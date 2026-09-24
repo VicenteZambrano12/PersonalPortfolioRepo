@@ -9,23 +9,26 @@ import { projectsData } from '../lib/projectsData.js'
 import { getStyles } from '../utils/styles.jsx'
 import robotIcon from '../assets/robot-icon.svg'
 
-function Portfolio({ theme, onToggleTheme }) {
+function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
   const [selectedProjectId, setSelectedProjectId] = useState(null)
-  const selectedProject = selectedProjectId ? projectsData[selectedProjectId] : null
   const styles = getStyles(theme)
+  const translatedProjects = Object.fromEntries(
+    Object.entries(projectsData).map(([id, project]) => [id, { ...project, ...t.projects[id] }])
+  )
+  const selectedProject = selectedProjectId ? translatedProjects[selectedProjectId] : null
 
   return (
     <MainLayout
       theme={theme}
-      header={<Header theme={theme} onToggleTheme={onToggleTheme} />}
-      footer={<Footer theme={theme} />}
+      header={<Header theme={theme} onToggleTheme={onToggleTheme} language={language} onChangeLanguage={onChangeLanguage} t={t} />}
+      footer={<Footer theme={theme} t={t} />}
     >
       <div style={styles.header}>
-        <h2 className="text-2xl font-semibold" style={styles.sectionHeading}>My Projects</h2>
+        <h2 className="text-2xl font-semibold" style={styles.sectionHeading}>{t.portfolio.heading}</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-        {Object.entries(projectsData).map(([id, project]) => (
+        {Object.entries(translatedProjects).map(([id, project]) => (
           <ProjectCard key={id} project={project} theme={theme} onSelect={() => setSelectedProjectId(id)} />
         ))}
 
@@ -33,16 +36,16 @@ function Portfolio({ theme, onToggleTheme }) {
           href="https://youtube.com/"
           icon="ph-youtube-logo"
           iconImage={robotIcon}
-          title="YouTube Channel"
-          subtitle="Content Creator"
-          tagline="&ldquo;La IA explicada para escépticos&rdquo;"
-          cta="Visit Channel"
+          title={t.externalLink.title}
+          subtitle={t.externalLink.subtitle}
+          tagline={t.externalLink.tagline}
+          cta={t.externalLink.cta}
           theme={theme}
         />
       </div>
 
       {selectedProject && (
-        <ProjectModal project={selectedProject} theme={theme} onClose={() => setSelectedProjectId(null)} />
+        <ProjectModal project={selectedProject} theme={theme} t={t} onClose={() => setSelectedProjectId(null)} />
       )}
     </MainLayout>
   )

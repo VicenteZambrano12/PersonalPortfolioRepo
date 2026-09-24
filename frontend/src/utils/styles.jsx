@@ -22,6 +22,11 @@ export const getStyles = (theme = 'dark') => {
       color: colors.accentAmber,
       border: `1px solid ${colors.border}`,
     },
+    languageSwitcher: {
+      backgroundColor: colors.surface,
+      color: colors.secondaryText,
+      border: `1px solid ${colors.border}`,
+    },
     siteFooter: {
       backgroundColor: colors.background,
       color: colors.secondaryText,

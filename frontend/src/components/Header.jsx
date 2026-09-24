@@ -1,7 +1,9 @@
 import { getStyles } from '../utils/styles.jsx'
+import { socialLinks } from '../config/links.jsx'
 import robotIcon from '../assets/robot-icon.svg'
+import LanguageSwitcher from './LanguageSwitcher.jsx'
 
-function Header({ theme, onToggleTheme }) {
+function Header({ theme, onToggleTheme, language, onChangeLanguage, t }) {
   const styles = getStyles(theme)
 
   return (
@@ -16,16 +18,24 @@ function Header({ theme, onToggleTheme }) {
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight" style={styles.siteHeaderTitle}>
               Vicente Zambrano Andrada
             </h1>
-            <p className="mt-2 text-lg" style={styles.siteHeaderSubtitle}>Cloud Solutions & AI App Developer</p>
+            <p className="mt-2 text-lg" style={styles.siteHeaderSubtitle}>{t.header.subtitle}</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <a href="#" className="social-link transition-colors" style={styles.socialIcon} aria-label="GitHub">
-            <i className="ph ph-github-logo text-3xl"></i>
-          </a>
-          <a href="#" className="social-link transition-colors" style={styles.socialIcon} aria-label="LinkedIn">
-            <i className="ph ph-linkedin-logo text-3xl"></i>
-          </a>
+          {socialLinks.map(({ id, label, href, icon }) => (
+            <a
+              key={id}
+              href={href || '#'}
+              target={href ? '_blank' : undefined}
+              rel={href ? 'noopener noreferrer' : undefined}
+              className="social-link transition-colors"
+              style={styles.socialIcon}
+              aria-label={label}
+            >
+              <i className={`ph ${icon} text-3xl`}></i>
+            </a>
+          ))}
+          <LanguageSwitcher theme={theme} language={language} onChangeLanguage={onChangeLanguage} t={t} />
           <button
             type="button"
             onClick={onToggleTheme}
