@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vicente Zambrano Andrada | Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons for modern SVG icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    animation: {
+                        'modal-enter': 'modal-enter 0.3s ease-out forwards',
+                    },
+                    keyframes: {
+                        'modal-enter': {
+                            '0%': { opacity: '0', transform: 'scale(0.95) translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        /* Custom scrollbar for modal */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-5xl mx-auto px-6 py-12 text-center md:text-left flex flex-col md:flex-row items-center justify-between">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">Vicente Zambrano Andrada</h1>
+                <p class="text-slate-500 mt-2 text-lg">Cloud Solutions & AI App Developer</p>
+            </div>
+            <div class="mt-6 md:mt-0 flex gap-4">
+                <a href="#" class="text-slate-400 hover:text-brand-600 transition-colors">
+                    <i class="ph ph-github-logo text-3xl"></i>
+                </a>
+                <a href="#" class="text-slate-400 hover:text-brand-600 transition-colors">
+                    <i class="ph ph-linkedin-logo text-3xl"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto px-6 py-12 w-full">
+        
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold text-slate-800 border-b border-slate-200 pb-2">My Projects</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- App Card 1: PAUHelper -->
+            <div class="app-card group bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full" data-app-id="pauhelper">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600">
+                        <i class="ph ph-brain text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900">PAUHelper</h3>
+                        <p class="text-sm font-medium text-brand-600">AI Study Assistant</p>
+                    </div>
+                </div>
+                <p class="text-slate-600 mb-6 flex-grow">An intelligent assistant designed to help students prepare for exams using AI-driven tutoring, personalized study paths, and quick queries.</p>
+                <div class="flex flex-wrap gap-2 mt-auto">
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">Python</span>
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">React</span>
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">GCP</span>
+                </div>
+            </div>
+
+            <!-- App Card 2: Orchestrator Data App -->
+            <div class="app-card group bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full" data-app-id="orchestratordata">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+                        <i class="ph ph-database text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900">Orchestrator Data App</h3>
+                        <p class="text-sm font-medium text-brand-600">Data Pipeline Manager</p>
+                    </div>
+                </div>
+                <p class="text-slate-600 mb-6 flex-grow">A centralized platform built to orchestrate, monitor, and manage complex data pipelines and serverless AI workloads securely and efficiently on Google Cloud Platform.</p>
+                <div class="flex flex-wrap gap-2 mt-auto">
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">Python</span>
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">Cloud Run</span>
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">FastAPI</span>
+                </div>
+            </div>
+
+            <!-- App Card 3: Voice Simulator -->
+            <div class="app-card group bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full" data-app-id="voicesimulator">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
+                        <i class="ph ph-waveform text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900">Voice Simulator</h3>
+                        <p class="text-sm font-medium text-brand-600">AI Audio Synthesis</p>
+                    </div>
+                </div>
+                <p class="text-slate-600 mb-6 flex-grow">An advanced voice generation and simulation tool leveraging LLMs and neural TTS models to create realistic, conversational audio outputs for various use cases.</p>
+                <div class="flex flex-wrap gap-2 mt-auto">
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">LangGraph</span>
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">LLMs</span>
+                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">React</span>
+                </div>
+            </div>
+
+            <!-- Card 4: YouTube Channel (Link, not modal) -->
+            <a href="https://youtube.com/" target="_blank" class="group bg-gradient-to-br from-red-500 to-red-700 rounded-2xl border-none p-6 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full text-white relative overflow-hidden">
+                <!-- Decorative background elements -->
+                <i class="ph-fill ph-youtube-logo absolute -bottom-6 -right-6 text-9xl text-white opacity-20 transform group-hover:scale-110 transition-transform duration-500"></i>
+                
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
+                            <i class="ph-fill ph-youtube-logo text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">YouTube Channel</h3>
+                            <p class="text-sm font-medium text-red-100">Content Creator</p>
+                        </div>
+                    </div>
+                    <p class="text-white/90 mb-6 flex-grow font-medium text-lg">
+                        "La IA explicada para escépticos"
+                    </p>
+                    <div class="mt-auto flex items-center gap-2 text-white font-medium group-hover:gap-3 transition-all">
+                        Visit Channel <i class="ph ph-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-sm">
+        <p>&copy; <span id="year"></span> Vicente Zambrano Andrada. All rights reserved.</p>
+    </footer>
+
+    <!-- Modal Backdrop -->
+    <div id="modalBackdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4 sm:p-6">
+        
+        <!-- Modal Container -->
+        <div id="modalContainer" class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden hidden scale-95 transition-transform duration-300">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-slate-100 bg-white">
+                <div>
+                    <h3 id="modalTitle" class="text-2xl font-bold text-slate-900">App Title</h3>
+                    <p id="modalSubtitle" class="text-brand-600 font-medium">App Subtitle</p>
+                </div>
+                <button id="closeModalBtn" class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200 hover:text-slate-900 transition-colors">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-grow bg-slate-50">
+                
+                <!-- Video Walkthrough Placeholder -->
+                <div class="w-full aspect-video bg-slate-900 rounded-xl mb-8 relative overflow-hidden flex items-center justify-center group shadow-md">
+                    <img id="modalVideoThumb" src="" alt="Video Thumbnail" class="absolute inset-0 w-full h-full object-cover opacity-60" onerror="this.style.display='none'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+                    
+                    <button class="relative z-10 w-20 h-20 bg-brand-600/90 rounded-full flex items-center justify-center text-white backdrop-blur-sm group-hover:scale-110 transition-transform shadow-lg border-2 border-white/20">
+                        <i class="ph-fill ph-play text-3xl ml-1"></i>
+                    </button>
+                    <div class="absolute bottom-4 left-6 z-10 text-white">
+                        <span class="bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-md font-medium border border-white/10">Video Walkthrough</span>
+                    </div>
+                </div>
+
+                <!-- Description & Tech Stack -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                    <div class="lg:col-span-2">
+                        <h4 class="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                            <i class="ph ph-info text-brand-600"></i> Description
+                        </h4>
+                        <p id="modalDescription" class="text-slate-600 leading-relaxed">
+                            Full description goes here.
+                        </p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                        <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">Tech Stack</h4>
+                        <div id="modalTags" class="flex flex-wrap gap-2">
+                            <!-- Tags injected via JS -->
+                        </div>
+                        <div class="mt-6 pt-6 border-t border-slate-100">
+                             <a href="#" class="w-full flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white py-2.5 px-4 rounded-lg font-medium transition-colors">
+                                Open Live App <i class="ph ph-arrow-up-right"></i>
+                             </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Technical Docs -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h4 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <i class="ph ph-code text-slate-500"></i> Technical Docs
+                        </h4>
+                        <div id="modalTechDocs" class="prose prose-sm text-slate-600 prose-li:marker:text-brand-500">
+                            <!-- Technical content injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Soft Docs -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h4 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <i class="ph ph-book-open-text text-slate-500"></i> User Guide & Logic
+                        </h4>
+                        <div id="modalSoftDocs" class="prose prose-sm text-slate-600 prose-p:mb-3">
+                            <!-- Soft content injected here -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set dynamic year in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Application Data Object (acts as a mini database for the modal)
+        const appsData = {
+            'pauhelper': {
+                title: 'PAUHelper',
+                subtitle: 'AI Study Assistant',
+                thumbUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1000&auto=format&fit=crop', // Demo placeholder
+                description: 'PAUHelper is a comprehensive study assistant designed to optimize exam preparation. It leverages large language models to generate practice questions, summarize notes, and act as a conversational tutor for specific academic subjects.',
+                tags: ['Python', 'FastAPI', 'React', 'GCP', 'OpenAI API', 'Docker'],
+                techDocs: `
+                    <ul class="list-disc pl-4 space-y-2">
+                        <li><strong>Frontend:</strong> React single-page application built with Vite and styled via Tailwind CSS.</li>
+                        <li><strong>Backend:</strong> Stateless FastAPI microservice running in an isolated Docker container.</li>
+                        <li><strong>Infrastructure:</strong> Deployed on Google Cloud Run for seamless autoscaling from zero to handle exam season spikes.</li>
+                        <li><strong>Auth:</strong> JWT-based authentication flow.</li>
+                    </ul>`,
+                softDocs: `
+                    <p>The core concept is to reduce the friction of studying by providing instant context. Instead of searching through textbooks, students can upload their syllabus and ask targeted questions.</p>
+                    <p><strong>Use Case:</strong> A high school student preparing for final exams (PAU in Spain) needs to clarify a historical event. The app provides a summary tuned to the curriculum level.</p>`
+            },
+            'orchestratordata': {
+                title: 'Orchestrator Data App',
+                subtitle: 'Data Pipeline Manager',
+                thumbUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop', // Demo placeholder
+                description: 'A robust data orchestration platform that serves as a central hub for monitoring, managing, and triggering various AI-driven data processing pipelines. It ensures data flows securely between isolated instances.',
+                tags: ['GCP Cloud Run', 'Python', 'FastAPI', 'Docker', 'HTML/CSS'],
+                techDocs: `
+                    <ul class="list-disc pl-4 space-y-2">
+                        <li><strong>Architecture:</strong> Acts as a central orchestrator. Triggers and monitors backend Cloud Run services using REST APIs and message queues.</li>
+                        <li><strong>Deployment:</strong> Fully CI/CD automated via GitHub Actions to GCP Cloud Run.</li>
+                        <li><strong>Security:</strong> Implements robust authentication and IAM policies to secure data pipeline execution.</li>
+                    </ul>`,
+                softDocs: `
+                    <p>Designed for data engineering teams to easily monitor the health of their pipelines and trigger manual reruns without needing deep command-line access.</p>
+                    <p><strong>Workflow:</strong> User logs into the portal, views active pipelines in a dashboard, and can click into specific jobs to view logs, performance metrics, and data lineage.</p>`
+            },
+            'voicesimulator': {
+                title: 'Voice Simulator',
+                subtitle: 'AI Audio Synthesis',
+                thumbUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop', // Demo placeholder
+                description: 'An advanced audio platform utilizing cutting-edge neural Text-to-Speech (TTS) models and LLMs to generate highly realistic, nuanced voice simulations for automated customer service, content creation, and accessibility.',
+                tags: ['Python', 'LangGraph', 'LLMs', 'Neural TTS', 'React', 'GCP'],
+                techDocs: `
+                    <ul class="list-disc pl-4 space-y-2">
+                        <li><strong>Core Logic:</strong> Utilizes LangGraph to orchestrate conversation flow, sentiment analysis, and dynamic prompt generation before passing to the TTS engine.</li>
+                        <li><strong>Audio Processing:</strong> Generates streaming audio chunks to minimize latency during live conversational simulations.</li>
+                        <li><strong>Integration:</strong> Connects to external LLM providers and custom fine-tuned voice models.</li>
+                    </ul>`,
+                softDocs: `
+                    <p>The Voice Simulator addresses the need for scalable, human-like voice interactions. It goes beyond robotic responses by injecting emotional cues based on the conversation's context.</p>
+                    <p><strong>Business Value:</strong> Reduces support costs by handling complex, multi-turn phone inquiries while maintaining a high standard of customer experience through natural-sounding voices.</p>`
+            }
+        };
+
+        // DOM Elements
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const modalContainer = document.getElementById('modalContainer');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const appCards = document.querySelectorAll('.app-card');
+
+        // Modal Content Elements
+        const mTitle = document.getElementById('modalTitle');
+        const mSubtitle = document.getElementById('modalSubtitle');
+        const mDesc = document.getElementById('modalDescription');
+        const mTags = document.getElementById('modalTags');
+        const mTechDocs = document.getElementById('modalTechDocs');
+        const mSoftDocs = document.getElementById('modalSoftDocs');
+        const mThumb = document.getElementById('modalVideoThumb');
+
+        // Open Modal Function
+        function openModal(appId) {
+            const data = appsData[appId];
+            if (!data) return;
+
+            // Populate Data
+            mTitle.textContent = data.title;
+            mSubtitle.textContent = data.subtitle;
+            mDesc.textContent = data.description;
+            mThumb.src = data.thumbUrl;
+            
+            // Build Tags
+            mTags.innerHTML = data.tags.map(tag => 
+                `<span class="px-3 py-1 bg-brand-50 text-brand-700 border border-brand-100 text-xs font-semibold rounded-md">${tag}</span>`
+            ).join('');
+
+            // Inject HTML docs
+            mTechDocs.innerHTML = data.techDocs;
+            mSoftDocs.innerHTML = data.softDocs;
+
+            // Show Modal (Animate in)
+            modalBackdrop.classList.remove('hidden');
+            modalContainer.classList.remove('hidden');
+            
+            // Small delay to allow display:block to apply before animating opacity/transform
+            requestAnimationFrame(() => {
+                modalBackdrop.classList.remove('opacity-0');
+                modalContainer.classList.remove('scale-95');
+                modalContainer.classList.add('animate-modal-enter');
+            });
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Modal Function
+        function closeModal() {
+            // Animate out
+            modalBackdrop.classList.add('opacity-0');
+            modalContainer.classList.add('scale-95');
+            modalContainer.classList.remove('animate-modal-enter');
+
+            // Wait for transition to finish before hiding
+            setTimeout(() => {
+                modalBackdrop.classList.add('hidden');
+                modalContainer.classList.add('hidden');
+                document.body.style.overflow = ''; // Restore scroll
+            }, 300); // 300ms matches Tailwind transition duration
+        }
+
+        // Event Listeners
+        appCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const appId = card.getAttribute('data-app-id');
+                openModal(appId);
+            });
+        });
+
+        closeModalBtn.addEventListener('click', closeModal);
+
+        // Close on backdrop click
+        modalBackdrop.addEventListener('click', (e) => {
+            if (e.target === modalBackdrop) {
+                closeModal();
+            }
+        });
+
+        // Close on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modalBackdrop.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
