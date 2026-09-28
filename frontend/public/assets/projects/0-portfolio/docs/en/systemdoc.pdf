@@ -9,10 +9,10 @@ endobj
 << /Type /Page /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >> /MediaBox [0 0 612 792] /Contents 5 0 R >>
 endobj
 4 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
 endobj
 5 0 obj
-<< /Length 918 >>
+<< /Length 929 >>
 stream
 BT
 72 740 Td
@@ -41,7 +41,7 @@ BT
 (3. Assets: images, videos and PDFs are served statically) Tj
 0 -16 Td
 /F1 11 Tf
-(   from public/assets/projects/<project-id>/.) Tj
+(   from public/assets/projects/<project-id>/docs/<lang>/.) Tj
 0 -16 Td
 /F1 11 Tf
 (4. Documentation: each project links to a technical doc and) Tj
@@ -61,9 +61,9 @@ xref
 0000000058 00000 n 
 0000000115 00000 n 
 0000000241 00000 n 
-0000000311 00000 n 
+0000000338 00000 n 
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-1279
+1318
 %%EOF

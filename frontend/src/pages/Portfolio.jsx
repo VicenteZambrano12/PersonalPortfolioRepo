@@ -6,6 +6,7 @@ import ExternalLinkCard from '../components/ExternalLinkCard.jsx'
 import ProjectModal from '../components/ProjectModal.jsx'
 import MainLayout from '../layouts/MainLayout.jsx'
 import { projectsData } from '../lib/projectsData.js'
+import { getDocUrl } from '../lib/docs.js'
 import { getStyles } from '../utils/styles.jsx'
 import robotIcon from '../assets/robot-icon.png'
 
@@ -13,7 +14,15 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
   const [selectedProjectId, setSelectedProjectId] = useState(null)
   const styles = getStyles(theme)
   const translatedProjects = Object.fromEntries(
-    Object.entries(projectsData).map(([id, project]) => [id, { ...project, ...t.projects[id] }])
+    Object.entries(projectsData).map(([id, project]) => [
+      id,
+      {
+        ...project,
+        ...t.projects[id],
+        techDocUrl: getDocUrl(project.slug, language, 'techdoc'),
+        nonTechDocUrl: getDocUrl(project.slug, language, 'nontechdoc'),
+      },
+    ])
   )
   const selectedProject = selectedProjectId ? translatedProjects[selectedProjectId] : null
 
@@ -26,7 +35,7 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
       <div className="flex flex-wrap items-center justify-between gap-4" style={styles.header}>
         <h2 className="text-2xl font-semibold" style={styles.sectionHeading}>{t.portfolio.heading}</h2>
         <a
-          href="/assets/projects/0-portfolio/systemdoc.pdf"
+          href={getDocUrl('0-portfolio', language, 'systemdoc')}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 transition-colors w-auto"
