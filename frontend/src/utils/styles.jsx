@@ -208,6 +208,17 @@ export const getStyles = (theme = 'dark') => {
       cursor: 'pointer',
       width: '100%',
       marginTop: '1.5rem',
+    },
+    buttonSecondary: {
+      backgroundColor: 'transparent',
+      color: colors.accentCyan,
+      padding: '0.75rem 1.5rem',
+      borderRadius: '8px',
+      border: `1px solid ${hexToRgba(colors.accentCyan, 0.4)}`,
+      fontWeight: '600',
+      cursor: 'pointer',
+      width: '100%',
+      textDecoration: 'none',
     }
   };
 };

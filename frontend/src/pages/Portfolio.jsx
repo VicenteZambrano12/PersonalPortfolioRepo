@@ -7,7 +7,7 @@ import ProjectModal from '../components/ProjectModal.jsx'
 import MainLayout from '../layouts/MainLayout.jsx'
 import { projectsData } from '../lib/projectsData.js'
 import { getStyles } from '../utils/styles.jsx'
-import robotIcon from '../assets/robot-icon.svg'
+import robotIcon from '../assets/robot-icon.png'
 
 function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
   const [selectedProjectId, setSelectedProjectId] = useState(null)

@@ -103,11 +103,15 @@ function ProjectModal({ project, theme, t, onClose }) {
               <h4 className="text-lg font-bold mb-4 flex items-center gap-2 pb-3" style={styles.panelHeading}>
                 <i className="ph ph-code" style={styles.sectionIcon}></i> {t.modal.technicalDocs}
               </h4>
-              <ul className="list-disc pl-4 space-y-2 text-sm" style={{ color: styles.cardDescription.color }}>
-                {project.techDocs.map((item, index) => (
-                  <li key={index} dangerouslySetInnerHTML={{ __html: item }} />
-                ))}
-              </ul>
+              <a
+                href={project.techDocUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 transition-colors"
+                style={styles.buttonSecondary}
+              >
+                <i className="ph ph-file-pdf"></i> {t.modal.viewTechnicalDocs}
+              </a>
             </div>
 
             {/* Soft Docs */}
@@ -115,11 +119,15 @@ function ProjectModal({ project, theme, t, onClose }) {
               <h4 className="text-lg font-bold mb-4 flex items-center gap-2 pb-3" style={styles.panelHeading}>
                 <i className="ph ph-book-open-text" style={styles.sectionIcon}></i> {t.modal.userGuide}
               </h4>
-              <div className="text-sm space-y-3" style={{ color: styles.cardDescription.color }}>
-                {project.softDocs.map((paragraph, index) => (
-                  <p key={index} dangerouslySetInnerHTML={{ __html: paragraph }} />
-                ))}
-              </div>
+              <a
+                href={project.nonTechDocUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 transition-colors"
+                style={styles.buttonSecondary}
+              >
+                <i className="ph ph-file-pdf"></i> {t.modal.viewUserGuide}
+              </a>
             </div>
           </div>
         </div>

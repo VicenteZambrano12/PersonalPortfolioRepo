@@ -1,6 +1,6 @@
 import { getStyles } from '../utils/styles.jsx'
 import { socialLinks } from '../config/links.jsx'
-import robotIcon from '../assets/robot-icon.svg'
+import robotIcon from '../assets/robot-icon.png'
 import LanguageSwitcher from './LanguageSwitcher.jsx'
 
 function Header({ theme, onToggleTheme, language, onChangeLanguage, t }) {
