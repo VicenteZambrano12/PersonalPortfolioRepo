@@ -6,6 +6,7 @@ export const en = {
   },
   portfolio: {
     heading: 'My Projects',
+    systemDocCta: 'How This Site Works',
   },
   footer: {
     rights: 'All rights reserved.',

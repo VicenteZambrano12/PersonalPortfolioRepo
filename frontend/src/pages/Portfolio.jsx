@@ -23,8 +23,17 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
       header={<Header theme={theme} onToggleTheme={onToggleTheme} language={language} onChangeLanguage={onChangeLanguage} t={t} />}
       footer={<Footer theme={theme} t={t} />}
     >
-      <div style={styles.header}>
+      <div className="flex flex-wrap items-center justify-between gap-4" style={styles.header}>
         <h2 className="text-2xl font-semibold" style={styles.sectionHeading}>{t.portfolio.heading}</h2>
+        <a
+          href="/assets/projects/0-portfolio/systemdoc.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 transition-colors w-auto"
+          style={{ ...styles.buttonSecondary, width: 'auto' }}
+        >
+          <i className="ph ph-file-pdf"></i> {t.portfolio.systemDocCta}
+        </a>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">

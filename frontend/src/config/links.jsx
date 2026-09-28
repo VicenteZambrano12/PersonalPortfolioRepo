@@ -1,6 +1,6 @@
 // Social media links. Fill in the `href` values when accounts are ready.
 export const socialLinks = [
-  { id: 'github', label: 'GitHub', href: '', icon: 'ph-github-logo' },
+  { id: 'github', label: 'GitHub', href: 'https://github.com/VicenteZambrano12', icon: 'ph-github-logo' },
   { id: 'linkedin', label: 'LinkedIn', href: '', icon: 'ph-linkedin-logo' },
   { id: 'instagram', label: 'Instagram', href: '', icon: 'ph-instagram-logo' },
   { id: 'facebook', label: 'Facebook', href: '', icon: 'ph-facebook-logo' },
