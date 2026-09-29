@@ -43,6 +43,7 @@ function ProjectModal({ project, theme, t, onClose }) {
             onClick={onClose}
             className="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
             style={styles.closeButton}
+            aria-label="Close"
           >
             <i className="ph ph-x text-xl"></i>
           </button>
