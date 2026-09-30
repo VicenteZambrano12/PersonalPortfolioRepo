@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --animate-modal-enter: modal-enter 0.3s ease-out forwards;
+
+  @keyframes modal-enter {
+    0% {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+}
+
+/* Mirrors utils/colors.jsx accent values; only used for :hover states inline styles can't express. */
+:root {
+  color-scheme: dark;
+  --color-cyan: #06B6D4;
+  --color-amber: #F59E0B;
+  --color-scrollbar-track: #1e293b;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --color-cyan: #0891B2;
+  --color-amber: #EA580C;
+  --color-scrollbar-track: #E2E8F0;
+}
+
+html, body, #root {
+  width: 100%;
+  min-height: 100%;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar for modal */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-track);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #64748B;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cyan);
+}
+
+/* !important is required here: React inline styles otherwise always win over class rules. */
+.social-link:hover {
+  color: var(--color-cyan) !important;
+}
+.theme-toggle:hover {
+  border-color: var(--color-cyan) !important;
+  color: var(--color-cyan) !important;
+}
+.project-card:hover {
+  border-color: var(--color-cyan) !important;
+}
+.youtube-card:hover {
+  border-color: var(--color-amber) !important;
+}
+
