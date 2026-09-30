@@ -9,7 +9,8 @@ module "networking" {
   region      = var.region
   vpc_name    = "portfolio-demo-vpc"
   subnet_name = "portfolio-serverless-subnet"
-  subnet_cidr = "10.0.3.0/28"
+  # /26 minimum for Cloud Run Direct VPC egress (instances + rolling-deploy headroom)
+  subnet_cidr = "10.0.3.0/26"
 }
 
 module "cloudrun" {
