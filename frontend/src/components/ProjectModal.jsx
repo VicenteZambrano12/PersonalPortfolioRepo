@@ -88,7 +88,8 @@ function ProjectModal({ project, theme, t, onClose }) {
               </div>
               <div className="mt-6 pt-6" style={{ borderTop: styles.panel.border }}>
                 <a
-                  href="#"
+                  href={project.liveUrl || '#'}
+                  {...(project.liveUrl ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   className="w-full flex items-center justify-center gap-2 transition-colors"
                   style={styles.buttonPrimary}
                 >
