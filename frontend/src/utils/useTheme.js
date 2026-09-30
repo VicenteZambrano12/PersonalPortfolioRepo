@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { createLogger } from './logger.js';
 
 const STORAGE_KEY = 'portfolio-theme';
+const log = createLogger('theme');
 
 function getInitialTheme() {
   if (typeof window === 'undefined') return 'dark';
@@ -15,7 +17,12 @@ export function useTheme() {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    window.localStorage.setItem(STORAGE_KEY, theme);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, theme);
+    } catch (error) {
+      log.warn('Unable to persist theme preference', { message: error.message });
+    }
+    log.debug('Theme applied', { theme });
   }, [theme]);
 
   const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
