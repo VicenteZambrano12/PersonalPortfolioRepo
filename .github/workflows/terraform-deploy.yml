@@ -1,9 +1,12 @@
 name: Deploy GCP Infrastructure (Terraform)
 
+# Manual-only until the storage/secrets/qdrant_vm modules are committed. Re-enable the
+# pull_request trigger below once infra/environments/prod has all its modules in the repo.
 on:
-  pull_request:
-    types: [closed]
-    branches: [main]
+  workflow_dispatch:
+  # pull_request:
+  #   types: [closed]
+  #   branches: [main]
 
 env:
   PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
