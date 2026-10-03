@@ -29,7 +29,8 @@ module "secrets" {
   source                          = "../../modules/secrets"
   project_id                      = var.project_id
   region                          = var.region
-  cloud_run_service_account_email = local.cloud_run_service_account_email
+  secret_id                       = "basicragapp-secrets"
+  accessor_service_account_email  = local.cloud_run_service_account_email
   common_labels                   = var.common_labels
 }
 

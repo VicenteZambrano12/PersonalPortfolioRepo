@@ -13,6 +13,11 @@ variable "app_container_image" {
   description = "The Docker image URL to deploy"
 }
 
+variable "deploy_service_account_email" {
+  type        = string
+  description = "CI/CD service account that builds the frontend image and must be able to read the frontend secret."
+}
+
 variable "common_labels" {
   type        = map(string)
   description = "Common labels applied to resources that support them."

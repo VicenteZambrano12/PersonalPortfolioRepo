@@ -23,3 +23,12 @@ module "cloudrun" {
   serverless_subnet_id   = module.networking.subnet_id
   common_labels          = var.common_labels
 }
+
+module "secrets" {
+  source                          = "../../modules/secrets"
+  project_id                      = var.project_id
+  region                          = var.region
+  secret_id                       = "portfolio-frontend-secrets"
+  accessor_service_account_email  = var.deploy_service_account_email
+  common_labels                   = var.common_labels
+}
