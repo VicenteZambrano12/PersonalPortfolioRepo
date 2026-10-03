@@ -32,3 +32,10 @@ module "secrets" {
   accessor_service_account_email  = var.deploy_service_account_email
   common_labels                   = var.common_labels
 }
+
+# Secret was created manually (see config/populate_demo_secret.py) before this module existed;
+# adopt it into state instead of trying to re-create it.
+import {
+  id = "projects/${var.project_id}/secrets/portfolio-frontend-secrets"
+  to = module.secrets.google_secret_manager_secret.app_secrets
+}
