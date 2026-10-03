@@ -8,7 +8,10 @@ import MainLayout from '../layouts/MainLayout.jsx'
 import { projectsData } from '../lib/projectsData.js'
 import { getDocUrl } from '../lib/docs.js'
 import { getStyles } from '../utils/styles.jsx'
+import { createLogger } from '../utils/logger.js'
 import robotIcon from '../assets/robot-icon.png'
+
+const log = createLogger('portfolio')
 
 function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
   const [selectedProjectId, setSelectedProjectId] = useState(null)
@@ -25,6 +28,16 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
     ])
   )
   const selectedProject = selectedProjectId ? translatedProjects[selectedProjectId] : null
+
+  const handleSelectProject = (id) => {
+    log.info('Project opened', { projectId: id })
+    setSelectedProjectId(id)
+  }
+
+  const handleCloseProject = () => {
+    log.info('Project closed', { projectId: selectedProjectId })
+    setSelectedProjectId(null)
+  }
 
   return (
     <MainLayout
@@ -47,7 +60,7 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         {Object.entries(translatedProjects).map(([id, project]) => (
-          <ProjectCard key={id} project={project} theme={theme} onSelect={() => setSelectedProjectId(id)} />
+          <ProjectCard key={id} project={project} theme={theme} onSelect={() => handleSelectProject(id)} />
         ))}
 
         <ExternalLinkCard
@@ -63,7 +76,7 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
       </div>
 
       {selectedProject && (
-        <ProjectModal project={selectedProject} theme={theme} t={t} onClose={() => setSelectedProjectId(null)} />
+        <ProjectModal project={selectedProject} theme={theme} t={t} onClose={handleCloseProject} />
       )}
     </MainLayout>
   )

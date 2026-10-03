@@ -13,6 +13,8 @@ env:
   TF_WORKING_DIR: infra/environments/production
   TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
   TF_VAR_region: ${{ vars.GCP_REGION }}
+  TF_VAR_deploy_service_account_email: ${{ secrets.GCP_TERRAFORM_SERVICE_ACCOUNT }}
+  FRONTEND_SECRET_ID: portfolio-frontend-secrets
 
 jobs:
   build-and-plan:
@@ -78,9 +80,18 @@ jobs:
           fi
 
       # 3. Only execute Docker build/push if 'build' was evaluated to true
+      - name: Fetch frontend env secrets
+        if: steps.image.outputs.build == 'true'
+        id: frontend-secrets
+        run: |
+          SECRET_JSON=$(gcloud secrets versions access latest --secret="${{ env.FRONTEND_SECRET_ID }}" --project="${{ env.PROJECT_ID }}")
+          VITE_PAUHELPER_LIVE_URL=$(echo "$SECRET_JSON" | jq -r '.VITE_PAUHELPER_LIVE_URL')
+          echo "::add-mask::$VITE_PAUHELPER_LIVE_URL"
+          echo "vite_pauhelper_live_url=$VITE_PAUHELPER_LIVE_URL" >> "$GITHUB_OUTPUT"
+
       - name: Build Docker image
         if: steps.image.outputs.build == 'true'
-        run: docker build -t ${{ steps.image.outputs.image }} .
+        run: docker build --build-arg VITE_PAUHELPER_LIVE_URL="${{ steps.frontend-secrets.outputs.vite_pauhelper_live_url }}" -t ${{ steps.image.outputs.image }} .
 
       - name: Push Docker image
         if: steps.image.outputs.build == 'true'

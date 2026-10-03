@@ -6,6 +6,11 @@ COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 
 COPY frontend/. .
+
+# Build-time env vars inlined into the static bundle by Vite
+ARG VITE_PAUHELPER_LIVE_URL
+ENV VITE_PAUHELPER_LIVE_URL=$VITE_PAUHELPER_LIVE_URL
+
 RUN npm run build
 
 # --- Serve stage ---
