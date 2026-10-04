@@ -1,32 +1,36 @@
 name: Deploy GCP Infrastructure (Terraform)
 
-# All modules referenced by infra/environments/prod now exist in the repo
-# (storage/secrets/qdrant_vm/qdrant_vm_starter). Workflow is still
-# manual-only (workflow_dispatch) by choice; uncomment the pull_request
-# trigger below once you're ready to auto-apply on merges to main.
+# Deploys infra/environments/production: the portfolio site itself
+# (Cloud Run "portfolio" service, its VPC subnet, and its frontend secret).
+#
+# The Qdrant VM / on-demand starter Cloud Function live in the separate
+# BasicRAGapp repo's own Terraform state (infra/environments/prod there) and
+# are deployed by that repo's own terraform-deploy.yml — NOT from here. This
+# repo's prod/ duplicate was removed because its backend.tf pointed at the
+# exact same remote state as BasicRAGapp's, which made `terraform apply` from
+# here plan to destroy the real, shared VM/disk/storage bucket.
+#
+# Manual-only by design (workflow_dispatch): trigger it yourself from the
+# Actions tab whenever you want to deploy.
 on:
   workflow_dispatch:
-  # pull_request:
-  #   types: [closed]
-  #   branches: [main]
 
 env:
   PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
   REGION: ${{ vars.GCP_REGION }}
   AR_REPOSITORY: ${{ vars.GCP_AR_REPOSITORY }}
-  IMAGE_NAME: basicragapp
-  TF_WORKING_DIR: infra/environments/prod
+  IMAGE_NAME: portfolio
+  TF_WORKING_DIR: infra/environments/production
   TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
   TF_VAR_region: ${{ vars.GCP_REGION }}
-  # Name of the existing Qdrant VM (owned by a separate repo/Terraform state).
-  # Falls back to the module's "qdrant-vm" default if the repo variable isn't set,
-  # so this never accidentally overrides it with an empty string.
-  TF_VAR_qdrant_vm_name: ${{ vars.QDRANT_VM_NAME || 'qdrant-vm' }}
+  # Same identity used across this project (Cloud Run runtime SA, Cloud
+  # Function runtime SA, and this very Terraform/CI deploy SA) — reuse the
+  # secret rather than hardcoding the email a second time.
+  TF_VAR_deploy_service_account_email: ${{ secrets.GCP_TERRAFORM_SERVICE_ACCOUNT }}
 
 jobs:
   build-and-plan:
-    # Run on manual dispatch, or for PRs from 'dev' that were actually merged into 'main'.
-    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.head_ref == 'dev')
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,7 +42,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1. NEW: Check if backend or frontend directories changed in this PR
+      # 1. NEW: Check if frontend source or its Docker build context changed
       - name: Check for source changes
         uses: dorny/paths-filter@v3
         id: filter
@@ -46,8 +50,118 @@ jobs:
           filters: |
             app:
               - 'frontend/**'
-              - 'src/**'
-              - 'vector_db/**'
+              - 'Dockerfile'
+              - 'nginx.conf.template'
+
+      - name: Authenticate to GCP (Workload Identity Federation)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_TERRAFORM_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      # 2. MODIFIED: Set the image tag conditionally based on the filter output
+      - name: Set image tag and build flag
+        id: image
+        run: |
+          BASE_IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.AR_REPOSITORY }}/${{ env.IMAGE_NAME }}"
+          
+          if [ "${{ steps.filter.outputs.app }}" == "true" ]; then
+            echo "Source changed. Will build and push a new image."
+            echo "image=${BASE_IMAGE}:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No source changes detected. Skipping build and fetching the latest image from GCP..."
+            
+            # Fetch the digest of the most recently updated image in Artifact Registry
+            LATEST_DIGEST=$(gcloud artifacts docker images list $BASE_IMAGE \
+              --sort-by="~UPDATE_TIME" \
+              --limit=1 \
+              --format="value(version)")
+            
+            # Pass the existing digest to Terraform so the state remains intact
+            echo "image=${BASE_IMAGE}@${LATEST_DIGEST}" >> "$GITHUB_OUTPUT"
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # 3. MODIFIED: Only execute Docker build/push if 'build' was evaluated to true
+      - name: Build Docker image
+        if: steps.image.outputs.build == 'true'
+        run: docker build -t ${{ steps.image.outputs.image }} .
+
+      - name: Push Docker image
+        if: steps.image.outputs.build == 'true'
+        run: docker push ${{ steps.image.outputs.image }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform plan -out=tfplan -var="app_container_image=${{ steps.image.outputs.image }}"
+        
+      - name: Show Terraform Plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform show tfplan
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ env.TF_WORKING_DIR }}/tfplan
+          retention-days: 1
+
+  apply:
+    needs: build-and-plan
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP (Workload Identity Federation)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_TERRAFORM_SERVICE_ACCOUNT }}
+
+      - name: Download plan artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ env.TF_WORKING_DIR }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform apply tfplan
+
+      - name: Show outputs
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          {
+            echo "### Portfolio deploy"
+            echo "- Cloud Run URL: \`$(terraform output -raw cloud_run_url)\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Authenticate to GCP (Workload Identity Federation)
         id: auth

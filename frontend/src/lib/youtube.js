@@ -7,6 +7,7 @@ export function validateYoutubeVideos(videos) {
     new Set(videos.map((video) => video?.id)).size !== 3 ||
     videos.some((video) =>
       !video ||
+      typeof video.id !== 'string' ||
       !/^[A-Za-z0-9_-]{11}$/.test(video.id) ||
       typeof video.title !== 'string' ||
       !video.title.trim() ||

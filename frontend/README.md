@@ -4,6 +4,10 @@
 
 The portfolio shows the latest three regular uploads from the configured channel
 ([channel URL](src/lib/youtube.js)), with their original titles and watch links.
+Click the YouTube card to open them in a popup styled like the project modals.
+The popup loads the list when opened and closes with its close button, Escape,
+or a click on the backdrop. Keyboard focus stays inside and returns to the card
+when closed.
 Shorts are excluded by reading only watch entries from the channel's Videos tab,
 not its uploads feed or Shorts tab. No API key or browser-side YouTube request is needed.
 
