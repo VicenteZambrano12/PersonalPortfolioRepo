@@ -1,5 +1,23 @@
 # React + Vite
 
+## YouTube card
+
+The portfolio shows the latest three regular uploads from the configured channel
+([channel URL](src/lib/youtube.js)), with their original titles and watch links.
+Shorts are excluded by reading only watch entries from the channel's Videos tab,
+not its uploads feed or Shorts tab. No API key or browser-side YouTube request is needed.
+
+`npm run dev` and `npm run build` first run `npm run refresh:youtube`, which writes
+an ignored `public/youtube-videos.json` file served with the app. This also runs
+during the Docker build. Videos update on each build/deploy, not continuously
+between deployments. You can run the refresh command manually during development.
+
+Refresh requires network access to YouTube. HTTP errors, fewer than three valid
+videos, or an unrecognized page format fail the command/build explicitly, rather
+than shipping stale data. If YouTube changes its page format, update
+[the extraction helper](scripts/youtube.mjs). A failed browser request displays a
+localized error with a channel link.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

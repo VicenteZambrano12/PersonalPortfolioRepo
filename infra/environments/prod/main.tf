@@ -1,6 +1,9 @@
 locals {
   # Pre-existing Cloud Run runtime SA, created manually in the console (not Terraform-managed).
   cloud_run_service_account_email = "basicragapp-app@basicrahgapp.iam.gserviceaccount.com"
+  # Shared portfolio-repo-sa identity (same one this repo's Terraform/CI runs
+  # as) reused as the Cloud Function's runtime SA — no dedicated SA is created.
+  qdrant_vm_starter_service_account_email = "portfolio-repo-sa@basicrahgapp.iam.gserviceaccount.com"
 }
 
 module "artifact_registry" {
@@ -43,12 +46,13 @@ module "qdrant_vm" {
 }
 
 module "qdrant_vm_starter" {
-  source        = "../../modules/qdrant_vm_starter"
-  project_id    = var.project_id
-  region        = var.region
-  zone          = module.qdrant_vm.zone
-  vm_name       = module.qdrant_vm.vm_name
-  common_labels = var.common_labels
+  source                 = "../../modules/qdrant_vm_starter"
+  project_id             = var.project_id
+  region                 = var.region
+  zone                   = module.qdrant_vm.zone
+  vm_name                = module.qdrant_vm.vm_name
+  service_account_email  = local.qdrant_vm_starter_service_account_email
+  common_labels          = var.common_labels
 }
 
 module "cloudrun" {

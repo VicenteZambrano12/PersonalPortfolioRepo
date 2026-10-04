@@ -16,6 +16,9 @@ export const en = {
     subtitle: 'Content Creator',
     tagline: '“AI explained for skeptics”',
     cta: 'Visit Channel',
+    latestVideos: 'Latest videos',
+    videosLoading: 'Loading latest videos…',
+    videosError: 'Videos could not be loaded. Visit the channel to watch the latest videos.',
   },
   modal: {
     videoWalkthrough: 'Video Walkthrough',

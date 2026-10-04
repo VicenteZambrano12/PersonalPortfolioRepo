@@ -1,14 +1,11 @@
-# --- 1. Dedicated service account for the startup Cloud Function ---
-# IAM bindings (compute.instanceAdmin.v1 on the project, run.invoker for
-# allUsers on the function) are intentionally NOT managed here — see
-# infra/scripts/grant_vm_starter_permissions.sh for the equivalent gcloud
-# commands.
-resource "google_service_account" "vm_starter" {
-  project      = var.project_id
-  account_id   = var.service_account_id
-  display_name = "Qdrant VM starter (Cloud Function)"
-  description  = "Runtime identity for the HTTP Cloud Function that boots the Qdrant demo VM on demand."
-}
+# --- 1. Runtime identity for the startup Cloud Function ---
+# No service account is created here. The function runs as the existing
+# portfolio-repo-sa (var.service_account_email) — the same identity used
+# for Cloud Run deployments across this repo, and the identity Terraform/CI
+# itself runs as. IAM bindings (compute.instanceAdmin.v1 on the project,
+# run.invoker for allUsers on the function) are intentionally NOT managed
+# here — see infra/scripts/grant_vm_starter_permissions.sh for the
+# equivalent gcloud commands.
 
 # --- 2. Source code packaging & Cloud Storage ---
 resource "google_storage_bucket" "function_source" {
@@ -57,7 +54,7 @@ resource "google_cloudfunctions2_function" "start_vm" {
     timeout_seconds                = 60
     ingress_settings               = "ALLOW_ALL"
     all_traffic_on_latest_revision = true
-    service_account_email          = google_service_account.vm_starter.email
+    service_account_email          = var.service_account_email
 
     environment_variables = {
       PROJECT_ID = var.project_id

@@ -24,10 +24,10 @@ variable "function_name" {
   default     = "start-qdrant-vm"
 }
 
-variable "service_account_id" {
+variable "service_account_email" {
   type        = string
-  description = "account_id for the dedicated service account the function runs as."
-  default     = "qdrant-vm-starter-sa"
+  description = "Email of the existing service account the function runs as. No service account is created by this module."
+  default     = "portfolio-repo-sa@basicrahgapp.iam.gserviceaccount.com"
 }
 
 variable "common_labels" {

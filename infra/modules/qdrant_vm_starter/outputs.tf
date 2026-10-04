@@ -4,8 +4,8 @@ output "cloud_function_url" {
 }
 
 output "service_account_email" {
-  description = "Email of the dedicated Cloud Function service account. Copy this into the gcloud IAM grant commands."
-  value       = google_service_account.vm_starter.email
+  description = "Email of the (pre-existing) service account the function runs as. Copy this into the gcloud IAM grant commands."
+  value       = var.service_account_email
 }
 
 output "function_name" {

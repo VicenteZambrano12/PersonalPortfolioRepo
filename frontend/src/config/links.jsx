@@ -5,5 +5,6 @@ export const socialLinks = [
   { id: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/laiaexplicadaparaescepticos_/', icon: 'ph-instagram-logo' },
   { id: 'facebook', label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61586605749443', icon: 'ph-facebook-logo' },
   { id: 'tiktok', label: 'TikTok', href: 'https://www.tiktok.com/@laiaexplicadaparaescepti', icon: 'ph-tiktok-logo' },
-  { id: 'youtube', label: 'YouTube', href: 'https://youtube.com/@laiaexplicadaparaescepticos?si=2V6H53uvvUhyFpEn', icon: 'ph-youtube-logo' },
+  { id: 'youtube', label: 'YouTube', href: YOUTUBE_CHANNEL_URL, icon: 'ph-youtube-logo' },
 ]
+import { YOUTUBE_CHANNEL_URL } from '../lib/youtube.js'
