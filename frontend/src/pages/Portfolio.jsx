@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import ProjectCard from '../components/ProjectCard.jsx'
 import YoutubeCard from '../components/YoutubeCard.jsx'
+import YoutubeModal from '../components/YoutubeModal.jsx'
 import ProjectModal from '../components/ProjectModal.jsx'
 import MainLayout from '../layouts/MainLayout.jsx'
 import { projectsData } from '../lib/projectsData.js'
@@ -33,10 +34,10 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
     setSelectedProjectId(id)
   }
 
-  const handleCloseProject = () => {
+  const handleCloseProject = useCallback(() => {
     log.info('Project closed', { projectId: selectedProjectId })
     setSelectedProjectId(null)
-  }
+  }, [selectedProjectId])
 
   return (
     <MainLayout
@@ -62,11 +63,14 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
           <ProjectCard key={id} project={project} theme={theme} onSelect={() => handleSelectProject(id)} />
         ))}
 
-        <YoutubeCard theme={theme} t={t.externalLink} />
+        <YoutubeCard theme={theme} t={t.externalLink} onSelect={() => handleSelectProject('youtube')} />
       </div>
 
       {selectedProject && (
         <ProjectModal project={selectedProject} theme={theme} t={t} onClose={handleCloseProject} />
+      )}
+      {selectedProjectId === 'youtube' && (
+        <YoutubeModal theme={theme} t={t.externalLink} onClose={handleCloseProject} />
       )}
     </MainLayout>
   )

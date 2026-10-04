@@ -17,6 +17,8 @@ export const es = {
     tagline: '“La IA explicada para escépticos”',
     cta: 'Visitar Canal',
     latestVideos: 'Últimos vídeos',
+    openVideos: 'Ver últimos vídeos',
+    close: 'Cerrar',
     videosLoading: 'Cargando los últimos vídeos…',
     videosError: 'No se pudieron cargar los vídeos. Visita el canal para ver los últimos vídeos.',
   },

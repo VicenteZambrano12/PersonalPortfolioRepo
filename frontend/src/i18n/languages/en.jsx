@@ -17,6 +17,8 @@ export const en = {
     tagline: '“AI explained for skeptics”',
     cta: 'Visit Channel',
     latestVideos: 'Latest videos',
+    openVideos: 'View latest videos',
+    close: 'Close',
     videosLoading: 'Loading latest videos…',
     videosError: 'Videos could not be loaded. Visit the channel to watch the latest videos.',
   },
