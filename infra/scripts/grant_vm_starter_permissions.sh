@@ -11,15 +11,33 @@
 # and the Cloud Function. Requires the gcloud CLI, authenticated as a
 # principal with Owner/IAM Admin + Cloud Functions Admin on the project.
 #
-# NOTE: portfolio-repo-sa@basicrahgapp.iam.gserviceaccount.com (the
-# identity this repo's Terraform/CI runs as) was separately granted
-# roles/compute.instanceAdmin.v1 on 2026-10-04, so its `data
-# "google_compute_instance" "qdrant"` lookup (infra/modules/qdrant_vm) can
-# read the VM owned by the BasicRAGapp repo:
-#   gcloud projects add-iam-policy-binding basicrahgapp \
-#     --member="serviceAccount:portfolio-repo-sa@basicrahgapp.iam.gserviceaccount.com" \
-#     --role="roles/compute.instanceAdmin.v1" \
-#     --condition=None
+# NOTE: portfolio-repo-sa@basicrahgapp.iam.gserviceaccount.com is the
+# identity this repo's Terraform/CI (GCP_TERRAFORM_SERVICE_ACCOUNT) runs
+# as. The Terraform in infra/environments/prod creates a service account,
+# a GCS bucket, and a 2nd-gen Cloud Function, and reads the externally
+# owned VM, so on 2026-10-04 it was granted (one-time, project-level):
+#   roles/compute.instanceAdmin.v1   (read the BasicRAGapp-owned VM via
+#                                      data "google_compute_instance")
+#   roles/iam.serviceAccountAdmin    (create qdrant-vm-starter-sa)
+#   roles/storage.admin              (create the function-source bucket;
+#                                      storage.objectAdmin alone cannot
+#                                      create buckets)
+#   roles/cloudfunctions.admin       (create/update the 2nd-gen function)
+#   roles/cloudbuild.builds.editor   (2nd-gen function deploys run a
+#                                      Cloud Build job under the hood)
+# The cloudfunctions.googleapis.com, cloudbuild.googleapis.com and
+# eventarc.googleapis.com APIs were also enabled on the project (they
+# were disabled by default and Terraform does not enable them itself).
+# Re-run equivalent of:
+#   gcloud services enable cloudfunctions.googleapis.com \
+#     cloudbuild.googleapis.com eventarc.googleapis.com \
+#     --project=basicrahgapp
+#   for role in compute.instanceAdmin.v1 iam.serviceAccountAdmin \
+#     storage.admin cloudfunctions.admin cloudbuild.builds.editor; do
+#     gcloud projects add-iam-policy-binding basicrahgapp \
+#       --member="serviceAccount:portfolio-repo-sa@basicrahgapp.iam.gserviceaccount.com" \
+#       --role="roles/${role}" --condition=None
+#   done
 #
 # Usage:
 #   PROJECT_ID=my-project \
