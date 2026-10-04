@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { getStyles } from '../utils/styles.jsx'
+import { createLogger } from '../utils/logger.js'
+
+const log = createLogger('project-modal')
 
 function ProjectModal({ project, theme, t, onClose }) {
   const [visible, setVisible] = useState(false)
@@ -90,6 +93,16 @@ function ProjectModal({ project, theme, t, onClose }) {
                 <a
                   href={project.liveUrl || '#'}
                   {...(project.liveUrl ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  onClick={() => {
+                    // Best-effort: wake the demo's on-demand Qdrant VM (it
+                    // auto-shuts down after 30 idle minutes). Never blocks
+                    // or delays opening the live app link.
+                    if (project.vmStarterUrl) {
+                      fetch(project.vmStarterUrl).catch((error) =>
+                        log.warn('Qdrant VM starter call failed', { error: error.message })
+                      )
+                    }
+                  }}
                   className="w-full flex items-center justify-center gap-2 transition-colors"
                   style={styles.buttonPrimary}
                 >
