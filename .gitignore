@@ -42,3 +42,11 @@ next-env.d.ts
 .env
 
 /config
+
+# terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+tfplan
+*.auto.tfvars
+infra/**/.build/

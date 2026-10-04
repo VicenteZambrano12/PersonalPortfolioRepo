@@ -1,7 +1,9 @@
 name: Deploy GCP Infrastructure (Terraform)
 
-# Manual-only until the storage/secrets/qdrant_vm modules are committed. Re-enable the
-# pull_request trigger below once infra/environments/prod has all its modules in the repo.
+# All modules referenced by infra/environments/prod now exist in the repo
+# (storage/secrets/qdrant_vm/qdrant_vm_starter). Workflow is still
+# manual-only (workflow_dispatch) by choice; uncomment the pull_request
+# trigger below once you're ready to auto-apply on merges to main.
 on:
   workflow_dispatch:
   # pull_request:
@@ -16,11 +18,15 @@ env:
   TF_WORKING_DIR: infra/environments/prod
   TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
   TF_VAR_region: ${{ vars.GCP_REGION }}
+  # Name of the existing Qdrant VM (owned by a separate repo/Terraform state).
+  # Falls back to the module's "qdrant-vm" default if the repo variable isn't set,
+  # so this never accidentally overrides it with an empty string.
+  TF_VAR_qdrant_vm_name: ${{ vars.QDRANT_VM_NAME || 'qdrant-vm' }}
 
 jobs:
   build-and-plan:
-    # Only run for PRs from 'dev' that were actually merged into 'main'.
-    if: github.event.pull_request.merged == true && github.head_ref == 'dev'
+    # Run on manual dispatch, or for PRs from 'dev' that were actually merged into 'main'.
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.head_ref == 'dev')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -144,3 +150,16 @@ jobs:
       - name: Terraform Apply
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform apply tfplan
+
+      - name: Show qdrant_vm_starter outputs
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          {
+            echo "### Qdrant VM starter"
+            echo "- Cloud Function URL: \`$(terraform output -raw qdrant_vm_starter_function_url)\`"
+            echo "- Service account: \`$(terraform output -raw qdrant_vm_starter_service_account_email)\`"
+            echo ""
+            echo "IAM bindings (allUsers invoker, compute.instanceAdmin.v1) are intentionally"
+            echo "NOT applied by Terraform. Run infra/scripts/grant_vm_starter_permissions.sh"
+            echo "once, locally, using the values above."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# Grants the IAM permissions the Terraform config in
+# infra/environments/prod intentionally does NOT manage:
+#
+#   a) lets the qdrant-vm-starter-sa service account start/inspect the
+#      Qdrant VM (roles/compute.instanceAdmin.v1, or a tighter custom role)
+#   b) lets allUsers invoke the (2nd gen) Cloud Function so the public
+#      React frontend can call it unauthenticated
+#
+# Run this once after `terraform apply` has created the service account
+# and the Cloud Function. Requires the gcloud CLI, authenticated as a
+# principal with Owner/IAM Admin + Cloud Functions Admin on the project.
+#
+# NOTE: portfolio-repo-sa@basicrahgapp.iam.gserviceaccount.com (the
+# identity this repo's Terraform/CI runs as) was separately granted
+# roles/compute.instanceAdmin.v1 on 2026-10-04, so its `data
+# "google_compute_instance" "qdrant"` lookup (infra/modules/qdrant_vm) can
+# read the VM owned by the BasicRAGapp repo:
+#   gcloud projects add-iam-policy-binding basicrahgapp \
+#     --member="serviceAccount:portfolio-repo-sa@basicrahgapp.iam.gserviceaccount.com" \
+#     --role="roles/compute.instanceAdmin.v1" \
+#     --condition=None
+#
+# Usage:
+#   PROJECT_ID=my-project \
+#   FUNCTION_NAME=start-qdrant-vm \
+#   REGION=europe-southwest1 \
+#   SA_EMAIL=qdrant-vm-starter-sa@my-project.iam.gserviceaccount.com \
+#   ./grant_vm_starter_permissions.sh
+
+set -euo pipefail
+
+PROJECT_ID="${PROJECT_ID:?Set PROJECT_ID to your GCP project id}"
+REGION="${REGION:?Set REGION to the Cloud Function's region}"
+FUNCTION_NAME="${FUNCTION_NAME:-start-qdrant-vm}"
+# Copy this from Terraform's `qdrant_vm_starter_service_account_email` output.
+SA_EMAIL="${SA_EMAIL:?Set SA_EMAIL to the qdrant-vm-starter-sa email (terraform output qdrant_vm_starter_service_account_email)}"
+USE_CUSTOM_ROLE="${USE_CUSTOM_ROLE:-false}"
+
+echo "== a) Grant ${SA_EMAIL} permission to start/inspect the Qdrant VM =="
+
+if [ "$USE_CUSTOM_ROLE" = "true" ]; then
+  CUSTOM_ROLE_ID="qdrantVmStarter"
+
+  # Narrower alternative to roles/compute.instanceAdmin.v1: only what the
+  # Cloud Function actually calls (instances.get + instances.start).
+  if ! gcloud iam roles describe "$CUSTOM_ROLE_ID" --project="$PROJECT_ID" >/dev/null 2>&1; then
+    gcloud iam roles create "$CUSTOM_ROLE_ID" \
+      --project="$PROJECT_ID" \
+      --title="Qdrant VM Starter" \
+      --description="Minimal permissions to start and read status of the Qdrant demo VM" \
+      --permissions="compute.instances.start,compute.instances.get" \
+      --stage=GA
+  else
+    gcloud iam roles update "$CUSTOM_ROLE_ID" \
+      --project="$PROJECT_ID" \
+      --permissions="compute.instances.start,compute.instances.get"
+  fi
+
+  gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+    --member="serviceAccount:${SA_EMAIL}" \
+    --role="projects/${PROJECT_ID}/roles/${CUSTOM_ROLE_ID}" \
+    --condition=None
+else
+  gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+    --member="serviceAccount:${SA_EMAIL}" \
+    --role="roles/compute.instanceAdmin.v1" \
+    --condition=None
+fi
+
+echo "== b) Grant allUsers roles/run.invoker on the Cloud Function (public, unauthenticated) =="
+
+# 2nd gen Cloud Functions are backed by Cloud Run, so the invoker binding is
+# applied to the underlying Cloud Run service. `gcloud functions` exposes a
+# dedicated helper for this; falling back to `gcloud run` works identically.
+if gcloud functions add-invoker-policy-binding "$FUNCTION_NAME" \
+  --project="$PROJECT_ID" \
+  --region="$REGION" \
+  --member="allUsers" 2>/dev/null; then
+  :
+else
+  gcloud run services add-iam-policy-binding "$FUNCTION_NAME" \
+    --project="$PROJECT_ID" \
+    --region="$REGION" \
+    --member="allUsers" \
+    --role="roles/run.invoker"
+fi
+
+echo "Done. Public trigger URL:"
+gcloud functions describe "$FUNCTION_NAME" \
+  --project="$PROJECT_ID" \
+  --region="$REGION" \
+  --gen2 \
+  --format="value(serviceConfig.uri)"
