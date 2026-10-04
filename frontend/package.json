@@ -4,7 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "refresh:youtube": "node scripts/refresh-youtube.mjs",
+    "predev": "npm run refresh:youtube",
     "dev": "vite",
+    "prebuild": "npm run refresh:youtube",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",

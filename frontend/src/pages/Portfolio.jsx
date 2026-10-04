@@ -2,14 +2,13 @@ import { useState } from 'react'
 import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import ProjectCard from '../components/ProjectCard.jsx'
-import ExternalLinkCard from '../components/ExternalLinkCard.jsx'
+import YoutubeCard from '../components/YoutubeCard.jsx'
 import ProjectModal from '../components/ProjectModal.jsx'
 import MainLayout from '../layouts/MainLayout.jsx'
 import { projectsData } from '../lib/projectsData.js'
 import { getDocUrl } from '../lib/docs.js'
 import { getStyles } from '../utils/styles.jsx'
 import { createLogger } from '../utils/logger.js'
-import robotIcon from '../assets/robot-icon.png'
 
 const log = createLogger('portfolio')
 
@@ -63,16 +62,7 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
           <ProjectCard key={id} project={project} theme={theme} onSelect={() => handleSelectProject(id)} />
         ))}
 
-        <ExternalLinkCard
-          href="https://youtube.com/"
-          icon="ph-youtube-logo"
-          iconImage={robotIcon}
-          title={t.externalLink.title}
-          subtitle={t.externalLink.subtitle}
-          tagline={t.externalLink.tagline}
-          cta={t.externalLink.cta}
-          theme={theme}
-        />
+        <YoutubeCard theme={theme} t={t.externalLink} />
       </div>
 
       {selectedProject && (

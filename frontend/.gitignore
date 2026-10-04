@@ -28,3 +28,4 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+public/youtube-videos.json
