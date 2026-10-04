@@ -37,9 +37,17 @@ module "secrets" {
 module "qdrant_vm" {
   source        = "../../modules/qdrant_vm"
   project_id    = var.project_id
-  region        = var.region
   zone          = var.zone
-  subnet_id     = module.networking.qdrant_subnet_id
+  vm_name       = var.qdrant_vm_name
+  common_labels = var.common_labels
+}
+
+module "qdrant_vm_starter" {
+  source        = "../../modules/qdrant_vm_starter"
+  project_id    = var.project_id
+  region        = var.region
+  zone          = module.qdrant_vm.zone
+  vm_name       = module.qdrant_vm.vm_name
   common_labels = var.common_labels
 }
 
