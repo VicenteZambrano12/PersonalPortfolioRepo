@@ -107,12 +107,22 @@ function YoutubeModal({ theme, t, onClose }) {
                     href={video.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-start gap-2 rounded-lg p-3 hover:underline focus-visible:outline-2"
+                    className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg p-3 hover:underline focus-visible:outline-2"
                     style={styles.panel}
                   >
-                    <i className="ph ph-play-circle shrink-0 mt-1" aria-hidden="true" style={styles.youtubeCta}></i>
-                    <span>{video.title}</span>
-                    <i className="ph ph-arrow-up-right shrink-0 mt-1 ml-auto" aria-hidden="true"></i>
+                    <img
+                      src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`}
+                      alt=""
+                      width="480"
+                      height="360"
+                      loading="lazy"
+                      className="w-full sm:w-40 h-auto aspect-video object-cover rounded-md shrink-0"
+                    />
+                    <span className="flex items-start gap-2 min-w-0 w-full">
+                      <i className="ph ph-play-circle shrink-0 mt-1" aria-hidden="true" style={styles.youtubeCta}></i>
+                      <span>{video.title}</span>
+                      <i className="ph ph-arrow-up-right shrink-0 mt-1 ml-auto" aria-hidden="true"></i>
+                    </span>
                   </a>
                 </li>
               ))}

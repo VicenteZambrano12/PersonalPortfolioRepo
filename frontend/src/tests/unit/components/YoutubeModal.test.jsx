@@ -14,7 +14,7 @@ describe('YoutubeModal', () => {
   })
   afterEach(() => vi.unstubAllGlobals())
 
-  it.each([['dark', en], ['light', es]])('shows three title links in the %s theme', async (theme, language) => {
+  it.each([['dark', en], ['light', es]])('shows three thumbnail and title links in the %s theme', async (theme, language) => {
     render(<YoutubeModal theme={theme} t={language.externalLink} onClose={vi.fn()} />)
     const list = await screen.findByRole('list')
     expect(within(list).getAllByRole('link')).toHaveLength(3)
@@ -23,6 +23,10 @@ describe('YoutubeModal', () => {
       expect(link).toHaveAttribute('href', video.url)
       expect(link).toHaveAttribute('target', '_blank')
       expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+      const thumbnail = link.querySelector('img')
+      expect(thumbnail).toHaveAttribute('src', `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`)
+      expect(thumbnail).toHaveAttribute('alt', '')
+      expect(thumbnail).toHaveAttribute('loading', 'lazy')
     }
     expect(screen.getByText(language.externalLink.latestVideos)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: language.externalLink.cta })).toHaveAttribute('href', YOUTUBE_CHANNEL_URL)
