@@ -32,3 +32,13 @@ variable "container_port" {
 variable "common_labels" {
   type = map(string)
 }
+
+variable "firebase_api_key" {
+  type        = string
+  description = "Public Firebase web API key used by the login page."
+}
+
+variable "firebase_auth_domain" {
+  type        = string
+  description = "Firebase web authentication domain."
+}

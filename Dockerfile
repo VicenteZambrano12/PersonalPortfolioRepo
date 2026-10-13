@@ -13,14 +13,19 @@ ENV VITE_PAUHELPER_LIVE_URL=$VITE_PAUHELPER_LIVE_URL
 
 RUN npm run build
 
-# --- Serve stage ---
-FROM nginx:1.27-alpine AS serve
+# --- Authenticated serve stage ---
+FROM node:22-alpine AS serve
+WORKDIR /app
 
-COPY nginx.conf.template /etc/nginx/templates/default.conf.template
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY server/package.json server/package-lock.json ./server/
+RUN cd server && npm ci --omit=dev
+COPY server/ ./server/
+COPY auth-portal/ ./auth-portal/
+COPY --from=build /app/dist ./frontend/dist
 
-# Cloud Run injects PORT; nginx templating renders it into the listen directive
 ENV PORT=8080
+ENV NODE_ENV=production
 EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+USER node
+CMD ["node", "server/index.js"]

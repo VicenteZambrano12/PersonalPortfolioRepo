@@ -1,5 +1,19 @@
 # React + Vite
 
+## Authentication
+
+Production serves this build through a
+[Firebase session-verifying Node server](../server/app.js), not a public static
+server. All portfolio routes and assets require login; the header posts sign-out
+to `/auth/logout`. The same-origin [login page](../auth-portal/index.html) uses
+administrator-created email/password accounts with public signup disabled.
+
+See the [deployment and local authentication instructions](../infra/README.md).
+`npm run dev` and `npm run preview` are frontend-only development servers; they do
+not enforce authentication or implement the logout endpoint. Use the Node server
+with a built frontend to test authentication. Never expose Vite or the static
+build directly as the protected production app.
+
 ## YouTube card
 
 The portfolio shows the latest three regular uploads from the configured channel
