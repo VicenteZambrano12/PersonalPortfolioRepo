@@ -60,7 +60,7 @@ function sessionRequest(idToken = 'valid-token', requestOrigin = origin) {
 test('login, web configuration, and health check are public, but never contain portfolio content', async () => {
   const login = await request('/login')
   assert.equal(login.status, 200)
-  assert.match(await login.text(), /firebase-ui-auth\.js/)
+  assert.match(await login.text(), /signInWithEmailAndPassword/)
   assert.deepEqual(await (await request('/auth/config')).json(), firebaseConfig)
   assert.equal(await (await request('/healthz')).text(), 'ok')
   assert.equal(auth.verifySessionCookie.mock.callCount(), 0)
