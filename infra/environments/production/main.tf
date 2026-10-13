@@ -14,23 +14,43 @@ module "networking" {
 }
 
 module "cloudrun" {
-  source                 = "../../modules/cloudrun_static"
-  project_id             = var.project_id
-  region                 = var.region
-  service_name           = "portfolio"
-  app_container_image    = var.app_container_image
-  service_account_email  = local.cloud_run_service_account_email
-  serverless_subnet_id   = module.networking.subnet_id
-  common_labels          = var.common_labels
+  source                = "../../modules/cloudrun_static"
+  project_id            = var.project_id
+  region                = var.region
+  service_name          = "portfolio"
+  app_container_image   = var.app_container_image
+  service_account_email = local.cloud_run_service_account_email
+  serverless_subnet_id  = module.networking.subnet_id
+  common_labels         = var.common_labels
+  firebase_api_key      = var.firebase_api_key
+  firebase_auth_domain  = coalesce(var.firebase_auth_domain, "${var.project_id}.firebaseapp.com")
+}
+
+module "identity_platform" {
+  source     = "../../modules/identity_platform"
+  project_id = var.project_id
+  authorized_domains = distinct(concat(
+    var.authorized_domains,
+    [
+      coalesce(var.firebase_auth_domain, "${var.project_id}.firebaseapp.com"),
+      trimprefix(module.cloudrun.cloud_run_url, "https://"),
+    ]
+  ))
+}
+
+resource "google_project_iam_member" "runtime_auth" {
+  project = var.project_id
+  role    = "roles/firebaseauth.admin"
+  member  = "serviceAccount:${local.cloud_run_service_account_email}"
 }
 
 module "secrets" {
-  source                          = "../../modules/secrets"
-  project_id                      = var.project_id
-  region                          = var.region
-  secret_id                       = "portfolio-frontend-secrets"
-  accessor_service_account_email  = var.deploy_service_account_email
-  common_labels                   = var.common_labels
+  source                         = "../../modules/secrets"
+  project_id                     = var.project_id
+  region                         = var.region
+  secret_id                      = "portfolio-frontend-secrets"
+  accessor_service_account_email = var.deploy_service_account_email
+  common_labels                  = var.common_labels
 }
 
 # Secret was created manually (see config/populate_demo_secret.py) before this module existed;

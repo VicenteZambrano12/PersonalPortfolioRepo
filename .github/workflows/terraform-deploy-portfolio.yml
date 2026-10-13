@@ -13,6 +13,8 @@ env:
   TF_WORKING_DIR: infra/environments/production
   TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
   TF_VAR_region: ${{ vars.GCP_REGION }}
+  TF_VAR_firebase_api_key: ${{ vars.FIREBASE_API_KEY }}
+  TF_VAR_firebase_auth_domain: ${{ vars.FIREBASE_AUTH_DOMAIN }}
   TF_VAR_deploy_service_account_email: ${{ secrets.GCP_TERRAFORM_SERVICE_ACCOUNT }}
   FRONTEND_SECRET_ID: portfolio-frontend-secrets
 
@@ -39,6 +41,8 @@ jobs:
           filters: |
             app:
               - 'frontend/**'
+              - 'server/**'
+              - 'auth-portal/**'
               - 'Dockerfile'
               - 'nginx.conf.template'
 

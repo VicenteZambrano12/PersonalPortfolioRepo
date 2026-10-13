@@ -36,6 +36,11 @@ function Header({ theme, onToggleTheme, language, onChangeLanguage, t }) {
             </a>
           ))}
           <LanguageSwitcher theme={theme} language={language} onChangeLanguage={onChangeLanguage} t={t} />
+          <form action="/auth/logout" method="post">
+            <button type="submit" className="social-link transition-colors" style={styles.socialIcon}>
+              {t.header.signOut}
+            </button>
+          </form>
           <button
             type="button"
             onClick={onToggleTheme}

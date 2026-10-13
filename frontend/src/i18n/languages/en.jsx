@@ -3,6 +3,7 @@ export const en = {
   code: 'en',
   header: {
     subtitle: 'Cloud Solutions & AI App Developer',
+    signOut: 'Sign out',
   },
   portfolio: {
     heading: 'My Projects',

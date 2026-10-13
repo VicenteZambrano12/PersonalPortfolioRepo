@@ -25,4 +25,13 @@ describe('Header', () => {
 
     expect(onToggleTheme).toHaveBeenCalledTimes(1)
   })
+
+  it('posts sign-out to the server without exposing credentials', () => {
+    render(
+      <Header theme="dark" onToggleTheme={() => {}} language="en" onChangeLanguage={() => {}} t={en} />
+    )
+    const form = screen.getByRole('button', { name: en.header.signOut }).closest('form')
+    expect(form).toHaveAttribute('action', '/auth/logout')
+    expect(form).toHaveAttribute('method', 'post')
+  })
 })

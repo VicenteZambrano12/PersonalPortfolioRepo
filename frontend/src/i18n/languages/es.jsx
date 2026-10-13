@@ -3,6 +3,7 @@ export const es = {
   code: 'es',
   header: {
     subtitle: 'Desarrollador de Soluciones Cloud y Apps con IA',
+    signOut: 'Cerrar sesión',
   },
   portfolio: {
     heading: 'Mis Proyectos',

@@ -17,6 +17,21 @@ resource "google_cloud_run_v2_service" "this" {
     containers {
       image = var.app_container_image
 
+      env {
+        name  = "FIREBASE_PROJECT_ID"
+        value = var.project_id
+      }
+
+      env {
+        name  = "FIREBASE_API_KEY"
+        value = var.firebase_api_key
+      }
+
+      env {
+        name  = "FIREBASE_AUTH_DOMAIN"
+        value = var.firebase_auth_domain
+      }
+
       ports {
         container_port = var.container_port
       }

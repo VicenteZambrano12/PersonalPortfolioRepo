@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign in</title>
+    <link
+      rel="stylesheet"
+      href="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.css"
+    >
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Sign in</h1>
+      <p>Use the account provided by your administrator.</p>
+      <p id="auth-status" role="status">Checking your session...</p>
+      <div id="firebaseui-auth-container"></div>
+    </main>
+    <script>
+      const uiConfig = {
+        signInSuccessUrl: "/",
+        signInOptions: [
+          {
+            provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            disableSignUp: { status: true }
+          }
+        ],
+        credentialHelper: firebaseui.auth.CredentialHelper.NONE,
+        callbacks: {
+          // The auth-state listener establishes the server session before redirecting.
+          signInSuccessWithAuthResult: () => false
+        }
+      };
+
+      const status = document.getElementById("auth-status");
+      function showError(error) {
+        console.error("Authentication failed:", error);
+        status.textContent = error.message;
+      }
+
+      async function initializeLogin() {
+        const response = await fetch("/auth/config", { cache: "no-store" });
+        if (!response.ok) throw new Error("Unable to load login configuration. Please reload and try again.");
+        firebase.initializeApp(await response.json());
+        const auth = firebase.auth();
+        await auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+        let ui;
+        let exchangingSession = false;
+
+        async function establishSession(user) {
+          if (exchangingSession) return;
+          exchangingSession = true;
+          status.textContent = "Signing in...";
+          try {
+            const idToken = await user.getIdToken();
+            const response = await fetch("/auth/session", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "same-origin",
+              body: JSON.stringify({ idToken })
+            });
+            if (!response.ok) {
+              const result = await response.json();
+              throw new Error(result.error || "Unable to establish a session. Please try again.");
+            }
+            await auth.signOut();
+            window.location.replace(uiConfig.signInSuccessUrl);
+          } catch (error) {
+            showError(error);
+            try {
+              await auth.signOut();
+              if (ui) ui.reset();
+              startWidget();
+            } catch (signOutError) {
+              showError(signOutError);
+            } finally {
+              exchangingSession = false;
+            }
+          }
+        }
+
+        function startWidget() {
+          if (!ui) ui = new firebaseui.auth.AuthUI(auth);
+          ui.start("#firebaseui-auth-container", uiConfig);
+        }
+
+        auth.onAuthStateChanged(
+          (user) => {
+            if (exchangingSession) return;
+            if (user) {
+              return establishSession(user);
+            }
+            status.textContent = "";
+            if (!ui) startWidget();
+          },
+          showError
+        );
+      }
+
+      initializeLogin().catch(showError);
+    </script>
+  </body>
+</html>
