@@ -54,9 +54,12 @@ or a Firebase web app.
 
 ## Integrated login and server sessions
 
-The [login page](../auth-portal/index.html) uses Firebase App/Auth v10 compat and
-FirebaseUI v6.1.0. FirebaseUI is versioned independently of the Firebase SDK; there
-is no corresponding FirebaseUI v10 compat CDN build.
+The [login page](../auth-portal/index.html) uses Firebase App/Auth v10 compat with
+a direct email/password form. It calls `signInWithEmailAndPassword` without first
+looking up whether an email exists. This works with email enumeration protection
+enabled, unlike the previous FirebaseUI v6.1.0 email-first flow, which treated the
+hidden sign-in methods as an unregistered account and displayed "Not Authorized".
+Keep email enumeration protection enabled in Identity Platform.
 
 The [Node server](../server/app.js) replaces Nginx in the production image.
 Unauthenticated requests to the entire portfolio, including assets, documents,
@@ -80,13 +83,17 @@ The header's localized sign-out button POSTs to `/auth/logout`, clears this
 browser's cookie, and redirects to login. It does not revoke sessions on other
 devices; administrators can revoke refresh tokens to invalidate all user sessions.
 
-The email provider's `disableSignUp` option suppresses the signup flow and rejects
-unregistered users in FirebaseUI. The Terraform client permissions are the
-authoritative enforcement, including for direct REST/SDK signup and deletion
-requests. The page waits for the initial auth-state result before starting the
-widget. A visitor with a valid server session redirects before the page is served;
+The form has no account-creation flow or calls to the signup APIs. The Terraform
+client permissions remain the authoritative enforcement, including for direct
+REST/SDK signup and deletion requests. Invalid emails/passwords receive the same
+generic credentials error; password reset confirmation does not reveal whether
+the email exists. The password reset button requires an email address and sends
+the Firebase recovery email for existing accounts.
+
+The page waits for the initial auth-state result before showing the form.
+A visitor with a valid server session redirects before the page is served;
 a Firebase-authenticated visitor establishes the server session before redirecting
-without rendering the widget.
+without showing the form.
 
 The Cloud Run service still allows public HTTP invocation so that users can reach
 the login page; authorization of portfolio content happens inside the server.
