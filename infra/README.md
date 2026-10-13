@@ -90,6 +90,25 @@ generic credentials error; password reset confirmation does not reveal whether
 the email exists. The password reset button requires an email address and sends
 the Firebase recovery email for existing accounts.
 
+The standalone portal mirrors the portfolio's Inter typography, navy/slate
+surfaces, cyan accents, amber primary button, and card/control radii. It reads
+the same `portfolio-theme` preference and otherwise follows the system color
+scheme. Its inline design tokens should stay aligned with
+[`colors.jsx`](../frontend/src/utils/colors.jsx) and
+[`styles.jsx`](../frontend/src/utils/styles.jsx); it does not load protected
+portfolio assets before authentication. The initials/name above the card are
+the application branding placeholder.
+
+The responsive card supports keyboard focus rings, 48px controls, a labeled
+password visibility toggle, and reduced-motion preferences. During sign-in and
+session creation, controls are disabled and the submit button shows a loading
+indicator. Errors use an accessible alert separate from progress and recovery
+confirmation messages. Failed attempts preserve the email but clear and conceal
+the password; network failures include connection guidance.
+Small accent text uses the existing slate text color in light mode, and the
+primary button uses large bold text to maintain accessible contrast without
+changing the brand palette.
+
 The page waits for the initial auth-state result before showing the form.
 A visitor with a valid server session redirects before the page is served;
 a Firebase-authenticated visitor establishes the server session before redirecting

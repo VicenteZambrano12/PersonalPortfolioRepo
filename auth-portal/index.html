@@ -3,47 +3,269 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sign in</title>
+    <title>Sign in | Vicente Zambrano Andrada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      let theme;
+      try {
+        theme = window.localStorage.getItem("portfolio-theme");
+      } catch (error) {
+        console.warn("Unable to read theme preference:", error.message);
+      }
+      document.documentElement.dataset.theme = theme === "light" || theme === "dark"
+        ? theme
+        : window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    </script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <style>
-      body { margin: 0; padding: 2rem 1rem; background: #f5f7fa; color: #172033; font-family: system-ui, sans-serif; }
-      main { max-width: 24rem; margin: 3rem auto; padding: 2rem; background: white; border-radius: 0.75rem; box-shadow: 0 2px 12px #0001; }
+      /* Keep these standalone tokens aligned with frontend/src/utils/colors.jsx and styles.jsx. */
+      :root {
+        color-scheme: dark;
+        --background: #0F172A;
+        --surface: #1E293B;
+        --primary-text: #F8FAFC;
+        --secondary-text: #94A3B8;
+        --border: #334155;
+        --cyan: #06B6D4;
+        --amber: #F59E0B;
+        --button-text: #0F172A;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+        --error-text: #FCA5A5;
+        --error-background: rgba(239, 68, 68, 0.1);
+        --error-border: #F87171;
+        --card-radius: 12px;
+        --control-radius: 8px;
+        --space-1: 0.5rem;
+        --space-2: 1rem;
+        --space-3: 1.5rem;
+        --space-4: 2rem;
+      }
+      [data-theme="light"] {
+        color-scheme: light;
+        --background: #F8FAFC;
+        --surface: #FFFFFF;
+        --primary-text: #0F172A;
+        --secondary-text: #64748B;
+        --border: #E2E8F0;
+        --cyan: #0891B2;
+        --amber: #EA580C;
+        --button-text: #FFFFFF;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        --error-text: #B91C1C;
+        --error-background: rgba(239, 68, 68, 0.06);
+        --error-border: #DC2626;
+      }
+      * { box-sizing: border-box; }
+      [hidden] { display: none !important; }
+      body {
+        margin: 0;
+        padding: var(--space-4) var(--space-2);
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        background: var(--background);
+        color: var(--primary-text);
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
+      }
+      main { width: 100%; max-width: 28rem; min-width: 0; }
+      .brand { text-align: center; margin-bottom: var(--space-4); }
+      .brand-mark {
+        display: inline-grid;
+        place-items: center;
+        width: 3rem;
+        height: 3rem;
+        margin-bottom: var(--space-2);
+        border: 1px solid var(--cyan);
+        border-radius: var(--control-radius);
+        color: var(--cyan);
+        font-weight: 700;
+      }
+      .brand-name { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.025em; }
+      .brand-subtitle { margin: 0.25rem 0 0; color: var(--cyan); font-size: 0.875rem; }
+      .login-card {
+        padding: var(--space-3);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--card-radius);
+        box-shadow: var(--card-shadow);
+      }
+      h1 { margin: 0 0 var(--space-1); font-size: 1.5rem; letter-spacing: -0.025em; }
+      .intro { margin: 0 0 var(--space-3); color: var(--secondary-text); font-size: 0.95rem; }
+      #auth-status { margin: 0 0 var(--space-2); color: var(--secondary-text); font-size: 0.875rem; overflow-wrap: anywhere; }
+      #auth-error {
+        margin-bottom: var(--space-3);
+        padding: var(--space-2);
+        border: 1px solid var(--error-border);
+        border-radius: var(--control-radius);
+        background: var(--error-background);
+        color: var(--error-text);
+        font-size: 0.875rem;
+        overflow-wrap: anywhere;
+      }
       fieldset { border: 0; margin: 0; padding: 0; }
-      label { display: block; margin: 1rem 0 0.4rem; }
-      input, button { box-sizing: border-box; width: 100%; padding: 0.75rem; font: inherit; border-radius: 0.3rem; }
-      input { border: 1px solid #697386; }
-      button { margin-top: 1rem; cursor: pointer; background: #1a56db; color: white; border: 0; }
-      button[type="button"] { background: white; color: #1a56db; border: 1px solid #1a56db; }
-      button:disabled { opacity: 0.6; cursor: wait; }
-      #auth-status { min-height: 1.5rem; }
+      .field + .field { margin-top: var(--space-3); }
+      label { display: block; margin-bottom: var(--space-1); font-size: 0.875rem; font-weight: 600; }
+      input, button { font: inherit; border-radius: var(--control-radius); min-height: 48px; }
+      input {
+        width: 100%;
+        min-width: 0;
+        padding: 0.75rem var(--space-2);
+        background: var(--background);
+        color: var(--primary-text);
+        border: 1px solid var(--secondary-text);
+      }
+      input:hover:not(:disabled), input:focus { border-color: var(--cyan); }
+      input:focus-visible, button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+      .password-field { position: relative; }
+      .password-field input { padding-right: 3.5rem; }
+      button { cursor: pointer; font-weight: 600; transition: filter 0.2s ease, background-color 0.2s ease; }
+      button:disabled { opacity: 0.65; cursor: wait; }
+      input:disabled { opacity: 0.65; }
+      button:not(:disabled):active { filter: brightness(0.9); }
+      #toggle-password {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 48px;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        background: transparent;
+        color: var(--secondary-text);
+        border: 0;
+      }
+      #toggle-password:hover:not(:disabled) { color: var(--cyan); }
+      #toggle-password svg { width: 22px; height: 22px; }
+      #toggle-password[aria-pressed="false"] .eye-off,
+      #toggle-password[aria-pressed="true"] .eye { display: none; }
+      #submit-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-1);
+        width: 100%;
+        margin-top: var(--space-3);
+        padding: 0.75rem var(--space-3);
+        border: 0;
+        background: var(--amber);
+        color: var(--button-text);
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+      #submit-button:hover:not(:disabled) { filter: brightness(1.08); }
+      .spinner {
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      #reset-password {
+        width: 100%;
+        margin-top: var(--space-1);
+        padding: 0.75rem var(--space-2);
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--cyan);
+        font-size: 0.875rem;
+      }
+      #reset-password:hover:not(:disabled) { border-color: var(--cyan); }
+      [data-theme="light"] .brand-subtitle,
+      [data-theme="light"] #reset-password { color: var(--secondary-text); }
+      .access-note { margin: var(--space-3) var(--space-1) 0; text-align: center; color: var(--secondary-text); font-size: 0.875rem; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @media (min-width: 480px) { .login-card { padding: var(--space-4); } }
+      @media (prefers-reduced-motion: reduce) {
+        button { transition: none; }
+        .spinner { animation: none; }
+      }
     </style>
   </head>
   <body>
     <main>
-      <h1>Sign in</h1>
-      <p>Use the account provided by your administrator.</p>
-      <p id="auth-status" role="status">Checking your session...</p>
-      <form id="login-form" hidden>
-        <fieldset id="login-fields">
-          <label for="email">Email</label>
-          <input id="email" type="email" autocomplete="username" required>
-          <label for="password">Password</label>
-          <input id="password" type="password" autocomplete="current-password" required>
-          <button type="submit">Sign in</button>
-          <button id="reset-password" type="button">Forgot password?</button>
-        </fieldset>
-      </form>
-      <noscript>JavaScript is required to sign in.</noscript>
+      <header class="brand" aria-label="Application">
+        <div class="brand-mark" aria-hidden="true">VZ</div>
+        <p class="brand-name">Vicente Zambrano Andrada</p>
+        <p class="brand-subtitle">Personal portfolio</p>
+      </header>
+      <section class="login-card" aria-labelledby="login-title">
+        <h1 id="login-title">Welcome back</h1>
+        <p class="intro">Sign in with the account provided by your administrator.</p>
+        <p id="auth-status" role="status" aria-live="polite" aria-atomic="true">Checking your session...</p>
+        <div id="auth-error" role="alert" aria-atomic="true" hidden></div>
+        <form id="login-form" aria-labelledby="login-title" aria-busy="false" hidden>
+          <fieldset id="login-fields">
+            <div class="field">
+              <label for="email">Email address</label>
+              <input id="email" name="email" type="email" autocomplete="email" required autocapitalize="none" spellcheck="false">
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <div class="password-field">
+                <input id="password" name="password" type="password" autocomplete="current-password" required>
+                <button id="toggle-password" type="button" aria-label="Show password" aria-controls="password" aria-pressed="false">
+                  <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="m3 3 18 18M10.5 5.1 12 5c6.5 0 10 7 10 7a20 20 0 0 1-3.2 4.1M6.1 6.1A20 20 0 0 0 2 12s3.5 7 10 7c1.8 0 3.4-.5 4.8-1.2M9.9 9.9a3 3 0 0 0 4.2 4.2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <button id="submit-button" type="submit">
+              <span id="submit-spinner" class="spinner" aria-hidden="true" hidden></span>
+              <span id="submit-label">Sign in</span>
+            </button>
+            <button id="reset-password" type="button">Forgot password?</button>
+          </fieldset>
+        </form>
+        <noscript>JavaScript is required to sign in.</noscript>
+      </section>
+      <p class="access-note">Access is managed by your administrator.</p>
     </main>
     <script>
       const signInSuccessUrl = "/";
       const status = document.getElementById("auth-status");
+      const errorAlert = document.getElementById("auth-error");
       const form = document.getElementById("login-form");
       const fields = document.getElementById("login-fields");
       const email = document.getElementById("email");
       const password = document.getElementById("password");
       const resetPassword = document.getElementById("reset-password");
+      const togglePassword = document.getElementById("toggle-password");
+      const submitSpinner = document.getElementById("submit-spinner");
+      const submitLabel = document.getElementById("submit-label");
+
+      function setPasswordVisible(visible) {
+        password.type = visible ? "text" : "password";
+        togglePassword.setAttribute("aria-pressed", String(visible));
+        togglePassword.setAttribute("aria-label", visible ? "Hide password" : "Show password");
+      }
+
+      togglePassword.addEventListener("click", () => {
+        setPasswordVisible(password.type === "password");
+      });
+
+      function showStatus(message) {
+        errorAlert.hidden = true;
+        errorAlert.textContent = "";
+        status.hidden = !message;
+        status.textContent = message;
+      }
+
+      function setBusy(busy, action = "signin") {
+        fields.disabled = busy;
+        form.setAttribute("aria-busy", String(busy));
+        submitSpinner.hidden = !busy || action !== "signin";
+        submitLabel.textContent = busy && action === "signin" ? "Signing in..." : "Sign in";
+        if (busy) setPasswordVisible(false);
+      }
 
       function showError(error) {
         console.error("Authentication failed:", error.code || error.message);
@@ -57,9 +279,16 @@
           "auth/too-many-requests": "Too many attempts. Please wait and try again.",
           "auth/network-request-failed": "Unable to connect. Check your connection and try again."
         };
-        status.textContent = error.code
+        password.value = "";
+        setPasswordVisible(false);
+        status.hidden = true;
+        status.textContent = "";
+        errorAlert.hidden = false;
+        errorAlert.textContent = error.code
           ? messages[error.code] || "Unable to sign in. Please try again or contact your administrator."
-          : error.message;
+          : error.name === "TypeError"
+            ? "Unable to connect. Check your connection and try again."
+            : error.message || "Unable to sign in. Please try again or contact your administrator.";
       }
 
       async function initializeLogin() {
@@ -74,8 +303,8 @@
         async function establishSession(user) {
           if (exchangingSession) return;
           exchangingSession = true;
-          fields.disabled = true;
-          status.textContent = "Signing in...";
+          setBusy(true);
+          showStatus("Signing in...");
           try {
             const idToken = await user.getIdToken();
             const response = await fetch("/auth/session", {
@@ -99,7 +328,7 @@
               showError(signOutError);
             } finally {
               exchangingSession = false;
-              fields.disabled = false;
+              setBusy(false);
             }
           }
         }
@@ -108,32 +337,33 @@
           event.preventDefault();
           if (submitting || exchangingSession) return;
           submitting = true;
-          fields.disabled = true;
-          status.textContent = "Signing in...";
+          setBusy(true);
+          showStatus("Signing in...");
           try {
             await auth.signInWithEmailAndPassword(email.value.trim(), password.value);
           } catch (error) {
             showError(error);
           } finally {
             password.value = "";
+            setPasswordVisible(false);
             submitting = false;
-            if (!exchangingSession) fields.disabled = false;
+            if (!exchangingSession) setBusy(false);
           }
         });
 
         resetPassword.addEventListener("click", async () => {
           if (submitting || exchangingSession || !email.reportValidity()) return;
           submitting = true;
-          fields.disabled = true;
-          status.textContent = "Requesting password reset...";
+          setBusy(true, "reset");
+          showStatus("Requesting password reset...");
           try {
             await auth.sendPasswordResetEmail(email.value.trim());
-            status.textContent = "If an account exists for this email, a password reset email has been sent.";
+            showStatus("If an account exists for this email, a password reset email has been sent.");
           } catch (error) {
             showError(error);
           } finally {
             submitting = false;
-            fields.disabled = false;
+            setBusy(false);
           }
         });
 
@@ -143,7 +373,7 @@
             if (user) {
               return establishSession(user);
             }
-            status.textContent = "";
+            showStatus("");
             form.hidden = false;
           },
           showError
