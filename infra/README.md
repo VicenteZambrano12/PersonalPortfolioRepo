@@ -34,12 +34,17 @@ authorized domains. Add custom domain hostnames through `authorized_domains`.
 5. Create email/password users manually in Identity Platform's Users console or
    through a trusted administrator's Admin SDK environment.
 
-If Identity Platform is already configured, import its existing configuration
-into the production state before applying:
+Identity Platform is already enabled in the production project. The production
+root includes a declarative `import` block for `projects/PROJECT_ID/config`, so
+both deployment workflows adopt the existing configuration in their normal
+plan/apply cycle rather than attempting to enable it again. Subsequent runs skip
+the import once the resource is in state. A new project must have Identity
+Platform enabled before using this production-specific import block.
 
-```sh
-terraform import module.identity_platform.google_identity_platform_config.this projects/YOUR_PROJECT_ID/config
-```
+After deploying this change, generate a fresh plan by running the complete
+workflow on the updated revision. Do not rerun only the failed apply job: its
+saved plan still attempts to create the existing configuration. Review the new
+plan for the import and the intended authentication restrictions before applying.
 
 The module's `authorized_domains` defaults to `["localhost"]`; the production root
 adds the runtime hostnames. Entries contain no scheme, port, or path. The module

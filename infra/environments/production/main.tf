@@ -38,6 +38,12 @@ module "identity_platform" {
   ))
 }
 
+# Identity Platform is already enabled in the production project.
+import {
+  id = "projects/${var.project_id}/config"
+  to = module.identity_platform.google_identity_platform_config.this
+}
+
 resource "google_project_iam_member" "runtime_auth" {
   project = var.project_id
   role    = "roles/firebaseauth.admin"
