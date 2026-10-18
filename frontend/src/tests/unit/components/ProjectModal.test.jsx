@@ -23,6 +23,23 @@ describe('ProjectModal', () => {
     expect(screen.getByText('React')).toBeInTheDocument()
   })
 
+  it('renders the live app link when a URL is configured', () => {
+    render(
+      <ProjectModal
+        project={{ ...project, liveUrl: 'https://orchestrator.example.com' }}
+        theme="dark"
+        t={en}
+        onClose={() => {}}
+      />
+    )
+
+    expect(screen.getByRole('link', { name: /Open Live App/ })).toHaveAttribute(
+      'href',
+      'https://orchestrator.example.com'
+    )
+    expect(screen.getByRole('link', { name: /Open Live App/ })).toHaveAttribute('target', '_blank')
+  })
+
   it('calls onClose when the close button is clicked', async () => {
     const user = userEvent.setup()
     const onClose = vi.fn()
