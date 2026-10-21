@@ -4,7 +4,7 @@ import { createLogger } from '../utils/logger.js'
 
 const log = createLogger('project-modal')
 
-function ProjectModal({ project, theme, t, onClose }) {
+function ProjectModal({ project, theme, t, onClose, onOpenPresentation }) {
   const [visible, setVisible] = useState(false)
   const styles = getStyles(theme)
 
@@ -113,36 +113,32 @@ function ProjectModal({ project, theme, t, onClose }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Technical Docs */}
             <div className="p-6 rounded-xl" style={styles.panel}>
               <h4 className="text-lg font-bold mb-4 flex items-center gap-2 pb-3" style={styles.panelHeading}>
-                <i className="ph ph-code" style={styles.sectionIcon}></i> {t.modal.technicalDocs}
+                <i className="ph ph-chart-line" style={styles.sectionIcon}></i> {t.modal.businessPresentation}
               </h4>
-              <a
-                href={project.techDocUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => onOpenPresentation(project, 'business')}
                 className="flex items-center justify-center gap-2 transition-colors"
                 style={styles.buttonSecondary}
               >
-                <i className="ph ph-file-pdf"></i> {t.modal.viewTechnicalDocs}
-              </a>
+                <i className="ph ph-presentation"></i> {t.modal.viewBusinessPresentation}
+              </button>
             </div>
 
-            {/* Soft Docs */}
             <div className="p-6 rounded-xl" style={styles.panel}>
               <h4 className="text-lg font-bold mb-4 flex items-center gap-2 pb-3" style={styles.panelHeading}>
-                <i className="ph ph-book-open-text" style={styles.sectionIcon}></i> {t.modal.userGuide}
+                <i className="ph ph-code" style={styles.sectionIcon}></i> {t.modal.technicalPresentation}
               </h4>
-              <a
-                href={project.nonTechDocUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => onOpenPresentation(project, 'technical')}
                 className="flex items-center justify-center gap-2 transition-colors"
                 style={styles.buttonSecondary}
               >
-                <i className="ph ph-file-pdf"></i> {t.modal.viewUserGuide}
-              </a>
+                <i className="ph ph-presentation"></i> {t.modal.viewTechnicalPresentation}
+              </button>
             </div>
           </div>
         </div>

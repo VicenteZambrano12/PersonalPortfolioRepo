@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { once } from 'node:events'
-import { mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, mock, test } from 'node:test'
@@ -91,6 +91,25 @@ test('a returning authenticated visitor skips the login page', async () => {
   const response = await request('/login', { headers: { Cookie: cookie } })
   assert.equal(response.status, 303)
   assert.equal(response.headers.get('location'), '/')
+})
+
+test('only authenticated presentation pages permit same-origin framing', async () => {
+  const folder = path.join(staticDir, 'src/features/docs/0-portfolio')
+  await mkdir(folder, { recursive: true })
+  await writeFile(path.join(folder, 'business.html'), '<h1>Business slides</h1>')
+  const route = '/src/features/docs/0-portfolio/business.html'
+  const unauthenticated = await request(route)
+  assert.equal(unauthenticated.status, 303)
+  assert.equal(unauthenticated.headers.get('x-frame-options'), 'DENY')
+  const presentation = await request(route, { headers: { Cookie: cookie } })
+  assert.equal(presentation.status, 200)
+  assert.equal(presentation.headers.get('x-frame-options'), 'SAMEORIGIN')
+  assert.match(await presentation.text(), /Business slides/)
+  for (const route of ['/', '/login', '/private.js']) {
+    const response = await request(route, { headers: { Cookie: cookie } })
+    assert.equal(response.headers.get('x-frame-options'), 'DENY')
+    await response.text()
+  }
 })
 
 test('invalid, expired, revoked, deleted, or disabled sessions never expose content', async () => {

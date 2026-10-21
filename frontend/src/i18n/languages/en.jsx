@@ -7,10 +7,17 @@ export const en = {
   },
   portfolio: {
     heading: 'My Projects',
-    systemDocCta: 'How This Site Works',
+    businessPresentation: 'Portfolio: Business Overview',
+    technicalPresentation: 'Portfolio: How it works?',
   },
   footer: {
     rights: 'All rights reserved.',
+  },
+  presentation: {
+    close: 'Close presentation',
+    loading: 'Loading slides…',
+    error: 'The presentation could not load. Close it and try again.',
+    hint: 'Use arrows or swipe to navigate. Esc closes the presentation.',
   },
   externalLink: {
     title: 'YouTube Channel',
@@ -28,10 +35,10 @@ export const en = {
     description: 'Description',
     techStack: 'Tech Stack',
     openLiveApp: 'Open Live App',
-    technicalDocs: 'Technical Docs',
-    userGuide: 'User Guide & Logic',
-    viewTechnicalDocs: 'View Technical Documentation',
-    viewUserGuide: 'View User Guide',
+    technicalPresentation: 'How it works?',
+    businessPresentation: 'Business Overview',
+    viewTechnicalPresentation: 'How it works?',
+    viewBusinessPresentation: 'Business Overview',
   },
   languageSwitcher: {
     label: 'Language',
@@ -41,11 +48,11 @@ export const en = {
   projects: {
     pauhelper: {
       title: 'PAUHelper',
-      subtitle: 'AI Study Assistant',
+      subtitle: 'EBAU Study Assistant',
       description:
-        'An intelligent assistant designed to help students prepare for exams using AI-driven tutoring, personalized study paths, and quick queries.',
+        'Prepare for the EBAU with answers grounded in study documents, tailored to your subject and autonomous community, with source references you can check.',
       fullDescription:
-        'PAUHelper is a comprehensive study assistant designed to optimize exam preparation. It leverages large language models to generate practice questions, summarize notes, and act as a conversational tutor for specific academic subjects.',
+        'PAUHelper helps Spanish students prepare for the EBAU university entrance exams. Select a subject and autonomous community, ask a question, and receive an answer grounded in relevant study materials with exam-specific instructions and source references. References help you verify the original documents, but do not guarantee correctness. BasicRAGapp is the code used to power the original Android app; this version provides a React web interface.',
     },
     orchestratordata: {
       title: 'Orchestrator Data App',

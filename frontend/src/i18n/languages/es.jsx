@@ -7,10 +7,17 @@ export const es = {
   },
   portfolio: {
     heading: 'Mis Proyectos',
-    systemDocCta: 'Cómo Funciona Este Sitio',
+    businessPresentation: 'Portfolio: Resumen de negocio',
+    technicalPresentation: 'Portfolio: ¿Cómo funciona?',
   },
   footer: {
     rights: 'Todos los derechos reservados.',
+  },
+  presentation: {
+    close: 'Cerrar presentación',
+    loading: 'Cargando presentación…',
+    error: 'No se pudo cargar la presentación. Ciérrala y vuelve a intentarlo.',
+    hint: 'Usa las flechas o desliza para navegar. Esc cierra la presentación.',
   },
   externalLink: {
     title: 'Canal de YouTube',
@@ -28,10 +35,10 @@ export const es = {
     description: 'Descripción',
     techStack: 'Stack Tecnológico',
     openLiveApp: 'Abrir Aplicación',
-    technicalDocs: 'Documentación Técnica',
-    userGuide: 'Guía de Usuario y Lógica',
-    viewTechnicalDocs: 'Ver Documentación Técnica',
-    viewUserGuide: 'Ver Guía de Usuario',
+    technicalPresentation: '¿Cómo funciona?',
+    businessPresentation: 'Resumen de negocio',
+    viewTechnicalPresentation: '¿Cómo funciona?',
+    viewBusinessPresentation: 'Resumen de negocio',
   },
   languageSwitcher: {
     label: 'Idioma',
@@ -41,11 +48,11 @@ export const es = {
   projects: {
     pauhelper: {
       title: 'PAUHelper',
-      subtitle: 'Asistente de Estudio con IA',
+      subtitle: 'Asistente de Estudio para la EBAU',
       description:
-        'Un asistente inteligente diseñado para ayudar a los estudiantes a prepararse para los exámenes mediante tutoría basada en IA, rutas de estudio personalizadas y consultas rápidas.',
+        'Prepara la EBAU con respuestas basadas en documentos de estudio, adaptadas a tu asignatura y comunidad autónoma, con referencias que puedes comprobar.',
       fullDescription:
-        'PAUHelper es un asistente de estudio integral diseñado para optimizar la preparación de exámenes. Utiliza modelos de lenguaje de gran tamaño para generar preguntas de práctica, resumir apuntes y actuar como tutor conversacional en materias académicas específicas.',
+        'PAUHelper ayuda a estudiantes de España a preparar la EBAU. Selecciona asignatura y comunidad autónoma, plantea una pregunta y recibe una respuesta basada en materiales relevantes, con instrucciones específicas del examen y referencias a las fuentes. Las referencias permiten consultar los documentos originales, pero no garantizan la exactitud. BasicRAGapp es el código utilizado en la aplicación Android original; esta versión ofrece una interfaz web en React.',
     },
     orchestratordata: {
       title: 'Orchestrator Data App',

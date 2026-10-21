@@ -96,6 +96,10 @@ export function createApp({ auth, firebaseConfig, staticDir, loginFile, secureCo
     if (req.user) return next()
     res.redirect(303, '/login')
   })
+  app.use('/src/features/docs', (req, res, next) => {
+    res.set('X-Frame-Options', 'SAMEORIGIN')
+    next()
+  })
   app.use(express.static(staticDir, { index: false, dotfiles: 'deny', cacheControl: false }))
   app.get('/{*route}', (req, res) => {
     if (path.extname(req.path)) return res.status(404).send('Not found')

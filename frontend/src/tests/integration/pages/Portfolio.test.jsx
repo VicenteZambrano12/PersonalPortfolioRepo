@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Portfolio from '../../../pages/Portfolio.jsx'
 import { en } from '../../../i18n/languages/en.jsx'
+import { es } from '../../../i18n/languages/es.jsx'
+import { projectsData } from '../../../lib/projectsData.js'
 import { youtubeVideos } from '../../fixtures/youtube.js'
 
 // Integration test: wires Portfolio together with real project data,
@@ -73,10 +75,61 @@ describe('Portfolio (integration)', () => {
     await user.click(screen.getByText(en.projects.pauhelper.title))
 
     expect(screen.getByText(en.projects.pauhelper.fullDescription)).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: en.modal.viewTechnicalDocs })).toHaveAttribute(
-      'href',
-      '/assets/projects/1-pauhelper/docs/en/techdoc.pdf'
+    await user.click(screen.getByRole('button', { name: en.modal.viewTechnicalPresentation }))
+    expect(screen.getByTitle(`PAUHelper - ${en.modal.technicalPresentation}`)).toHaveAttribute(
+      'src', '/src/features/docs/1-pauhelper/technical.html?lang=en&embed=1'
     )
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(screen.getByText(en.projects.pauhelper.fullDescription)).toBeInTheDocument()
+  })
+
+  it.each([en, es])('opens every project and portfolio deck in the same window ($code)', async (t) => {
+    const user = userEvent.setup()
+    render(
+      <Portfolio theme="dark" onToggleTheme={() => {}} language={t.code} onChangeLanguage={() => {}} t={t} />
+    )
+    for (const audience of ['business', 'technical']) {
+      const trigger = screen.getByRole('button', { name: t.portfolio[`${audience}Presentation`] })
+      await user.click(trigger)
+      expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true')
+      expect(screen.getByTitle(`Personal Portfolio - ${t.modal[`${audience}Presentation`]}`))
+        .toHaveAttribute('src', `/src/features/docs/0-portfolio/${audience}.html?lang=${t.code}&embed=1`)
+      await user.click(screen.getAllByRole('button', { name: t.presentation.close })[0])
+      expect(trigger).toHaveFocus()
+    }
+    for (const [id, project] of Object.entries(projectsData)) {
+      await user.click(screen.getByText(t.projects[id].title))
+      for (const audience of ['business', 'technical']) {
+        const name = audience === 'business' ? t.modal.viewBusinessPresentation : t.modal.viewTechnicalPresentation
+        await user.click(screen.getByRole('button', { name }))
+        expect(screen.getByTitle(`${t.projects[id].title} - ${t.modal[`${audience}Presentation`]}`))
+          .toHaveAttribute('src', `/src/features/docs/${project.slug}/${audience}.html?lang=${t.code}&embed=1`)
+        await user.click(screen.getAllByRole('button', { name: t.presentation.close })[0])
+      }
+      await user.click(screen.getByRole('button', { name: 'Close' }))
+    }
+  })
+
+  it.each([en, es])('shows the README-aligned PAUHelper card and details ($code)', async (t) => {
+    const user = userEvent.setup()
+    render(
+      <Portfolio theme="dark" onToggleTheme={() => {}} language={t.code} onChangeLanguage={() => {}} t={t} />
+    )
+    const card = screen.getByText('PAUHelper').closest('.project-card')
+    expect(within(card).getByText(t.projects.pauhelper.subtitle)).toHaveTextContent('EBAU')
+    expect(within(card).getByText(t.projects.pauhelper.description)).toHaveTextContent('EBAU')
+    for (const label of ['RAG', 'Gemini', 'React', 'GCP']) {
+      expect(within(card).getByText(label)).toBeInTheDocument()
+    }
+    await user.click(within(card).getByText('PAUHelper'))
+    const description = screen.getByText(t.projects.pauhelper.fullDescription)
+    expect(description).toHaveTextContent('Android')
+    const details = description.closest('.custom-scrollbar')
+    for (const label of ['FastAPI', 'LangGraph', 'Vertex AI', 'Qdrant', 'Terraform']) {
+      expect(within(details).getByText(label)).toBeInTheDocument()
+    }
+    expect(screen.queryByText('OpenAI API')).not.toBeInTheDocument()
   })
 
   it('closes the modal when the close button is clicked', async () => {

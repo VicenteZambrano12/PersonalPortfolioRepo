@@ -1,5 +1,4 @@
 import { getStyles } from '../utils/styles.jsx'
-import robotIcon from '../assets/robot-icon.png'
 
 function YoutubeCard({ theme, t, onSelect }) {
   const styles = getStyles(theme)
@@ -15,7 +14,7 @@ function YoutubeCard({ theme, t, onSelect }) {
     >
       <div className="flex items-center gap-4 mb-4">
         <div style={styles.youtubeIconBox}>
-          <img src={robotIcon} alt="" className="w-8 h-8" />
+          <img src="/logo.png" alt="" width="32" height="32" className="w-8 h-8" />
         </div>
         <div>
           <h3 id="youtube-card-title" style={styles.youtubeTitle}>{t.title}</h3>

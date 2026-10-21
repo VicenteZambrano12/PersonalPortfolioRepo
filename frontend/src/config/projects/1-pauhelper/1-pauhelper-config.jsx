@@ -9,6 +9,6 @@ export const pauhelperConfig = {
   vmStarterUrl: import.meta.env.VITE_QDRANT_VM_STARTER_URL,
   thumbUrl:
     'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1000&auto=format&fit=crop',
-  tags: ['Python', 'React', 'GCP'],
-  modalTags: ['Python', 'FastAPI', 'React', 'GCP', 'OpenAI API', 'Docker'],
+  tags: ['RAG', 'Gemini', 'React', 'GCP'],
+  modalTags: ['Python', 'FastAPI', 'React', 'Vite', 'LangGraph', 'Gemini', 'Vertex AI', 'Qdrant', 'GCP', 'Docker', 'Terraform'],
 }

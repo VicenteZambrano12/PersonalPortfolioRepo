@@ -5,9 +5,10 @@ import ProjectCard from '../components/ProjectCard.jsx'
 import YoutubeCard from '../components/YoutubeCard.jsx'
 import YoutubeModal from '../components/YoutubeModal.jsx'
 import ProjectModal from '../components/ProjectModal.jsx'
+import PresentationModal from '../components/PresentationModal.jsx'
 import MainLayout from '../layouts/MainLayout.jsx'
 import { projectsData } from '../lib/projectsData.js'
-import { getDocUrl } from '../lib/docs.js'
+import { getPresentationUrl } from '../lib/docs.js'
 import { getStyles } from '../utils/styles.jsx'
 import { createLogger } from '../utils/logger.js'
 
@@ -15,6 +16,7 @@ const log = createLogger('portfolio')
 
 function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
   const [selectedProjectId, setSelectedProjectId] = useState(null)
+  const [selectedPresentation, setSelectedPresentation] = useState(null)
   const styles = getStyles(theme)
   const translatedProjects = Object.fromEntries(
     Object.entries(projectsData).map(([id, project]) => [
@@ -22,8 +24,6 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
       {
         ...project,
         ...t.projects[id],
-        techDocUrl: getDocUrl(project.slug, language, 'techdoc'),
-        nonTechDocUrl: getDocUrl(project.slug, language, 'nontechdoc'),
       },
     ])
   )
@@ -39,7 +39,17 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
     setSelectedProjectId(null)
   }, [selectedProjectId])
 
+  const handleClosePresentation = useCallback(() => setSelectedPresentation(null), [])
+  const handleOpenPresentation = (project, audience) => {
+    setSelectedPresentation({
+      url: getPresentationUrl(project.slug, language, audience),
+      title: `${project.title} - ${t.modal[`${audience}Presentation`]}`,
+    })
+  }
+
   return (
+    <>
+    <div inert={Boolean(selectedPresentation)}>
     <MainLayout
       theme={theme}
       header={<Header theme={theme} onToggleTheme={onToggleTheme} language={language} onChangeLanguage={onChangeLanguage} t={t} />}
@@ -47,15 +57,19 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
     >
       <div className="flex flex-wrap items-center justify-between gap-4" style={styles.header}>
         <h2 className="text-2xl font-semibold" style={styles.sectionHeading}>{t.portfolio.heading}</h2>
-        <a
-          href={getDocUrl('0-portfolio', language, 'systemdoc')}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 transition-colors w-auto"
-          style={{ ...styles.buttonSecondary, width: 'auto' }}
-        >
-          <i className="ph ph-file-pdf"></i> {t.portfolio.systemDocCta}
-        </a>
+        <div className="flex flex-wrap gap-3">
+          {['business', 'technical'].map((audience) => (
+            <button
+              key={audience}
+              type="button"
+              onClick={() => handleOpenPresentation({ slug: '0-portfolio', title: 'Personal Portfolio' }, audience)}
+              className="inline-flex items-center gap-2 transition-colors"
+              style={{ ...styles.buttonSecondary, width: 'auto' }}
+            >
+              <i className="ph ph-presentation"></i> {t.portfolio[`${audience}Presentation`]}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -67,12 +81,17 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
       </div>
 
       {selectedProject && (
-        <ProjectModal project={selectedProject} theme={theme} t={t} onClose={handleCloseProject} />
+        <ProjectModal project={selectedProject} theme={theme} t={t} onClose={handleCloseProject} onOpenPresentation={handleOpenPresentation} />
       )}
       {selectedProjectId === 'youtube' && (
         <YoutubeModal theme={theme} t={t.externalLink} onClose={handleCloseProject} />
       )}
     </MainLayout>
+    </div>
+    {selectedPresentation && (
+      <PresentationModal presentation={selectedPresentation} theme={theme} t={t.presentation} onClose={handleClosePresentation} />
+    )}
+    </>
   )
 }
 

@@ -14,6 +14,13 @@ function collectKeyPaths(obj, prefix = '') {
 }
 
 describe('translation dictionaries', () => {
+  it('uses the requested business and technical presentation button labels', () => {
+    expect(en.modal.viewBusinessPresentation).toBe('Business Overview')
+    expect(en.modal.viewTechnicalPresentation).toBe('How it works?')
+    expect(en.portfolio.businessPresentation).toBe('Portfolio: Business Overview')
+    expect(en.portfolio.technicalPresentation).toBe('Portfolio: How it works?')
+  })
+
   it('expose the same set of keys in every language', () => {
     expect(collectKeyPaths(es).sort()).toEqual(collectKeyPaths(en).sort())
   })

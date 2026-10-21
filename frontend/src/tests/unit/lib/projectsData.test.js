@@ -3,6 +3,14 @@ import { projectsData } from '../../../lib/projectsData.js'
 import { en } from '../../../i18n/languages/en.jsx'
 
 describe('projectsData', () => {
+  it('labels PAUHelper with its documented RAG and Google AI stack', () => {
+    expect(projectsData.pauhelper.tags).toEqual(['RAG', 'Gemini', 'React', 'GCP'])
+    expect(projectsData.pauhelper.modalTags).toEqual(expect.arrayContaining([
+      'FastAPI', 'LangGraph', 'Gemini', 'Vertex AI', 'Qdrant', 'Terraform',
+    ]))
+    expect(projectsData.pauhelper.modalTags).not.toContain('OpenAI API')
+  })
+
   it('gives every project an id, slug, icon and tags', () => {
     Object.entries(projectsData).forEach(([id, project]) => {
       expect(project.slug).toEqual(expect.any(String))

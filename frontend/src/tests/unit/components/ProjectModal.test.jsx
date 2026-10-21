@@ -10,8 +10,7 @@ const project = {
   thumbUrl: '/thumb.png',
   fullDescription: 'Full description text',
   modalTags: ['React'],
-  techDocUrl: '/tech.pdf',
-  nonTechDocUrl: '/user.pdf',
+  slug: 'test-project',
 }
 
 describe('ProjectModal', () => {
@@ -21,6 +20,19 @@ describe('ProjectModal', () => {
     expect(screen.getByText('Test Project')).toBeInTheDocument()
     expect(screen.getByText('Full description text')).toBeInTheDocument()
     expect(screen.getByText('React')).toBeInTheDocument()
+  })
+
+  it('requests an integrated presentation for each audience', async () => {
+    const user = userEvent.setup()
+    const onOpenPresentation = vi.fn()
+    render(<ProjectModal project={project} theme="dark" t={en} onClose={() => {}} onOpenPresentation={onOpenPresentation} />)
+    const buttons = screen.getAllByRole('button')
+    expect(buttons.indexOf(screen.getByRole('button', { name: en.modal.viewBusinessPresentation })))
+      .toBeLessThan(buttons.indexOf(screen.getByRole('button', { name: en.modal.viewTechnicalPresentation })))
+    await user.click(screen.getByRole('button', { name: en.modal.viewTechnicalPresentation }))
+    expect(onOpenPresentation).toHaveBeenLastCalledWith(project, 'technical')
+    await user.click(screen.getByRole('button', { name: en.modal.viewBusinessPresentation }))
+    expect(onOpenPresentation).toHaveBeenLastCalledWith(project, 'business')
   })
 
   it('renders the live app link when a URL is configured', () => {

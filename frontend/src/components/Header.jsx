@@ -1,6 +1,5 @@
 import { getStyles } from '../utils/styles.jsx'
 import { socialLinks } from '../config/links.jsx'
-import robotIcon from '../assets/robot-icon.png'
 import LanguageSwitcher from './LanguageSwitcher.jsx'
 
 function Header({ theme, onToggleTheme, language, onChangeLanguage, t }) {
@@ -13,7 +12,7 @@ function Header({ theme, onToggleTheme, language, onChangeLanguage, t }) {
     >
       <div className="max-w-5xl mx-auto px-6 py-8 md:py-10 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <img src={robotIcon} alt="Portfolio logo" className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0" />
+          <img src="/logo.png" alt="Portfolio logo" width="56" height="56" className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0" />
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight" style={styles.siteHeaderTitle}>
               Vicente Zambrano Andrada
