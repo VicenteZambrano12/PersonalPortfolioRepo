@@ -9,12 +9,12 @@ function YoutubeCard({ theme, t, onSelect }) {
       onClick={onSelect}
       aria-haspopup="dialog"
       aria-labelledby="youtube-card-title youtube-card-cta"
-      className="youtube-card group rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col h-full"
+      className="youtube-card group rounded-2xl p-6 sm:p-8 text-left transition-colors duration-200 hover:shadow-xl cursor-pointer flex flex-col h-full min-w-0"
       style={styles.youtubeCard}
     >
       <div className="flex items-center gap-4 mb-4">
         <div style={styles.youtubeIconBox}>
-          <img src="/logo.png" alt="" width="32" height="32" className="w-8 h-8" />
+          <img src="/logo.png" alt="" width="48" height="48" className="brand-logo w-12 h-12" />
         </div>
         <div>
           <h3 id="youtube-card-title" style={styles.youtubeTitle}>{t.title}</h3>

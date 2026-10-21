@@ -39,7 +39,7 @@ describe('Orchestrator technical presentation', () => {
       expect(title.startsWith(`${diagram.section}. `)).toBe(true)
       expect(notes).toHaveLength(3)
       expect(notes.every(([heading, body]) => heading.length > 0 && body.length > 0)).toBe(true)
-      expect(diagram.caption).toBe(`README ${diagram.section} · ${title.slice(diagram.section.length + 2)}`)
+      expect(diagram.caption).toBe(`${diagram.section} · ${title.slice(diagram.section.length + 2)}`)
       const ids = diagram.nodes.map(node => node.id)
       expect(new Set(ids).size).toBe(ids.length)
       expect(ids.length).toBeGreaterThanOrEqual(4)
@@ -78,7 +78,8 @@ describe('Orchestrator technical presentation', () => {
     for (const id of sectionIds) {
       const [enTitle, enNotes, enDiagram] = english[id]
       const [esTitle, esNotes, esDiagram] = spanish[id]
-      expect(enTitle).not.toBe(esTitle)
+      expect(enTitle.startsWith(`${id}. `)).toBe(true)
+      expect(esTitle.startsWith(`${id}. `)).toBe(true)
       expect(enNotes).not.toEqual(esNotes)
       expect(enDiagram.nodes.map(({ label, ...node }) => ({ ...node, lines: label.length })))
         .toEqual(esDiagram.nodes.map(({ label, ...node }) => ({ ...node, lines: label.length })))
@@ -190,7 +191,7 @@ describe('Orchestrator technical presentation', () => {
     expect(document.querySelectorAll('.prompt-card')).toHaveLength(42)
     expect([...document.querySelectorAll('[data-readme-section]')].map(node => node.dataset.readmeSection)).toEqual(sectionIds)
     expect(document.querySelector('.brand img').getAttribute('src')).toBeTruthy()
-    expect(document.querySelector('.cover').textContent).toContain(content.source)
+    expect(document.body.textContent).not.toMatch(/readme/i)
     for (const [title, notes, diagram] of content.slides) {
       expect(document.body.textContent).toContain(title)
       for (const [heading, body] of notes) {

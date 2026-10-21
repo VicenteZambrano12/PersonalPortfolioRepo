@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getPresentationContent } from '../../../features/docs/content.js'
 import { renderDiagram } from '../../../features/docs/diagram.js'
+import { brandPalettes } from '../../../utils/colors.jsx'
 
 const pages = import.meta.glob('../../../features/docs/*/*.html', {
   query: '?raw',
@@ -23,6 +24,22 @@ afterEach(() => {
 })
 
 describe('presentation templates', () => {
+  it.each(['light', 'dark'])('uses the explicit %s theme over the saved preference', async (theme) => {
+    vi.resetModules()
+    localStorage.setItem('portfolio-theme', theme === 'dark' ? 'light' : 'dark')
+    vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
+    window.history.replaceState(null, '', `/?lang=en&theme=${theme}`)
+    document.body.innerHTML = '<main class="reveal"><div class="slides"></div></main>'
+    document.body.dataset.project = '0-portfolio'
+    document.body.dataset.audience = 'business'
+    await import('../../../features/docs/presentation.js')
+    expect(document.documentElement.dataset.theme).toBe(theme)
+    for (const [key, value] of Object.entries(brandPalettes[theme])) {
+      expect(document.documentElement.style.getPropertyValue(`--${key}`)).toBe(value)
+    }
+    localStorage.removeItem('portfolio-theme')
+  })
+
   it('provides exactly eight HTML pages, with no YouTube presentation', () => {
     expect(Object.keys(pages)).toHaveLength(8)
     for (const slug of ['0-portfolio', '1-pauhelper', '2-orchestratordata', '3-voicesimulator']) {
@@ -106,7 +123,7 @@ describe('presentation templates', () => {
     expect(document.querySelectorAll('.slides > section')).toHaveLength(8)
     expect(document.querySelectorAll('.prompt-card')).toHaveLength(18)
     expect(document.querySelector('.brand img').getAttribute('src')).toBeTruthy()
-    expect(document.body.textContent).toContain(content.source)
+    expect(document.body.textContent).not.toMatch(/readme/i)
     for (const [title, cards] of content.slides) {
       expect(document.body.textContent).toContain(title)
       for (const [heading, text] of cards) {
@@ -182,23 +199,28 @@ describe('presentation templates', () => {
     expect(() => getPresentationContent('0-portfolio', 'unknown', 'en')).toThrow('Unknown presentation audience')
   })
 
-  it.each(['business', 'technical'])('renders a branded, translated %s deck and initializes navigation', async (audience) => {
+  it.each([
+    ['business', 'en'],
+    ['business', 'es'],
+    ['technical', 'en'],
+    ['technical', 'es'],
+  ])('renders a branded, translated %s deck (%s) and initializes navigation', async (audience, language) => {
     vi.resetModules()
     vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
-    window.history.replaceState(null, '', '/?lang=es')
+    window.history.replaceState(null, '', `/?lang=${language}`)
     document.body.innerHTML = '<main class="reveal"><div class="slides"></div></main>'
     document.body.dataset.project = '1-pauhelper'
     document.body.dataset.audience = audience
     await import('../../../features/docs/presentation.js')
     const { default: Reveal } = await import('reveal.js')
-    expect(document.documentElement.lang).toBe('es')
+    expect(document.documentElement.lang).toBe(language)
     expect(document.querySelector('h1').textContent).toBe('PAUHelper')
     expect(document.querySelectorAll('.slides > section')).toHaveLength(audience === 'business' ? 8 : 10)
     expect(document.querySelector('.brand img').getAttribute('src')).toBeTruthy()
     expect(document.querySelectorAll('.prompt-card')).toHaveLength(audience === 'business' ? 18 : 27)
     const eyebrows = [...document.querySelectorAll('.eyebrow')].map(node => node.textContent)
     expect(eyebrows).not.toContain('Plantilla de presentación')
-    expect(document.body.textContent).toContain('Fuente: README de BasicRAGapp')
+    expect(document.body.textContent).not.toMatch(/readme/i)
     if (audience === 'technical') {
       expect(document.body).toHaveClass('schematic-deck')
       expect(document.querySelectorAll('.technical-diagram svg')).toHaveLength(9)

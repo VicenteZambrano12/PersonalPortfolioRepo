@@ -15,6 +15,42 @@ describe('Portfolio (integration)', () => {
   })
   afterEach(() => vi.unstubAllGlobals())
 
+  it.each([
+    { t: en, theme: 'light' },
+    { t: en, theme: 'dark' },
+    { t: es, theme: 'light' },
+    { t: es, theme: 'dark' },
+  ])('uses matching presentation icons in $t.code, $theme mode', ({ t, theme }) => {
+    render(
+      <Portfolio theme={theme} onToggleTheme={() => {}} language={t.code} onChangeLanguage={() => {}} t={t} />
+    )
+    for (const [audience, icon] of [['business', 'ph-chart-line'], ['technical', 'ph-code']]) {
+      const button = screen.getByRole('button', { name: t.portfolio[`${audience}Presentation`] })
+      expect(button.querySelector('i')).toHaveClass('ph', icon)
+      expect(button.querySelector('i')).toHaveAttribute('aria-hidden', 'true')
+    }
+  })
+
+  it.each([
+    [en, 'light'],
+    [en, 'dark'],
+    [es, 'light'],
+    [es, 'dark'],
+  ])('shows the upcoming portfolio video action in $0.code, $1 mode', async (t, theme) => {
+    const user = userEvent.setup()
+    render(
+      <Portfolio theme={theme} onToggleTheme={() => {}} language={t.code} onChangeLanguage={() => {}} t={t} />
+    )
+    const videoButton = screen.getByRole('button', { name: t.portfolio.video })
+    expect(videoButton).toBeVisible()
+    expect(videoButton).toBeDisabled()
+    expect(screen.getByRole('button', { name: t.portfolio.businessPresentation })).toBeEnabled()
+    expect(screen.getByRole('button', { name: t.portfolio.technicalPresentation })).toBeEnabled()
+    await user.click(videoButton)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(fetch).not.toHaveBeenCalled()
+  })
+
   it('opens the latest YouTube videos in a popup from its card', async () => {
     const user = userEvent.setup()
     render(
@@ -77,10 +113,10 @@ describe('Portfolio (integration)', () => {
     expect(screen.getByText(en.projects.pauhelper.fullDescription)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: en.modal.viewTechnicalPresentation }))
     expect(screen.getByTitle(`PAUHelper - ${en.modal.technicalPresentation}`)).toHaveAttribute(
-      'src', '/src/features/docs/1-pauhelper/technical.html?lang=en&embed=1'
+      'src', '/src/features/docs/1-pauhelper/technical.html?lang=en&embed=1&theme=dark'
     )
     await user.keyboard('{Escape}')
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(screen.getByRole('dialog', { name: 'PAUHelper' })).toBeInTheDocument()
     expect(screen.getByText(en.projects.pauhelper.fullDescription)).toBeInTheDocument()
   })
 
@@ -94,7 +130,7 @@ describe('Portfolio (integration)', () => {
       await user.click(trigger)
       expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true')
       expect(screen.getByTitle(`Personal Portfolio - ${t.modal[`${audience}Presentation`]}`))
-        .toHaveAttribute('src', `/src/features/docs/0-portfolio/${audience}.html?lang=${t.code}&embed=1`)
+        .toHaveAttribute('src', `/src/features/docs/0-portfolio/${audience}.html?lang=${t.code}&embed=1&theme=dark`)
       await user.click(screen.getAllByRole('button', { name: t.presentation.close })[0])
       expect(trigger).toHaveFocus()
     }
@@ -104,10 +140,10 @@ describe('Portfolio (integration)', () => {
         const name = audience === 'business' ? t.modal.viewBusinessPresentation : t.modal.viewTechnicalPresentation
         await user.click(screen.getByRole('button', { name }))
         expect(screen.getByTitle(`${t.projects[id].title} - ${t.modal[`${audience}Presentation`]}`))
-          .toHaveAttribute('src', `/src/features/docs/${project.slug}/${audience}.html?lang=${t.code}&embed=1`)
+          .toHaveAttribute('src', `/src/features/docs/${project.slug}/${audience}.html?lang=${t.code}&embed=1&theme=dark`)
         await user.click(screen.getAllByRole('button', { name: t.presentation.close })[0])
       }
-      await user.click(screen.getByRole('button', { name: 'Close' }))
+      await user.click(screen.getByRole('button', { name: t.modal.close }))
     }
   })
 

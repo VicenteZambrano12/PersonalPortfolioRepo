@@ -342,7 +342,7 @@ export function getOrchestratorTechnical(language) {
         width: 1120,
         height: layout.height,
         section: id,
-        caption: `README ${id} · ${section.title}`,
+        caption: `${id} · ${section.title}`,
         nodes: layout.nodes.map(node => ({ ...node, label: section.nodes[node.id] })),
         edges: layout.edges.map(edge => ({ ...edge, label: content.edges[edge.label] })),
       }]

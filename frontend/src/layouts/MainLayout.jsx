@@ -9,7 +9,7 @@ function MainLayout({ theme, header, footer, children }) {
       style={{ backgroundColor, color }}
     >
       {header}
-      <main className="flex-grow max-w-5xl mx-auto px-6 py-12 w-full">{children}</main>
+      <main id="main-content" tabIndex={-1} className="flex-grow max-w-6xl mx-auto px-5 sm:px-8 py-8 sm:py-12 w-full">{children}</main>
       {footer}
     </div>
   )

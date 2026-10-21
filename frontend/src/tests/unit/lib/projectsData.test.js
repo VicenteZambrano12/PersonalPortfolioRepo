@@ -3,6 +3,15 @@ import { projectsData } from '../../../lib/projectsData.js'
 import { en } from '../../../i18n/languages/en.jsx'
 
 describe('projectsData', () => {
+  it('labels Orchestrator with its documented agent, application and deployment stack', () => {
+    expect(projectsData.orchestratordata.tags).toEqual(['AI Agents', 'Gemini', 'React', 'GCP'])
+    expect(projectsData.orchestratordata.modalTags).toEqual(expect.arrayContaining([
+      'Python', 'FastAPI', 'Pydantic', 'Gemini', 'React', 'Vite', 'Tailwind CSS',
+      'SQLite', 'Neon PostgreSQL', 'fakeredis', 'GCP Cloud Run', 'Docker', 'Terraform', 'GitHub Actions',
+    ]))
+    expect(projectsData.orchestratordata.modalTags).not.toContain('HTML/CSS')
+  })
+
   it('labels PAUHelper with its documented RAG and Google AI stack', () => {
     expect(projectsData.pauhelper.tags).toEqual(['RAG', 'Gemini', 'React', 'GCP'])
     expect(projectsData.pauhelper.modalTags).toEqual(expect.arrayContaining([

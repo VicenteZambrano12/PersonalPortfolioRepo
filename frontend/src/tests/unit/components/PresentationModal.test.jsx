@@ -27,7 +27,7 @@ describe('PresentationModal', () => {
   it('embeds the deck, locks scrolling, and accepts readiness only from its own same-origin frame', () => {
     render(<PresentationModal presentation={presentation} theme="dark" t={en.presentation} onClose={() => {}} />)
     expect(screen.getByRole('dialog')).toHaveAccessibleName(presentation.title)
-    expect(screen.getByTitle(presentation.title)).toHaveAttribute('src', `${presentation.url}&embed=1`)
+    expect(screen.getByTitle(presentation.title)).toHaveAttribute('src', `${presentation.url}&embed=1&theme=dark`)
     expect(document.body.style.overflow).toBe('hidden')
     notify('presentation-ready', { origin: 'https://other.example' })
     expect(screen.getByRole('status')).toHaveTextContent(en.presentation.loading)
@@ -35,6 +35,11 @@ describe('PresentationModal', () => {
     expect(screen.getByRole('status')).toBeInTheDocument()
     notify('presentation-ready')
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  })
+
+  it('passes the light theme to the embedded deck', () => {
+    render(<PresentationModal presentation={presentation} theme="light" t={en.presentation} onClose={() => {}} />)
+    expect(screen.getByTitle(presentation.title)).toHaveAttribute('src', `${presentation.url}&embed=1&theme=light`)
   })
 
   it('closes with Escape, the close button, frame messages, or a backdrop click', async () => {

@@ -211,7 +211,7 @@ export function getPauhelperTechnical(language) {
         width: 1120,
         height: layout.height,
         section: index + 1,
-        caption: `README ${index + 1} · ${section.title}`,
+        caption: `${index + 1} · ${section.title}`,
         nodes: layout.nodes.map(node => ({ ...node, label: section.nodes[node.id] })),
         edges: layout.edges.map(edge => ({ ...edge, label: content.edges[edge.label] })),
       }]

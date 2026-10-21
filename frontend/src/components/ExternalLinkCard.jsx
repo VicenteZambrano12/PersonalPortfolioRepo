@@ -8,10 +8,11 @@ function ExternalLinkCard({ href, icon, iconImage, title, subtitle, tagline, cta
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="youtube-card group rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col h-full relative overflow-hidden"
+      className="youtube-card group rounded-2xl p-6 transition-colors duration-200 hover:shadow-xl cursor-pointer flex flex-col h-full relative overflow-hidden"
       style={styles.youtubeCard}
     >
       <i
+        aria-hidden="true"
         className={`ph-fill ${icon} absolute -bottom-6 -right-6 text-9xl opacity-10 transform group-hover:scale-110 transition-transform duration-500`}
         style={{ color: styles.youtubeSubtitle.color }}
       ></i>
@@ -22,7 +23,7 @@ function ExternalLinkCard({ href, icon, iconImage, title, subtitle, tagline, cta
             {iconImage ? (
               <img src={iconImage} alt="" className="w-8 h-8" />
             ) : (
-              <i className={`ph-fill ${icon} text-2xl`}></i>
+              <i className={`ph-fill ${icon} text-2xl`} aria-hidden="true"></i>
             )}
           </div>
           <div>
@@ -34,7 +35,7 @@ function ExternalLinkCard({ href, icon, iconImage, title, subtitle, tagline, cta
           {tagline}
         </p>
         <div className="mt-auto flex items-center gap-2 group-hover:gap-3 transition-all" style={styles.youtubeCta}>
-          {cta} <i className="ph ph-arrow-right"></i>
+          {cta} <i className="ph ph-arrow-right" aria-hidden="true"></i>
         </div>
       </div>
     </a>

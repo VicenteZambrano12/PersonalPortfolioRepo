@@ -54,6 +54,7 @@ export function createApp({ auth, firebaseConfig, staticDir, loginFile, secureCo
 
   app.get('/healthz', (req, res) => res.send('ok'))
   app.get('/auth/config', (req, res) => res.json(firebaseConfig))
+  app.get('/auth/brand/logo.png', (req, res) => res.sendFile(path.join(staticDir, 'logo.png')))
   app.get('/login', readSession, (req, res) => {
     if (req.user) return res.redirect(303, '/')
     res.sendFile(loginFile)

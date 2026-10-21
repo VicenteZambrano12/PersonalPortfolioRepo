@@ -1,15 +1,16 @@
 :root {
   color-scheme: dark;
-  --presentation-secondary: #cbd5e1;
+  --presentation-secondary: var(--secondaryText, #B0BFDB);
   font-family: Inter, system-ui, sans-serif;
-  background: #0f172a;
-  color: #f8fafc;
+  background: var(--background, #050B24);
+  color: var(--primaryText, #F1F7FF);
 }
 
+[data-theme='light'] { color-scheme: light; }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--background, #0f172a); color: var(--primaryText, #f8fafc); }
-a { color: var(--accentCyan, #06b6d4); }
-a:focus-visible { outline: 3px solid var(--accentAmber); outline-offset: 6px; }
+body { margin: 0; background: var(--background, #050B24); color: var(--primaryText, #F1F7FF); }
+a { color: var(--accentCyan, #55EAF2); }
+a:focus-visible { outline: 3px solid var(--accentViolet); outline-offset: 6px; }
 
 .deck-header {
   min-height: 88px;
@@ -22,16 +23,16 @@ a:focus-visible { outline: 3px solid var(--accentAmber); outline-offset: 6px; }
 }
 
 .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--primaryText); font-weight: 700; }
-.brand img { width: 48px; height: 48px; object-fit: contain; }
+.brand img { width: 48px; height: 48px; object-fit: contain; border-radius: 50%; }
 .reveal { height: calc(100dvh - 88px); color: var(--primaryText); font-size: 28px; }
-.reveal.reveal-viewport { background-color: var(--background, #0f172a); color: var(--primaryText, #f8fafc); }
+.reveal.reveal-viewport { background-color: var(--background, #050B24); color: var(--primaryText, #F1F7FF); }
 .reveal .slides { text-align: left; }
 .reveal h1, .reveal h2, .reveal h3 { color: var(--primaryText); margin: 0 0 28px; line-height: 1.15; overflow-wrap: anywhere; }
 .reveal h1 { font-size: 2.6em; letter-spacing: -0.04em; max-width: 1000px; }
 .reveal h2 { font-size: 1.9em; }
 .reveal h3 { font-size: 1.1em; }
 .reveal p { line-height: 1.6; }
-.reveal .eyebrow { color: var(--accentAmber); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.6em; font-weight: 700; margin-bottom: 32px; }
+.reveal .eyebrow { color: var(--accentViolet); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.6em; font-weight: 700; margin-bottom: 32px; }
 .reveal .audience { color: var(--accentCyan); font-size: 1.5em; margin-bottom: 16px; }
 .reveal .subtitle, .reveal .hint { color: var(--presentation-secondary); }
 .reveal .hint { font-size: 0.65em; margin-top: 64px; }
@@ -42,24 +43,24 @@ a:focus-visible { outline: 3px solid var(--accentAmber); outline-offset: 6px; }
 .prompt-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accentCyan); border-radius: 16px; padding: 28px; }
 .prompt-card p { color: var(--primaryText); font-size: 0.85em; margin: 0; }
 .reveal .controls { color: var(--accentCyan); }
-.reveal .progress { color: var(--accentAmber); }
+.reveal .progress { color: var(--accentViolet); }
 .reveal .slide-number { background: var(--surface); color: var(--primaryText); font-family: inherit; }
 .deck-status:empty { display: none; }
-.deck-status { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px; background: var(--surface); color: var(--accentAmber); z-index: 40; }
+.deck-status { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px; background: var(--surface); color: var(--accentViolet); z-index: 40; }
 
 .reveal .schematic-slide .eyebrow { margin-bottom: 14px; }
 .reveal .schematic-slide h2 { font-size: 1.45em; margin-bottom: 18px; }
 .technical-diagram { margin: 0 0 18px; }
 .diagram-viewport { width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--background); }
-.diagram-viewport:focus-visible { outline: 3px solid var(--accentAmber); outline-offset: 3px; }
+.diagram-viewport:focus-visible { outline: 3px solid var(--accentViolet); outline-offset: 3px; }
 .technical-diagram svg { display: block; width: 100%; min-width: 900px; height: auto; }
 .diagram-node rect, .diagram-node polygon { fill: var(--surface); stroke: var(--accentCyan); stroke-width: 2; }
-.diagram-store rect { stroke: var(--accentAmber); }
-.diagram-decision polygon { stroke: var(--accentAmber); }
+.diagram-store rect { stroke: var(--accentViolet); }
+.diagram-decision polygon { stroke: var(--accentViolet); }
 .diagram-node text { fill: var(--primaryText); font-family: Inter, system-ui, sans-serif; font-size: 16px; font-weight: 600; }
 .diagram-edge { fill: none; stroke: var(--accentCyan); stroke-width: 2; stroke-linejoin: round; }
 .diagram-arrow { fill: var(--accentCyan); }
-.diagram-edge-label { fill: var(--accentAmber); font-size: 15px; font-weight: 700; paint-order: stroke; stroke: var(--background); stroke-width: 6px; }
+.diagram-edge-label { fill: var(--accentViolet); font-size: 15px; font-weight: 700; paint-order: stroke; stroke: var(--background); stroke-width: 6px; }
 .technical-diagram figcaption { color: var(--presentation-secondary); font-size: 0.55em; line-height: 1.5; margin-top: 8px; }
 .diagram-scroll-hint { display: none; }
 .schematic-facts { gap: 14px; }
@@ -73,7 +74,7 @@ a:focus-visible { outline: 3px solid var(--accentAmber); outline-offset: 6px; }
   .schematic-deck .schematic-facts { grid-template-columns: 1fr; }
   .schematic-deck .schematic-facts h3 { font-size: 1em; }
   .schematic-deck .schematic-facts .prompt-card p { font-size: 0.85em; }
-  .schematic-deck .diagram-scroll-hint { display: block; color: var(--accentAmber); }
+  .schematic-deck .diagram-scroll-hint { display: block; color: var(--accentViolet); }
   .schematic-deck .technical-diagram figcaption { font-size: 0.7em; }
 }
 
@@ -92,7 +93,7 @@ a:focus-visible { outline: 3px solid var(--accentAmber); outline-offset: 6px; }
   .prompt-grid { grid-template-columns: 1fr; gap: 12px; }
   .prompt-card { padding: 16px; }
   .prompt-card h3 { margin-bottom: 12px; }
-  .diagram-scroll-hint { display: block; color: var(--accentAmber); }
+  .diagram-scroll-hint { display: block; color: var(--accentViolet); }
   .technical-diagram figcaption { font-size: 0.7em; }
   .reveal .schematic-facts h3 { font-size: 1em; }
   .schematic-facts .prompt-card p { font-size: 0.85em; }

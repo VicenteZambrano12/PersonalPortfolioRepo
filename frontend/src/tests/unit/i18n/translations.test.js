@@ -14,6 +14,22 @@ function collectKeyPaths(obj, prefix = '') {
 }
 
 describe('translation dictionaries', () => {
+  it.each([en, es])('describes the Form fitness use case and its actual architecture ($code)', (dictionary) => {
+    const project = dictionary.projects.orchestratordata
+    expect(project.description).toContain('Form')
+    expect(project.description).toContain('SQL')
+    expect(project.subtitle).toMatch(/fitness/i)
+    for (const technology of ['Gemini', 'Python', 'React', 'FastAPI', 'SQLite', 'Neon PostgreSQL', 'GCP Cloud Run', 'Docker', 'Terraform', 'GitHub Actions', 'fakeredis']) {
+      expect(project.fullDescription).toContain(technology)
+    }
+    expect(project.fullDescription).toContain(dictionary.code === 'en'
+      ? 'explicit save confirmation' : 'confirmación explícita')
+    expect(project.fullDescription).toContain(dictionary.code === 'en'
+      ? 'are not durable' : 'no son duraderos')
+    expect(project.description).not.toMatch(/data pipelines|pipelines de datos/i)
+    expect(project.fullDescription).not.toMatch(/isolated instances|instancias aisladas/i)
+  })
+
   it('uses the requested business and technical presentation button labels', () => {
     expect(en.modal.viewBusinessPresentation).toBe('Business Overview')
     expect(en.modal.viewTechnicalPresentation).toBe('How it works?')

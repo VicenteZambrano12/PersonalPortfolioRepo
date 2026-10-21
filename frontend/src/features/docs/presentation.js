@@ -28,7 +28,19 @@ if (embedded) {
 
 document.documentElement.lang = content.language
 document.title = `${project.title} | ${content.audience}`
-for (const [name, value] of Object.entries(brandPalettes.dark)) {
+const requestedTheme = new URLSearchParams(location.search).get('theme')
+let storedTheme
+try {
+  storedTheme = localStorage.getItem('portfolio-theme')
+} catch (error) {
+  log.warn('Unable to read theme preference', { message: error.message })
+}
+const isTheme = (value) => value === 'light' || value === 'dark'
+const theme = isTheme(requestedTheme) ? requestedTheme
+  : isTheme(storedTheme) ? storedTheme
+    : matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+document.documentElement.dataset.theme = theme
+for (const [name, value] of Object.entries(brandPalettes[theme])) {
   document.documentElement.style.setProperty(`--${name}`, value)
 }
 
@@ -67,7 +79,6 @@ cover.append(
   element('p', project.subtitle, 'subtitle'),
   ...(!embedded ? [element('p', labels.hint, 'hint')] : []),
 )
-if (!content.showOverview && content.source) cover.append(element('p', content.source, 'hint'))
 slides.append(cover)
 
 if (content.showOverview) {
@@ -77,7 +88,6 @@ if (content.showOverview) {
     element('h2', labels.overview),
     element('p', project.fullDescription, 'description'),
   )
-  if (content.source) overview.append(element('p', content.source, 'hint'))
   if (audience === 'technical') {
     overview.append(element('h3', labels.stack))
     const tags = element('ul', null, 'tags')

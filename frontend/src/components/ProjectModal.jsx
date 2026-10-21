@@ -1,82 +1,62 @@
-import { useEffect, useState } from 'react'
+import { useRef } from 'react'
 import { getStyles } from '../utils/styles.jsx'
 import { createLogger } from '../utils/logger.js'
+import { useModalFocus } from '../utils/useModalFocus.js'
 
 const log = createLogger('project-modal')
 
 function ProjectModal({ project, theme, t, onClose, onOpenPresentation }) {
-  const [visible, setVisible] = useState(false)
   const styles = getStyles(theme)
-
-  useEffect(() => {
-    document.body.style.overflow = 'hidden'
-    const frame = requestAnimationFrame(() => setVisible(true))
-
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.body.style.overflow = ''
-      document.removeEventListener('keydown', handleKeyDown)
-      cancelAnimationFrame(frame)
-    }
-  }, [onClose])
+  const dialogRef = useRef(null)
+  const closeRef = useRef(null)
+  useModalFocus(dialogRef, closeRef, onClose)
 
   return (
     <div
-      className={`flex items-center justify-center p-4 sm:p-6 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}
+      className="flex items-center justify-center p-4 sm:p-6"
       style={styles.modalOverlay}
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}
     >
       <div
-        className={`rounded-2xl shadow-2xl w-full max-w-[70vw] max-h-[90vh] flex flex-col overflow-hidden transition-transform duration-300 ${visible ? 'scale-100' : 'scale-95'}`}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="project-modal-title"
+        className="rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90dvh] flex flex-col overflow-hidden animate-modal-enter"
         style={styles.modalContent}
       >
-        {/* Modal Header */}
-        <div className="flex items-center justify-between p-6" style={styles.modalHeader}>
+        <div className="flex items-center justify-between gap-4 p-5 sm:p-6" style={styles.modalHeader}>
           <div>
-            <h3 className="text-2xl font-bold" style={styles.cardTitle}>{project.title}</h3>
+            <h3 id="project-modal-title" className="text-2xl font-bold" style={styles.cardTitle}>{project.title}</h3>
             <p className="font-medium" style={styles.cardSubtitle}>{project.subtitle}</p>
           </div>
           <button
+            ref={closeRef}
+            type="button"
             onClick={onClose}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+            className="w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition-colors"
             style={styles.closeButton}
-            aria-label="Close"
+            aria-label={t.modal.close}
           >
-            <i className="ph ph-x text-xl"></i>
+            <i className="ph ph-x text-xl" aria-hidden="true"></i>
           </button>
         </div>
 
-        {/* Modal Body (Scrollable) */}
-        <div className="p-6 overflow-y-auto custom-scrollbar flex-grow" style={styles.modalBody}>
-          <div className="w-full aspect-video rounded-xl mb-8 relative overflow-hidden flex items-center justify-center group shadow-md" style={styles.videoFrame}>
+        <div className="p-5 sm:p-6 overflow-y-auto custom-scrollbar flex-grow" style={styles.modalBody}>
+          <div className="w-full aspect-[21/9] rounded-xl mb-8 relative overflow-hidden shadow-md" style={styles.videoFrame}>
             <img
               src={project.thumbUrl}
-              alt="Video Thumbnail"
-              className="absolute inset-0 w-full h-full object-cover opacity-40"
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
             />
-            <button
-              className="relative z-10 w-20 h-20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"
-              style={styles.playButton}
-            >
-              <i className="ph-fill ph-play text-3xl ml-1"></i>
-            </button>
-            <div className="absolute bottom-4 left-6 z-10">
-              <span className="px-3 py-1.5 rounded-md text-sm backdrop-blur-md font-medium" style={styles.videoBadge}>
-                <i className="ph ph-video-camera mr-1 align-middle"></i> {t.modal.videoWalkthrough}
-              </span>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8">
             <div className="lg:col-span-2">
               <h4 className="text-lg font-bold mb-3 flex items-center gap-2" style={styles.panelHeading}>
-                <i className="ph ph-info" style={styles.sectionIcon}></i> {t.modal.description}
+                <i className="ph ph-info" style={styles.sectionIcon} aria-hidden="true"></i> {t.modal.description}
               </h4>
               <p style={styles.cardDescription}>{project.fullDescription}</p>
             </div>
@@ -90,9 +70,10 @@ function ProjectModal({ project, theme, t, onClose, onOpenPresentation }) {
                 ))}
               </div>
               <div className="mt-6 pt-6" style={{ borderTop: styles.panel.border }}>
-                <a
-                  href={project.liveUrl || '#'}
-                  {...(project.liveUrl ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                {project.liveUrl ? <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => {
                     // Best-effort: wake the demo's on-demand Qdrant VM (it
                     // auto-shuts down after 30 idle minutes). Never blocks
@@ -106,8 +87,23 @@ function ProjectModal({ project, theme, t, onClose, onOpenPresentation }) {
                   className="w-full flex items-center justify-center gap-2 transition-colors"
                   style={styles.buttonPrimary}
                 >
-                  {t.modal.openLiveApp} <i className="ph ph-arrow-up-right"></i>
-                </a>
+                  {t.modal.openLiveApp} <i className="ph ph-arrow-up-right" aria-hidden="true"></i>
+                </a> : (
+                  <>
+                    <button
+                      type="button"
+                      disabled
+                      aria-describedby="demo-unavailable"
+                      className="w-full flex items-center justify-center gap-2"
+                      style={styles.buttonPrimary}
+                    >
+                      {t.modal.openLiveApp} <i className="ph ph-arrow-up-right" aria-hidden="true"></i>
+                    </button>
+                    <p id="demo-unavailable" className="mt-3 text-sm" style={styles.socialIcon}>
+                      {t.modal.demoUnavailable}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -115,7 +111,7 @@ function ProjectModal({ project, theme, t, onClose, onOpenPresentation }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-6 rounded-xl" style={styles.panel}>
               <h4 className="text-lg font-bold mb-4 flex items-center gap-2 pb-3" style={styles.panelHeading}>
-                <i className="ph ph-chart-line" style={styles.sectionIcon}></i> {t.modal.businessPresentation}
+                <i className="ph ph-chart-line" style={styles.sectionIcon} aria-hidden="true"></i> {t.modal.businessPresentation}
               </h4>
               <button
                 type="button"
@@ -123,13 +119,13 @@ function ProjectModal({ project, theme, t, onClose, onOpenPresentation }) {
                 className="flex items-center justify-center gap-2 transition-colors"
                 style={styles.buttonSecondary}
               >
-                <i className="ph ph-presentation"></i> {t.modal.viewBusinessPresentation}
+                <i className="ph ph-presentation" aria-hidden="true"></i> {t.modal.viewBusinessPresentation}
               </button>
             </div>
 
             <div className="p-6 rounded-xl" style={styles.panel}>
               <h4 className="text-lg font-bold mb-4 flex items-center gap-2 pb-3" style={styles.panelHeading}>
-                <i className="ph ph-code" style={styles.sectionIcon}></i> {t.modal.technicalPresentation}
+                <i className="ph ph-code" style={styles.sectionIcon} aria-hidden="true"></i> {t.modal.technicalPresentation}
               </h4>
               <button
                 type="button"
@@ -137,7 +133,7 @@ function ProjectModal({ project, theme, t, onClose, onOpenPresentation }) {
                 className="flex items-center justify-center gap-2 transition-colors"
                 style={styles.buttonSecondary}
               >
-                <i className="ph ph-presentation"></i> {t.modal.viewTechnicalPresentation}
+                <i className="ph ph-presentation" aria-hidden="true"></i> {t.modal.viewTechnicalPresentation}
               </button>
             </div>
           </div>

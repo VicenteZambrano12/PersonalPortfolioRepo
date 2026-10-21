@@ -95,7 +95,7 @@ function PresentationModal({ presentation, theme, t, onClose }) {
         {status === 'error' && <p role="alert" className="px-4 py-2" style={styles.cardDescription}>{t.error}</p>}
         <iframe
           ref={frameRef}
-          src={`${presentation.url}&embed=1`}
+          src={`${presentation.url}&embed=1&theme=${theme}`}
           title={presentation.title}
           className="w-full flex-1 min-h-0 border-0"
           onError={() => {

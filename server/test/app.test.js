@@ -21,6 +21,7 @@ beforeEach(async () => {
   staticDir = await mkdtemp(path.join(os.tmpdir(), 'portfolio-auth-test-'))
   await writeFile(path.join(staticDir, 'index.html'), '<h1>Private portfolio</h1>')
   await writeFile(path.join(staticDir, 'private.js'), 'private-content')
+  await writeFile(path.join(staticDir, 'logo.png'), Buffer.from([137, 80, 78, 71]))
   await writeFile(path.join(staticDir, 'youtube-videos.json'), '[{"title":"private-video"}]')
   auth = {
     verifyIdToken: mock.fn(async () => claims()),
@@ -67,7 +68,7 @@ test('login, web configuration, and health check are public, but never contain p
 })
 
 test('all portfolio routes and assets require a session, including HEAD requests', async () => {
-  for (const route of ['/', '/index.html', '/projects', '/private.js', '/youtube-videos.json', '/assets/app.js']) {
+  for (const route of ['/', '/index.html', '/projects', '/private.js', '/youtube-videos.json', '/assets/app.js', '/logo.png', '/auth/brand/private.js']) {
     for (const method of ['GET', 'HEAD']) {
       const response = await request(route, { method })
       assert.equal(response.status, 303, `${method} ${route}`)
@@ -77,6 +78,15 @@ test('all portfolio routes and assets require a session, including HEAD requests
   }
 })
 
+test('only the sign-in brand logo is public without exposing other assets', async () => {
+  const response = await request('/auth/brand/logo.png')
+  assert.equal(response.status, 200)
+  assert.match(response.headers.get('content-type'), /image\/png/)
+  assert.deepEqual(Buffer.from(await response.arrayBuffer()), Buffer.from([137, 80, 78, 71]))
+  assert.equal(auth.verifySessionCookie.mock.callCount(), 0)
+  const login = await request('/login')
+  assert.match(await login.text(), /src="\/auth\/brand\/logo.png"/)
+})
 test('a verified session serves files and SPA routes without public caching', async () => {
   for (const route of ['/', '/projects', '/private.js', '/youtube-videos.json']) {
     const response = await request(route, { headers: { Cookie: cookie } })

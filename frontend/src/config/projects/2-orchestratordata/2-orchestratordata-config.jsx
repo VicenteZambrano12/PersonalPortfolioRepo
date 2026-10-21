@@ -4,6 +4,6 @@ export const orchestratordataConfig = {
   liveUrl: import.meta.env.VITE_ORCHESTRATOR_APP,
   thumbUrl:
     'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop',
-  tags: ['Python', 'Cloud Run', 'FastAPI'],
-  modalTags: ['GCP Cloud Run', 'Python', 'FastAPI', 'Docker', 'HTML/CSS'],
+  tags: ['AI Agents', 'Gemini', 'React', 'GCP'],
+  modalTags: ['Python', 'FastAPI', 'Pydantic', 'Gemini', 'React', 'Vite', 'Tailwind CSS', 'SQLite', 'Neon PostgreSQL', 'fakeredis', 'GCP Cloud Run', 'Docker', 'Terraform', 'GitHub Actions'],
 }

@@ -22,20 +22,20 @@
       /* Keep these standalone tokens aligned with frontend/src/utils/colors.jsx and styles.jsx. */
       :root {
         color-scheme: dark;
-        --background: #0F172A;
-        --surface: #1E293B;
-        --primary-text: #F8FAFC;
-        --secondary-text: #94A3B8;
-        --border: #334155;
-        --cyan: #06B6D4;
-        --amber: #F59E0B;
-        --button-text: #0F172A;
+        --background: #050B24;
+        --surface: #101C3D;
+        --primary-text: #F1F7FF;
+        --secondary-text: #B0BFDB;
+        --border: #34466E;
+        --cyan: #55EAF2;
+        --violet: #C4A3FF;
+        --button-text: #050B24;
         --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
         --error-text: #FCA5A5;
         --error-background: rgba(239, 68, 68, 0.1);
         --error-border: #F87171;
-        --card-radius: 12px;
-        --control-radius: 8px;
+        --card-radius: 20px;
+        --control-radius: 12px;
         --space-1: 0.5rem;
         --space-2: 1rem;
         --space-3: 1.5rem;
@@ -43,13 +43,13 @@
       }
       [data-theme="light"] {
         color-scheme: light;
-        --background: #F8FAFC;
+        --background: #F3F7FF;
         --surface: #FFFFFF;
-        --primary-text: #0F172A;
-        --secondary-text: #64748B;
-        --border: #E2E8F0;
-        --cyan: #0891B2;
-        --amber: #EA580C;
+        --primary-text: #101C3D;
+        --secondary-text: #506184;
+        --border: #CCD7ED;
+        --cyan: #007681;
+        --violet: #7040C5;
         --button-text: #FFFFFF;
         --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         --error-text: #B91C1C;
@@ -65,7 +65,7 @@
         min-height: 100dvh;
         display: grid;
         place-items: center;
-        background: var(--background);
+        background: radial-gradient(ellipse at top, color-mix(in srgb, var(--cyan) 12%, transparent), transparent 65%), var(--background);
         color: var(--primary-text);
         font-family: "Inter", system-ui, -apple-system, sans-serif;
         line-height: 1.5;
@@ -73,15 +73,11 @@
       main { width: 100%; max-width: 28rem; min-width: 0; }
       .brand { text-align: center; margin-bottom: var(--space-4); }
       .brand-mark {
-        display: inline-grid;
-        place-items: center;
-        width: 3rem;
-        height: 3rem;
+        display: inline-block;
+        width: 5rem;
+        height: 5rem;
         margin-bottom: var(--space-2);
-        border: 1px solid var(--cyan);
-        border-radius: var(--control-radius);
-        color: var(--cyan);
-        font-weight: 700;
+        border-radius: 50%;
       }
       .brand-name { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.025em; }
       .brand-subtitle { margin: 0.25rem 0 0; color: var(--cyan); font-size: 0.875rem; }
@@ -150,7 +146,7 @@
         margin-top: var(--space-3);
         padding: 0.75rem var(--space-3);
         border: 0;
-        background: var(--amber);
+        background: var(--violet);
         color: var(--button-text);
         font-size: 1.25rem;
         font-weight: 700;
@@ -174,8 +170,6 @@
         font-size: 0.875rem;
       }
       #reset-password:hover:not(:disabled) { border-color: var(--cyan); }
-      [data-theme="light"] .brand-subtitle,
-      [data-theme="light"] #reset-password { color: var(--secondary-text); }
       .access-note { margin: var(--space-3) var(--space-1) 0; text-align: center; color: var(--secondary-text); font-size: 0.875rem; }
       @keyframes spin { to { transform: rotate(360deg); } }
       @media (min-width: 480px) { .login-card { padding: var(--space-4); } }
@@ -188,7 +182,7 @@
   <body>
     <main>
       <header class="brand" aria-label="Application">
-        <div class="brand-mark" aria-hidden="true">VZ</div>
+        <img class="brand-mark" src="/auth/brand/logo.png" alt="" width="80" height="80">
         <p class="brand-name">Vicente Zambrano Andrada</p>
         <p class="brand-subtitle">Personal portfolio</p>
       </header>

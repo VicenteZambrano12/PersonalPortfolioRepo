@@ -50,13 +50,29 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
   return (
     <>
     <div inert={Boolean(selectedPresentation)}>
+    <a href="#main-content" className="skip-link">{t.portfolio.skipToContent}</a>
     <MainLayout
       theme={theme}
       header={<Header theme={theme} onToggleTheme={onToggleTheme} language={language} onChangeLanguage={onChangeLanguage} t={t} />}
       footer={<Footer theme={theme} t={t} />}
     >
+      <section className="rounded-3xl p-6 sm:p-10 mb-10 flex items-center justify-between gap-8 overflow-hidden" style={styles.hero} aria-labelledby="intro-heading">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] mb-4" style={styles.siteHeaderSubtitle}>{t.portfolio.eyebrow}</p>
+          <h2 id="intro-heading" className="text-3xl sm:text-5xl font-bold tracking-tight leading-tight mb-5">{t.portfolio.intro}</h2>
+          <p className="text-base sm:text-lg leading-relaxed mb-6" style={styles.socialIcon}>{t.portfolio.description}</p>
+          <a href="#projects" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold" style={styles.themeToggle}>
+            {t.portfolio.explore} <i className="ph ph-arrow-down" aria-hidden="true"></i>
+          </a>
+        </div>
+        <img src="/logo.png" alt="" width="224" height="224" className="hero-logo brand-logo hidden md:block w-40 lg:w-56 h-auto shrink-0" />
+      </section>
+      <section id="projects" className="scroll-mt-6" aria-labelledby="projects-heading">
       <div className="flex flex-wrap items-center justify-between gap-4" style={styles.header}>
-        <h2 className="text-2xl font-semibold" style={styles.sectionHeading}>{t.portfolio.heading}</h2>
+        <div>
+          <h2 id="projects-heading" className="text-2xl font-bold" style={styles.sectionHeading}>{t.portfolio.heading}</h2>
+          <p className="mt-2 text-sm" style={styles.socialIcon}>{t.portfolio.projectHint}</p>
+        </div>
         <div className="flex flex-wrap gap-3">
           {['business', 'technical'].map((audience) => (
             <button
@@ -66,19 +82,28 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
               className="inline-flex items-center gap-2 transition-colors"
               style={{ ...styles.buttonSecondary, width: 'auto' }}
             >
-              <i className="ph ph-presentation"></i> {t.portfolio[`${audience}Presentation`]}
+              <i className={`ph ${audience === 'business' ? 'ph-chart-line' : 'ph-code'}`} aria-hidden="true"></i> {t.portfolio[`${audience}Presentation`]}
             </button>
           ))}
+          <button
+            type="button"
+            disabled
+            className="inline-flex items-center gap-2"
+            style={{ ...styles.buttonSecondary, width: 'auto' }}
+          >
+            <i className="ph ph-video-camera" aria-hidden="true"></i> {t.portfolio.video}
+          </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         {Object.entries(translatedProjects).map(([id, project]) => (
-          <ProjectCard key={id} project={project} theme={theme} onSelect={() => handleSelectProject(id)} />
+          <ProjectCard key={id} project={project} theme={theme} cta={t.portfolio.viewProject} onSelect={() => handleSelectProject(id)} />
         ))}
 
         <YoutubeCard theme={theme} t={t.externalLink} onSelect={() => handleSelectProject('youtube')} />
       </div>
+      </section>
 
       {selectedProject && (
         <ProjectModal project={selectedProject} theme={theme} t={t} onClose={handleCloseProject} onOpenPresentation={handleOpenPresentation} />

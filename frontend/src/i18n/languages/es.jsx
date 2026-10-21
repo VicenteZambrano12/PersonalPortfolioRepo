@@ -4,11 +4,22 @@ export const es = {
   header: {
     subtitle: 'Desarrollador de Soluciones Cloud y Apps con IA',
     signOut: 'Cerrar sesión',
+    toggleTheme: 'Cambiar tema de color',
+    lightTheme: 'Activar modo claro',
+    darkTheme: 'Activar modo oscuro',
   },
   portfolio: {
     heading: 'Mis Proyectos',
+    skipToContent: 'Saltar al contenido',
+    eyebrow: 'Ingeniería cloud · IA aplicada',
+    intro: 'De ideas a experiencias inteligentes.',
+    description: 'Explora las apps que desarrollo, los sistemas que las hacen posibles y las ideas que comparto. Soluciones cloud e IA prácticas y accesibles.',
+    explore: 'Explorar mi trabajo',
+    projectHint: 'Descubre cada proyecto, prueba la app o explora su diseño.',
+    viewProject: 'Explorar proyecto',
     businessPresentation: 'Portfolio: Resumen de negocio',
     technicalPresentation: 'Portfolio: ¿Cómo funciona?',
+    video: 'Portfolio: Vídeo — próximamente',
   },
   footer: {
     rights: 'Todos los derechos reservados.',
@@ -31,10 +42,12 @@ export const es = {
     videosError: 'No se pudieron cargar los vídeos. Visita el canal para ver los últimos vídeos.',
   },
   modal: {
+    close: 'Cerrar',
     videoWalkthrough: 'Video Explicativo',
     description: 'Descripción',
     techStack: 'Stack Tecnológico',
     openLiveApp: 'Abrir Aplicación',
+    demoUnavailable: 'El enlace de la demo de este proyecto aún no está configurado.',
     technicalPresentation: '¿Cómo funciona?',
     businessPresentation: 'Resumen de negocio',
     viewTechnicalPresentation: '¿Cómo funciona?',
@@ -56,11 +69,11 @@ export const es = {
     },
     orchestratordata: {
       title: 'Orchestrator Data App',
-      subtitle: 'Gestor de Pipelines de Datos',
+      subtitle: 'Asistente de fitness con IA basado en la intención',
       description:
-        'Una plataforma centralizada creada para orquestar, monitorizar y gestionar pipelines de datos complejos y cargas de trabajo de IA sin servidor de forma segura y eficiente en Google Cloud Platform.',
+        'Form dirige las consultas de fitness a agentes de IA especializados para explicar ejercicios con imágenes de referencia, crear rutinas y revisar el progreso registrado mediante consultas SQL controladas.',
       fullDescription:
-        'Una robusta plataforma de orquestación de datos que actúa como centro para monitorizar, gestionar y activar diversos pipelines de procesamiento de datos impulsados por IA. Garantiza que los datos fluyan de forma segura entre instancias aisladas.',
+        'Form es una aplicación de gimnasio que demuestra la orquestación de IA basada en la intención. Un orquestador con Gemini selecciona un agente especializado para explicar ejercicios, crear rutinas o analizar entrenamientos registrados; un pipeline Python ejecuta la tarea seleccionada mediante consultas SQL predefinidas y parametrizadas. La interfaz React presenta imágenes de ejercicios, borradores de rutinas que requieren confirmación explícita para guardarse e informes de progreso basados en datos. También permite seguir rutinas guardadas y registrar series completadas fuera del chat. FastAPI utiliza SQLite en local y Neon PostgreSQL en cloud, con frontend y backend desplegados juntos en GCP Cloud Run mediante Docker, Terraform y GitHub Actions. La memoria conversacional y los borradores usan fakeredis dentro del proceso y no son duraderos.',
     },
     voicesimulator: {
       title: 'Voice Simulator',

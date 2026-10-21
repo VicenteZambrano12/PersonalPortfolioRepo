@@ -1,21 +1,25 @@
 export const brandPalettes = {
   dark: {
-    background: '#0F172A',     // Trust Navy
-    surface: '#1E293B',        // Elevated Navy for cards/modals
-    primaryText: '#F8FAFC',    // Demystified White
-    secondaryText: '#94A3B8',  // Light Slate
-    border: '#334155',         // Dark Slate
-    accentCyan: '#06B6D4',     // Cognitive Cyan
-    accentAmber: '#F59E0B',    // Clarity Amber
+    background: '#050B24',
+    surface: '#101C3D',
+    primaryText: '#F1F7FF',
+    secondaryText: '#B0BFDB',
+    border: '#34466E',
+    accentCyan: '#55EAF2',
+    accentBlue: '#80B4FF',
+    accentViolet: '#C4A3FF',
+    onAccent: '#050B24',
   },
   light: {
-    background: '#F8FAFC',     // Demystified White
-    surface: '#FFFFFF',        // Pure White for cards/modals
-    primaryText: '#0F172A',    // Trust Navy
-    secondaryText: '#64748B',  // Pragmatic Slate
-    border: '#E2E8F0',         // Light Slate
-    accentCyan: '#0891B2',     // Slightly deeper Cyan for text contrast
-    accentAmber: '#EA580C',    // Deeper Amber for text contrast
+    background: '#F3F7FF',
+    surface: '#FFFFFF',
+    primaryText: '#101C3D',
+    secondaryText: '#506184',
+    border: '#CCD7ED',
+    accentCyan: '#007681',
+    accentBlue: '#2956C7',
+    accentViolet: '#7040C5',
+    onAccent: '#FFFFFF',
   }
 };
 
