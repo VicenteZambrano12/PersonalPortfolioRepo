@@ -19,7 +19,7 @@ export const getStyles = (theme = 'dark') => {
     },
     themeToggle: {
       backgroundColor: colors.surface,
-      color: colors.accentAmber,
+      color: colors.accentViolet,
       border: `1px solid ${colors.border}`,
     },
     languageSwitcher: {
@@ -45,19 +45,23 @@ export const getStyles = (theme = 'dark') => {
       paddingBottom: '1.5rem',
       borderBottom: `1px solid ${colors.border}`,
     },
+    hero: {
+      background: `radial-gradient(ellipse at top right, ${hexToRgba(colors.accentCyan, 0.13)}, transparent 65%), ${colors.surface}`,
+      border: `1px solid ${colors.border}`,
+    },
     sectionHeading: {
       color: colors.primaryText,
     },
     card: {
       backgroundColor: colors.surface,
       border: `1px solid ${colors.border}`,
-      borderRadius: '12px',
-      padding: '1.5rem',
+      borderRadius: '20px',
+      padding: 'clamp(1.25rem, 3vw, 2rem)',
       cursor: 'pointer',
       boxShadow: theme === 'light' 
-        ? '0 4px 6px -1px rgba(0, 0, 0, 0.05)' 
-        : '0 4px 6px -1px rgba(0, 0, 0, 0.4)',
-      transition: 'transform 0.2s ease, border-color 0.2s ease',
+        ? '0 8px 30px -12px rgba(16, 28, 61, 0.12)'
+        : '0 8px 30px -12px rgba(0, 0, 0, 0.45)',
+      transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
     },
     cardTitle: {
       fontSize: '1.25rem',
@@ -69,12 +73,12 @@ export const getStyles = (theme = 'dark') => {
       fontSize: '0.875rem',
       fontWeight: '600',
       color: colors.accentCyan,
-      marginBottom: '1rem',
+      marginBottom: '0',
     },
     cardDescription: {
       fontSize: '0.95rem',
       color: colors.secondaryText,
-      lineHeight: '1.5',
+      lineHeight: '1.75',
       marginBottom: '1.5rem',
     },
     iconBox: {
@@ -94,7 +98,7 @@ export const getStyles = (theme = 'dark') => {
       flexWrap: 'wrap',
     },
     tag: {
-      backgroundColor: theme === 'light' ? '#F1F5F9' : '#0F172A',
+      backgroundColor: colors.background,
       color: colors.secondaryText,
       padding: '0.25rem 0.75rem',
       borderRadius: '9999px',
@@ -104,7 +108,9 @@ export const getStyles = (theme = 'dark') => {
     },
     youtubeCard: {
       backgroundColor: colors.surface,
-      border: `1px solid ${hexToRgba(colors.accentAmber, 0.35)}`,
+      border: `1px solid ${colors.border}`,
+      backgroundImage: `linear-gradient(135deg, ${hexToRgba(colors.accentViolet, 0.08)}, transparent 70%)`,
+      borderRadius: '20px',
     },
     youtubeIconBox: {
       width: '3rem',
@@ -113,8 +119,8 @@ export const getStyles = (theme = 'dark') => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: hexToRgba('#EF4444', 0.1),
-      color: '#EF4444',
+      backgroundColor: hexToRgba(colors.accentViolet, 0.12),
+      color: colors.accentViolet,
       flexShrink: 0,
     },
     youtubeTitle: {
@@ -126,16 +132,16 @@ export const getStyles = (theme = 'dark') => {
     youtubeSubtitle: {
       fontSize: '0.875rem',
       fontWeight: '600',
-      color: colors.accentAmber,
+      color: colors.accentViolet,
       marginBottom: '1rem',
     },
     youtubeTagline: {
       color: colors.primaryText,
-      borderLeft: `4px solid ${colors.accentAmber}`,
+      borderLeft: `3px solid ${colors.accentViolet}`,
       paddingLeft: '1rem',
     },
     youtubeCta: {
-      color: colors.accentAmber,
+      color: colors.accentViolet,
       fontWeight: '600',
     },
     modalOverlay: {
@@ -152,7 +158,7 @@ export const getStyles = (theme = 'dark') => {
     modalContent: {
       backgroundColor: colors.surface,
       border: `1px solid ${colors.border}`,
-      borderRadius: '12px',
+      borderRadius: '20px',
       position: 'relative',
     },
     modalHeader: {
@@ -166,15 +172,17 @@ export const getStyles = (theme = 'dark') => {
       backgroundColor: colors.background,
       color: colors.secondaryText,
       border: `1px solid ${colors.border}`,
+      minWidth: '44px',
+      minHeight: '44px',
     },
     videoFrame: {
       backgroundColor: colors.background,
       border: `1px solid ${colors.border}`,
     },
     playButton: {
-      backgroundColor: colors.accentAmber,
-      color: colors.background,
-      boxShadow: `0 0 20px ${hexToRgba(colors.accentAmber, 0.35)}`,
+      backgroundColor: colors.accentViolet,
+      color: colors.onAccent,
+      boxShadow: `0 0 20px ${hexToRgba(colors.accentViolet, 0.2)}`,
     },
     videoBadge: {
       backgroundColor: hexToRgba(colors.background, 0.8),
@@ -199,10 +207,10 @@ export const getStyles = (theme = 'dark') => {
       border: `1px solid ${hexToRgba(colors.accentCyan, 0.2)}`,
     },
     buttonPrimary: {
-      backgroundColor: colors.accentAmber,
-      color: theme === 'light' ? '#FFFFFF' : '#0F172A',
+      backgroundColor: colors.accentViolet,
+      color: colors.onAccent,
       padding: '0.75rem 1.5rem',
-      borderRadius: '8px',
+      borderRadius: '12px',
       border: 'none',
       fontWeight: '600',
       cursor: 'pointer',
@@ -213,7 +221,7 @@ export const getStyles = (theme = 'dark') => {
       backgroundColor: 'transparent',
       color: colors.accentCyan,
       padding: '0.75rem 1.5rem',
-      borderRadius: '8px',
+      borderRadius: '12px',
       border: `1px solid ${hexToRgba(colors.accentCyan, 0.4)}`,
       fontWeight: '600',
       cursor: 'pointer',

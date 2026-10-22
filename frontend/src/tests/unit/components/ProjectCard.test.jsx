@@ -31,4 +31,16 @@ describe('ProjectCard', () => {
 
     expect(onSelect).toHaveBeenCalledTimes(1)
   })
+
+  it.each(['{Enter}', ' '])('opens from the keyboard with %s', async (key) => {
+    const user = userEvent.setup()
+    const onSelect = vi.fn()
+    render(<ProjectCard project={project} theme="light" onSelect={onSelect} />)
+    const card = screen.getByRole('button', { name: project.title })
+    expect(card).toHaveAttribute('aria-haspopup', 'dialog')
+    await user.tab()
+    expect(card).toHaveFocus()
+    await user.keyboard(key)
+    expect(onSelect).toHaveBeenCalledOnce()
+  })
 })

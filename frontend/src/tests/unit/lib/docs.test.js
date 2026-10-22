@@ -1,16 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { getDocUrl } from '../../../lib/docs.js'
+import { getPresentationUrl } from '../../../lib/docs.js'
 
-describe('getDocUrl', () => {
-  it('builds the public doc URL from slug, language and file name', () => {
-    expect(getDocUrl('pauhelper', 'en', 'techdoc')).toBe(
-      '/assets/projects/pauhelper/docs/en/techdoc.pdf'
-    )
-  })
-
-  it('reflects the requested language in the path', () => {
-    expect(getDocUrl('pauhelper', 'es', 'nontechdoc')).toBe(
-      '/assets/projects/pauhelper/docs/es/nontechdoc.pdf'
-    )
-  })
+describe('getPresentationUrl', () => {
+  it.each(['0-portfolio', '1-pauhelper', '2-orchestratordata', '3-voicesimulator'])(
+    'builds both presentation URLs for %s in both languages',
+    (slug) => {
+      for (const audience of ['business', 'technical']) {
+        for (const language of ['en', 'es']) {
+          expect(getPresentationUrl(slug, language, audience)).toBe(
+            `/src/features/docs/${slug}/${audience}.html?lang=${language}`
+          )
+        }
+      }
+    }
+  )
 })

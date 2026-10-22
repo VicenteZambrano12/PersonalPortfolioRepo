@@ -16,19 +16,23 @@
   }
 }
 
-/* Mirrors utils/colors.jsx accent values; only used for :hover states inline styles can't express. */
+/* Keep theme tokens aligned with utils/colors.jsx. */
 :root {
   color-scheme: dark;
-  --color-cyan: #06B6D4;
-  --color-amber: #F59E0B;
-  --color-scrollbar-track: #1e293b;
+  --color-cyan: #55EAF2;
+  --color-violet: #C4A3FF;
+  --color-background: #050B24;
+  --color-text: #F1F7FF;
+  --color-scrollbar-track: #101C3D;
 }
 
 [data-theme='light'] {
   color-scheme: light;
-  --color-cyan: #0891B2;
-  --color-amber: #EA580C;
-  --color-scrollbar-track: #E2E8F0;
+  --color-cyan: #007681;
+  --color-violet: #7040C5;
+  --color-background: #F3F7FF;
+  --color-text: #101C3D;
+  --color-scrollbar-track: #CCD7ED;
 }
 
 html, body, #root {
@@ -41,10 +45,43 @@ html {
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.6;
   transition: background-color 0.3s ease, color 0.3s ease;
   overflow-x: hidden;
 }
+
+:where(button, a, select, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-cyan);
+  outline-offset: 4px;
+}
+
+button, select, a { -webkit-tap-highlight-color: transparent; }
+button:not(:disabled), select { cursor: pointer; }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+button, select { min-height: 44px; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+::selection { background: var(--color-violet); color: var(--color-background); }
+
+.skip-link {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 150;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: var(--color-background);
+  color: var(--color-text);
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: translateY(0); }
+.brand-logo { border-radius: 50%; }
+.hero-logo { filter: drop-shadow(0 12px 28px rgba(5, 11, 36, 0.2)); }
+.card-action { border-top: 1px solid var(--color-scrollbar-track); }
 
 /* Custom scrollbar for modal */
 .custom-scrollbar::-webkit-scrollbar {
@@ -70,10 +107,17 @@ body {
   border-color: var(--color-cyan) !important;
   color: var(--color-cyan) !important;
 }
-.project-card:hover {
+.project-card:hover, .project-card:focus-visible {
   border-color: var(--color-cyan) !important;
 }
-.youtube-card:hover {
-  border-color: var(--color-amber) !important;
+.youtube-card:hover, .youtube-card:focus-visible {
+  border-color: var(--color-violet) !important;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

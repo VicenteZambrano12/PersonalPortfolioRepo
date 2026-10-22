@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { once } from 'node:events'
-import { mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, mock, test } from 'node:test'
@@ -21,6 +21,7 @@ beforeEach(async () => {
   staticDir = await mkdtemp(path.join(os.tmpdir(), 'portfolio-auth-test-'))
   await writeFile(path.join(staticDir, 'index.html'), '<h1>Private portfolio</h1>')
   await writeFile(path.join(staticDir, 'private.js'), 'private-content')
+  await writeFile(path.join(staticDir, 'logo.png'), Buffer.from([137, 80, 78, 71]))
   await writeFile(path.join(staticDir, 'youtube-videos.json'), '[{"title":"private-video"}]')
   auth = {
     verifyIdToken: mock.fn(async () => claims()),
@@ -67,7 +68,7 @@ test('login, web configuration, and health check are public, but never contain p
 })
 
 test('all portfolio routes and assets require a session, including HEAD requests', async () => {
-  for (const route of ['/', '/index.html', '/projects', '/private.js', '/youtube-videos.json', '/assets/app.js']) {
+  for (const route of ['/', '/index.html', '/projects', '/private.js', '/youtube-videos.json', '/assets/app.js', '/logo.png', '/auth/brand/private.js']) {
     for (const method of ['GET', 'HEAD']) {
       const response = await request(route, { method })
       assert.equal(response.status, 303, `${method} ${route}`)
@@ -77,6 +78,15 @@ test('all portfolio routes and assets require a session, including HEAD requests
   }
 })
 
+test('only the sign-in brand logo is public without exposing other assets', async () => {
+  const response = await request('/auth/brand/logo.png')
+  assert.equal(response.status, 200)
+  assert.match(response.headers.get('content-type'), /image\/png/)
+  assert.deepEqual(Buffer.from(await response.arrayBuffer()), Buffer.from([137, 80, 78, 71]))
+  assert.equal(auth.verifySessionCookie.mock.callCount(), 0)
+  const login = await request('/login')
+  assert.match(await login.text(), /src="\/auth\/brand\/logo.png"/)
+})
 test('a verified session serves files and SPA routes without public caching', async () => {
   for (const route of ['/', '/projects', '/private.js', '/youtube-videos.json']) {
     const response = await request(route, { headers: { Cookie: cookie } })
@@ -91,6 +101,25 @@ test('a returning authenticated visitor skips the login page', async () => {
   const response = await request('/login', { headers: { Cookie: cookie } })
   assert.equal(response.status, 303)
   assert.equal(response.headers.get('location'), '/')
+})
+
+test('only authenticated presentation pages permit same-origin framing', async () => {
+  const folder = path.join(staticDir, 'src/features/docs/0-portfolio')
+  await mkdir(folder, { recursive: true })
+  await writeFile(path.join(folder, 'business.html'), '<h1>Business slides</h1>')
+  const route = '/src/features/docs/0-portfolio/business.html'
+  const unauthenticated = await request(route)
+  assert.equal(unauthenticated.status, 303)
+  assert.equal(unauthenticated.headers.get('x-frame-options'), 'DENY')
+  const presentation = await request(route, { headers: { Cookie: cookie } })
+  assert.equal(presentation.status, 200)
+  assert.equal(presentation.headers.get('x-frame-options'), 'SAMEORIGIN')
+  assert.match(await presentation.text(), /Business slides/)
+  for (const route of ['/', '/login', '/private.js']) {
+    const response = await request(route, { headers: { Cookie: cookie } })
+    assert.equal(response.headers.get('x-frame-options'), 'DENY')
+    await response.text()
+  }
 })
 
 test('invalid, expired, revoked, deleted, or disabled sessions never expose content', async () => {

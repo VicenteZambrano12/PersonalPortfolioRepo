@@ -12,6 +12,7 @@ describe('Header', () => {
 
     expect(screen.getByText('Vicente Zambrano Andrada')).toBeInTheDocument()
     expect(screen.getByText(en.header.subtitle)).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Portfolio logo' })).toHaveAttribute('src', '/logo.png')
   })
 
   it('calls onToggleTheme when the theme button is clicked', async () => {

@@ -54,6 +54,7 @@ export function createApp({ auth, firebaseConfig, staticDir, loginFile, secureCo
 
   app.get('/healthz', (req, res) => res.send('ok'))
   app.get('/auth/config', (req, res) => res.json(firebaseConfig))
+  app.get('/auth/brand/logo.png', (req, res) => res.sendFile(path.join(staticDir, 'logo.png')))
   app.get('/login', readSession, (req, res) => {
     if (req.user) return res.redirect(303, '/')
     res.sendFile(loginFile)
@@ -95,6 +96,10 @@ export function createApp({ auth, firebaseConfig, staticDir, loginFile, secureCo
   app.use(readSession, (req, res, next) => {
     if (req.user) return next()
     res.redirect(303, '/login')
+  })
+  app.use('/src/features/docs', (req, res, next) => {
+    res.set('X-Frame-Options', 'SAMEORIGIN')
+    next()
   })
   app.use(express.static(staticDir, { index: false, dotfiles: 'deny', cacheControl: false }))
   app.get('/{*route}', (req, res) => {

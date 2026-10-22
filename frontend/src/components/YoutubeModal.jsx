@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { YOUTUBE_CHANNEL_URL, validateYoutubeVideos } from '../lib/youtube.js'
 import { createLogger } from '../utils/logger.js'
 import { getStyles } from '../utils/styles.jsx'
+import { useModalFocus } from '../utils/useModalFocus.js'
 
 const log = createLogger('youtube')
 
@@ -12,33 +13,7 @@ function YoutubeModal({ theme, t, onClose }) {
   const dialogRef = useRef(null)
   const closeRef = useRef(null)
 
-  useEffect(() => {
-    const previousFocus = document.activeElement
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    closeRef.current.focus()
-
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') onClose()
-      if (event.key !== 'Tab') return
-      const elements = dialogRef.current.querySelectorAll('button, a[href]')
-      const first = elements[0]
-      const last = elements[elements.length - 1]
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => {
-      document.body.style.overflow = previousOverflow
-      document.removeEventListener('keydown', handleKeyDown)
-      previousFocus?.focus()
-    }
-  }, [onClose])
+  useModalFocus(dialogRef, closeRef, onClose)
 
   useEffect(() => {
     const controller = new AbortController()
