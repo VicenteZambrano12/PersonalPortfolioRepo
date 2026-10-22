@@ -52,8 +52,10 @@ an explanation is shown instead of hiding the action or linking to `#`.
 PAUHelper uses `VITE_PAUHELPER_LIVE_URL`; Orchestrator uses
 `VITE_ORCHESTRATOR_APP`. For local development, set these in the repository-root
 `.env` (Vite uses `envDir: '..'`) or in the process environment, then restart
-Vite. Production receives them as Docker build arguments; changes require a
-rebuild. See [.env.example](.env.example) for the variable names.
+Vite. Copy the repository-root [.env.sample](../.env.sample) to `.env` to get
+started; it also includes `VITE_QDRANT_VM_STARTER_URL` for the Qdrant VM starter.
+These values are public frontend configuration, so do not include secrets.
+Production receives them as Docker build arguments; changes require a rebuild.
 Voice Simulator does not currently have a demo URL configured.
 
 ## YouTube card

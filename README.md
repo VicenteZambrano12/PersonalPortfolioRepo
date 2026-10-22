@@ -24,3 +24,32 @@ I created this project as a secure, time-efficient, and cost-effective gateway t
 The business value is straightforward: showcase my work while keeping access to the demos under my control. Only the people I authorize can use them, rather than making LLM access available to everyone.
 
 The application starts with a basic, low-cost foundation designed to scale and support more features as my portfolio grows.
+
+## 2. Repo structure
+
+The repository has three main modules:
+
+- **`frontend/`**: The React web application that presents my portfolio projects.
+- **`infra/`**: The infrastructure module for Terraform files and deployment configuration.
+- **`server/`**: The backend that handles application authentication.
+
+The `auth-portal/` directory contains the HTML for the authentication portal served by the application. The `.github/workflows/` directory contains the GitHub Actions workflows. The `Dockerfile` and this README are located at the repository root.
+
+```text
+PersonalPortfolioRepo/
+├── .github/
+│   └── workflows/           # GitHub Actions workflows
+├── auth-portal/
+│   └── index.html           # Authentication portal HTML
+├── frontend/                # React web application
+│   ├── public/              # Static assets
+│   └── src/                 # Application source and tests
+├── infra/                   # Infrastructure module for Terraform
+├── server/                  # Authentication backend
+│   ├── app.js
+│   ├── index.js
+│   └── test/
+├── Dockerfile               # Container image definition
+├── nginx.conf.template      # Nginx configuration template
+└── README.md
+```
