@@ -13,6 +13,11 @@ authorized domains. Add custom domain hostnames through `authorized_domains`.
 
 ## Production deployment
 
+The `portfolio-frontend-secrets` Secret Manager value is JSON containing the
+project URLs `VITE_PAUHELPER_LIVE_URL`, `VITE_ORCHESTRATOR_APP`, and
+`VITE_HISTORIC_GUIDE_APP`. The last URL is used by the Voice Simulator card.
+The deployment workflow passes these values into the frontend build.
+
 1. Register or select a Firebase web app in the deployment project. Set the GitHub
    repository Actions variable `FIREBASE_API_KEY` to its actual public web API key.
    Optionally set `FIREBASE_AUTH_DOMAIN`; an empty/unset value defaults to
