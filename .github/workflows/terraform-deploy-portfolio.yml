@@ -91,14 +91,17 @@ jobs:
           SECRET_JSON=$(gcloud secrets versions access latest --secret="${{ env.FRONTEND_SECRET_ID }}" --project="${{ env.PROJECT_ID }}")
           VITE_PAUHELPER_LIVE_URL=$(echo "$SECRET_JSON" | jq -r '.VITE_PAUHELPER_LIVE_URL')
           VITE_ORCHESTRATOR_APP=$(echo "$SECRET_JSON" | jq -r '.VITE_ORCHESTRATOR_APP')
+          VITE_HISTORIC_GUIDE_APP=$(echo "$SECRET_JSON" | jq -er '.VITE_HISTORIC_GUIDE_APP | strings | select(length > 0)')
           echo "::add-mask::$VITE_PAUHELPER_LIVE_URL"
           echo "::add-mask::$VITE_ORCHESTRATOR_APP"
+          echo "::add-mask::$VITE_HISTORIC_GUIDE_APP"
           echo "vite_pauhelper_live_url=$VITE_PAUHELPER_LIVE_URL" >> "$GITHUB_OUTPUT"
           echo "vite_orchestrator_app=$VITE_ORCHESTRATOR_APP" >> "$GITHUB_OUTPUT"
+          echo "vite_historic_guide_app=$VITE_HISTORIC_GUIDE_APP" >> "$GITHUB_OUTPUT"
 
       - name: Build Docker image
         if: steps.image.outputs.build == 'true'
-        run: docker build --build-arg VITE_PAUHELPER_LIVE_URL="${{ steps.frontend-secrets.outputs.vite_pauhelper_live_url }}" --build-arg VITE_ORCHESTRATOR_APP="${{ steps.frontend-secrets.outputs.vite_orchestrator_app }}" -t ${{ steps.image.outputs.image }} .
+        run: docker build --build-arg VITE_PAUHELPER_LIVE_URL="${{ steps.frontend-secrets.outputs.vite_pauhelper_live_url }}" --build-arg VITE_ORCHESTRATOR_APP="${{ steps.frontend-secrets.outputs.vite_orchestrator_app }}" --build-arg VITE_HISTORIC_GUIDE_APP="${{ steps.frontend-secrets.outputs.vite_historic_guide_app }}" -t ${{ steps.image.outputs.image }} .
 
       - name: Push Docker image
         if: steps.image.outputs.build == 'true'

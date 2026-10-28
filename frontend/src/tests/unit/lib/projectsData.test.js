@@ -37,4 +37,8 @@ describe('projectsData', () => {
       expect(en.projects[id]).toBeDefined()
     })
   })
+
+  it('uses the Historic Guide app URL for the Voice Simulator live link', () => {
+    expect(projectsData.voicesimulator.liveUrl).toBe(import.meta.env.VITE_HISTORIC_GUIDE_APP)
+  })
 })
