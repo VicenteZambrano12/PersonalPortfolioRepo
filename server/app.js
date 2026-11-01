@@ -16,6 +16,8 @@ const INVALID_CREDENTIAL_CODES = new Set([
 ])
 
 const VIDEO_PREFIX = 'videos'
+// Cloud Run rejects fixed-length HTTP/1 responses over 32 MiB, so ranges are capped below that.
+const MAX_RANGE_BYTES = 16 * 1024 * 1024
 const VIDEO_SEGMENTS = {
   app: /^\d+-[a-z0-9-]+$/,
   lang: /^(EN|ES)$/,
@@ -126,15 +128,17 @@ export function createApp({ auth, firebaseConfig, staticDir, loginFile, secureCo
           start = Math.max(size - Number(match[2]), 0)
         }
         if (start >= size || start > end) return res.status(416).set('Content-Range', `bytes */${size}`).end()
+        end = Math.min(end, start + MAX_RANGE_BYTES - 1)
       }
       res.status(range ? 206 : 200)
       res.set({
         'Accept-Ranges': 'bytes',
         'Cache-Control': 'private, max-age=3600',
-        'Content-Length': String(end - start + 1),
         'Content-Type': metadata.contentType || 'application/octet-stream',
       })
-      if (range) res.set('Content-Range', `bytes ${start}-${end}/${size}`)
+      if (range) {
+        res.set({ 'Content-Range': `bytes ${start}-${end}/${size}`, 'Content-Length': String(end - start + 1) })
+      }
       const stream = object.createReadStream({ start, end })
       stream.on('error', (error) => {
         console.error('Video stream failed:', error.code ?? error.message)
