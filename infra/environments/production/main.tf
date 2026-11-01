@@ -1,4 +1,7 @@
 locals {
+  # Shared bucket (also holds Terraform state); only the videos/ prefix is exposed to the runtime SA.
+  video_bucket = "terraform_bucket_portfolio"
+
   # Pre-existing Cloud Run runtime SA, created manually in the console (not Terraform-managed).
   cloud_run_service_account_email = "portfolio-repo-sa@basicrahgapp.iam.gserviceaccount.com"
 }
@@ -23,6 +26,7 @@ module "cloudrun" {
   serverless_subnet_id  = module.networking.subnet_id
   common_labels         = var.common_labels
   firebase_api_key      = var.firebase_api_key
+  video_bucket          = local.video_bucket
   firebase_auth_domain  = coalesce(var.firebase_auth_domain, "${var.project_id}.firebaseapp.com")
 }
 
@@ -64,4 +68,16 @@ module "secrets" {
 import {
   id = "projects/${var.project_id}/secrets/portfolio-frontend-secrets"
   to = module.secrets.google_secret_manager_secret.app_secrets
+}
+
+resource "google_storage_bucket_iam_member" "runtime_videos" {
+  bucket = local.video_bucket
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${local.cloud_run_service_account_email}"
+
+  condition {
+    title       = "videos-prefix-only"
+    description = "Read access limited to the videos/ prefix"
+    expression  = "resource.name.startsWith(\"projects/_/buckets/${local.video_bucket}/objects/videos/\")"
+  }
 }

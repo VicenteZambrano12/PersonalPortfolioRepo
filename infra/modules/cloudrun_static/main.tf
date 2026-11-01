@@ -32,6 +32,11 @@ resource "google_cloud_run_v2_service" "this" {
         value = var.firebase_auth_domain
       }
 
+      env {
+        name  = "VIDEO_BUCKET"
+        value = var.video_bucket
+      }
+
       ports {
         container_port = var.container_port
       }

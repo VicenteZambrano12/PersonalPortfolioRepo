@@ -42,3 +42,8 @@ variable "firebase_auth_domain" {
   type        = string
   description = "Firebase web authentication domain."
 }
+
+variable "video_bucket" {
+  type        = string
+  description = "Bucket whose videos/ prefix the server streams to signed-in users."
+}

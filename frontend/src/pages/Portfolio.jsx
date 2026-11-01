@@ -106,7 +106,7 @@ function Portfolio({ theme, onToggleTheme, language, onChangeLanguage, t }) {
       </section>
 
       {selectedProject && (
-        <ProjectModal project={selectedProject} theme={theme} t={t} onClose={handleCloseProject} onOpenPresentation={handleOpenPresentation} />
+        <ProjectModal project={selectedProject} theme={theme} language={language} t={t} onClose={handleCloseProject} onOpenPresentation={handleOpenPresentation} />
       )}
       {selectedProjectId === 'youtube' && (
         <YoutubeModal theme={theme} t={t.externalLink} onClose={handleCloseProject} />

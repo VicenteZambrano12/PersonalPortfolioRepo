@@ -5,7 +5,9 @@ import { useModalFocus } from '../utils/useModalFocus.js'
 
 const log = createLogger('project-modal')
 
-function ProjectModal({ project, theme, t, onClose, onOpenPresentation }) {
+function ProjectModal({ project, theme, language, t, onClose, onOpenPresentation }) {
+  const videoFile = project.videos?.[language]
+  const videoUrl = videoFile ? `/videos/${project.slug}/${language.toUpperCase()}/${videoFile}` : null
   const styles = getStyles(theme)
   const dialogRef = useRef(null)
   const closeRef = useRef(null)
@@ -46,11 +48,23 @@ function ProjectModal({ project, theme, t, onClose, onOpenPresentation }) {
 
         <div className="p-5 sm:p-6 overflow-y-auto custom-scrollbar flex-grow" style={styles.modalBody}>
           <div className="w-full aspect-[21/9] rounded-xl mb-8 relative overflow-hidden shadow-md" style={styles.videoFrame}>
-            <img
-              src={project.thumbUrl}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            {videoUrl ? (
+              <video
+                key={videoUrl}
+                src={videoUrl}
+                poster={project.thumbUrl}
+                controls
+                preload="metadata"
+                aria-label={project.title}
+                className="absolute inset-0 w-full h-full object-contain bg-black"
+              />
+            ) : (
+              <img
+                src={project.thumbUrl}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            )}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8">

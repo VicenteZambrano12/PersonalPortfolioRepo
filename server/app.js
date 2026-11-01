@@ -15,7 +15,14 @@ const INVALID_CREDENTIAL_CODES = new Set([
   'auth/user-not-found',
 ])
 
-export function createApp({ auth, firebaseConfig, staticDir, loginFile, secureCookies = true }) {
+const VIDEO_PREFIX = 'videos'
+const VIDEO_SEGMENTS = {
+  app: /^\d+-[a-z0-9-]+$/,
+  lang: /^(EN|ES)$/,
+  file: /^[A-Za-z0-9][A-Za-z0-9._-]*\.(mp4|webm)$/,
+}
+
+export function createApp({ auth, firebaseConfig, staticDir, loginFile, secureCookies = true, videoBucket }) {
   const app = express()
   const cookieName = secureCookies ? '__Host-portfolio_session' : 'portfolio_session'
   const cookieOptions = { httpOnly: true, secure: secureCookies, sameSite: 'lax', path: '/' }
@@ -96,6 +103,48 @@ export function createApp({ auth, firebaseConfig, staticDir, loginFile, secureCo
   app.use(readSession, (req, res, next) => {
     if (req.user) return next()
     res.redirect(303, '/login')
+  })
+  app.get('/videos/:app/:lang/:file', async (req, res, next) => {
+    const { app: appName, lang, file } = req.params
+    if (!videoBucket || !VIDEO_SEGMENTS.app.test(appName) || !VIDEO_SEGMENTS.lang.test(lang) || !VIDEO_SEGMENTS.file.test(file)) {
+      return res.status(404).send('Not found')
+    }
+    try {
+      const object = videoBucket.file(`${VIDEO_PREFIX}/${appName}/${lang}/${file}`)
+      const [metadata] = await object.getMetadata()
+      const size = Number(metadata.size)
+      let start = 0
+      let end = size - 1
+      const range = req.get('range')
+      if (range) {
+        const match = /^bytes=(\d*)-(\d*)$/.exec(range)
+        if (!match || (!match[1] && !match[2])) return res.status(416).set('Content-Range', `bytes */${size}`).end()
+        if (match[1]) {
+          start = Number(match[1])
+          if (match[2]) end = Math.min(Number(match[2]), size - 1)
+        } else {
+          start = Math.max(size - Number(match[2]), 0)
+        }
+        if (start >= size || start > end) return res.status(416).set('Content-Range', `bytes */${size}`).end()
+      }
+      res.status(range ? 206 : 200)
+      res.set({
+        'Accept-Ranges': 'bytes',
+        'Cache-Control': 'private, max-age=3600',
+        'Content-Length': String(end - start + 1),
+        'Content-Type': metadata.contentType || 'application/octet-stream',
+      })
+      if (range) res.set('Content-Range', `bytes ${start}-${end}/${size}`)
+      const stream = object.createReadStream({ start, end })
+      stream.on('error', (error) => {
+        console.error('Video stream failed:', error.code ?? error.message)
+        res.destroy(error)
+      })
+      stream.pipe(res)
+    } catch (error) {
+      if (error.code === 404) return res.status(404).send('Not found')
+      next(error)
+    }
   })
   app.use('/src/features/docs', (req, res, next) => {
     res.set('X-Frame-Options', 'SAMEORIGIN')
