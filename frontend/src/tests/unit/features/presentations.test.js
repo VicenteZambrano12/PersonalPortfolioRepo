@@ -55,7 +55,8 @@ describe('presentation templates', () => {
           expect(content.project.fullDescription).toBeTruthy()
           const slideCount = slug === '1-pauhelper'
             ? (audience === 'business' ? 6 : 9)
-            : slug === '2-orchestratordata' ? (audience === 'business' ? 6 : 14) : 3
+            : slug === '2-orchestratordata' ? (audience === 'business' ? 6 : 14)
+              : slug === '0-portfolio' && audience === 'business' ? 6 : 3
           expect(content.slides).toHaveLength(slideCount)
           expect(content.slides.every(([, prompts]) => prompts.length === 3)).toBe(true)
         }
@@ -63,7 +64,19 @@ describe('presentation templates', () => {
     }
   })
 
-  it.each(['en', 'es'])('fills PAUHelper business slides from the README, without changing the other templates (%s)', (language) => {
+  it.each(['en', 'es'])('fills Personal Portfolio business slides from the README (%s)', (language) => {
+    const content = getPresentationContent('0-portfolio', 'business', language)
+    const text = JSON.stringify(content)
+    expect(content.isTemplate).toBe(false)
+    expect(content.source).toContain('PersonalPortfolioRepo')
+    expect(content.slides).toHaveLength(6)
+    expect(text).toContain(language === 'en' ? 'hiring teams' : 'equipos de selección')
+    expect(text).toContain(language === 'en' ? 'public self-registration is disabled' : 'registro público está deshabilitado')
+    expect(text).toContain(language === 'en' ? 'low-cost foundation' : 'base de bajo coste')
+    expect(getPresentationContent('0-portfolio', 'technical', language).isTemplate).toBe(true)
+  })
+
+  it.each(['en', 'es'])('fills PAUHelper business slides from the README (%s)', (language) => {
     const content = getPresentationContent('1-pauhelper', 'business', language)
     const text = JSON.stringify(content)
     expect(content.isTemplate).toBe(false)
@@ -76,9 +89,7 @@ describe('presentation templates', () => {
     expect(content.slides[4][0]).toContain(language === 'en' ? 'not current features' : 'no funciones actuales')
     expect(content.slides[4][1][2][1]).toContain(language === 'en' ? 'not implemented' : 'no están implementadas')
     expect(content.slides[5][1][2][1]).toContain(language === 'en' ? 'access controls and document governance' : 'controles de acceso y gobierno documental')
-    for (const slug of ['0-portfolio', '3-voicesimulator']) {
-      expect(getPresentationContent(slug, 'business', language).isTemplate).toBe(true)
-    }
+    expect(getPresentationContent('3-voicesimulator', 'business', language).isTemplate).toBe(true)
     expect(getPresentationContent('1-pauhelper', 'technical', language).isTemplate).toBe(false)
   })
 
@@ -193,8 +204,10 @@ describe('presentation templates', () => {
   it('keeps business and technical template topics distinct', () => {
     const business = getPresentationContent('0-portfolio', 'business', 'en')
     const technical = getPresentationContent('0-portfolio', 'technical', 'en')
-    expect(business.slides[0][0]).toBe('Problem & audience')
+    expect(business.slides[0][0]).toBe('The challenge: showing skills in practice')
+    expect(business.isTemplate).toBe(false)
     expect(technical.slides[0][0]).toBe('Architecture & data flow')
+    expect(technical.isTemplate).toBe(true)
     expect(() => getPresentationContent('4-youtube', 'business', 'en')).toThrow('Unknown presentation project')
     expect(() => getPresentationContent('0-portfolio', 'unknown', 'en')).toThrow('Unknown presentation audience')
   })

@@ -1,6 +1,7 @@
 import { en } from '../../i18n/languages/en.jsx'
 import { es } from '../../i18n/languages/es.jsx'
 import { projectsData } from '../../lib/projectsData.js'
+import { portfolioBusiness } from './0-portfolio/business.js'
 import { pauhelperBusiness } from './1-pauhelper/business.js'
 import { getPauhelperTechnical } from './1-pauhelper/technical.js'
 import { orchestratorBusiness } from './2-orchestratordata/business.js'
@@ -120,8 +121,10 @@ export function getPresentationContent(slug, audience, language) {
     if (!entry) throw new Error(`Unknown presentation project: ${slug}`)
     project = { ...entry[1], ...dictionary.projects[entry[0]] }
   }
-  const projectContent = slug === '1-pauhelper'
-    ? (audience === 'business' ? pauhelperBusiness[dictionary.code] : getPauhelperTechnical(dictionary.code))
+  const projectContent = slug === '0-portfolio'
+    ? (audience === 'business' ? portfolioBusiness[dictionary.code] : null)
+    : slug === '1-pauhelper'
+      ? (audience === 'business' ? pauhelperBusiness[dictionary.code] : getPauhelperTechnical(dictionary.code))
     : slug === '2-orchestratordata'
       ? (audience === 'business' ? orchestratorBusiness[dictionary.code] : getOrchestratorTechnical(dictionary.code))
       : null

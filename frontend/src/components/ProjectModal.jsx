@@ -52,7 +52,7 @@ function ProjectModal({ project, theme, language, t, onClose, onOpenPresentation
               <video
                 key={videoUrl}
                 src={videoUrl}
-                poster={project.thumbUrl}
+                poster="/video-poster.svg"
                 controls
                 preload="metadata"
                 aria-label={project.title}
