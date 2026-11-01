@@ -1,5 +1,6 @@
 export const pauhelperConfig = {
   slug: '1-pauhelper',
+  videos: { en: 'english-version-pauhelpe-demo.mp4' },
   icon: 'ph-brain',
   liveUrl: import.meta.env.VITE_PAUHELPER_LIVE_URL,
   // On-demand Qdrant VM starter (see infra/modules/qdrant_vm_starter in the
