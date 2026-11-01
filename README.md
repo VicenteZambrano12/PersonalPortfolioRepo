@@ -8,12 +8,6 @@ This repository contains a web application designed to serve as the gateway to m
 
 Feel free to use it!
 
-## App logo
-
-The supplied robot artwork is served as an optimized 512px PNG at
-[`frontend/public/logo.png`](frontend/public/logo.png), shared by the header,
-YouTube card, and presentation viewer. Browser favicons (ICO and 32px PNG) and
-an Apple touch icon (180px PNG) are also stored in `frontend/public/`.
 
 ## 1. Business overview, use case, and value
 
@@ -52,4 +46,108 @@ PersonalPortfolioRepo/
 ├── Dockerfile               # Container image definition
 ├── nginx.conf.template      # Nginx configuration template
 └── README.md
+```
+
+## 3. Tech stack
+
+The application combines a lightweight frontend with an authentication backend and cloud-managed infrastructure:
+
+- **Frontend**: React and Vite provide the user interface, Tailwind CSS handles styling, and Reveal.js powers the HTML slide presentations.
+- **Backend and authentication**: Node.js and Express serve the application. Firebase Authentication, managed through Google Cloud Identity Platform, handles user sign-in, while the Firebase Admin SDK verifies authentication tokens and session cookies.
+- **Cloud infrastructure**: The application runs on Google Cloud Platform (GCP), with Docker packaging the frontend and backend into a container image.
+- **Infrastructure and automation**: Terraform manages the cloud resources, and GitHub Actions workflows automate deployment.
+
+## 4. Frontend
+
+The frontend provides a simple interface for exploring my portfolio. Users can open an explanatory slide presentation about the portfolio, watch project video walkthroughs, or browse project demo cards.
+
+Opening a demo card displays a modal with the project description, its technology stack, and a button to open the corresponding application. Demo URLs are configured through environment variables at build time. For the PauHelper demo, clicking the button also sends a best-effort request to start its on-demand Qdrant VM; the demo opens without waiting for the VM.
+
+HTML slide presentations provide detailed business and technical explanations about the portfolio and its projects.
+
+```mermaid
+flowchart TD
+    User["Authorized user"] --> Portfolio["Portfolio frontend"]
+    Portfolio --> Overview["Open portfolio explanation"]
+    Overview --> Slides["HTML slide presentation"]
+    Portfolio --> Video["Select video walkthrough"]
+    Video --> Player["Video modal"]
+    Portfolio --> Card["Open project demo card"]
+    Card --> Modal["Project modal"]
+    Modal --> Details["Project description and tech stack"]
+    Modal --> Docs["Open business or technical documentation"]
+    Docs --> Slides
+    Modal --> Launch["Click button to open demo"]
+    Env["Build-time environment variables"] -.->|Configure demo URLs| Launch
+    Launch --> App["Corresponding application"]
+    Launch -.->|Best-effort start request| Service["PauHelper on-demand Qdrant VM"]
+```
+
+## 5. Authorization
+
+Access is restricted to users whose accounts I manually provision through Firebase Authentication. Public self-registration is disabled, so I control who receives credentials and can access the portfolio.
+
+The current implementation uses administrator-provided email/password accounts, not federated sign-in or one-time passwords (OTPs). After sign-in, the backend verifies the Firebase token and creates a secure, HTTP-only session cookie. Protected requests check the session for revoked credentials or disabled accounts.
+
+This lightweight setup is designed for a single administrator managing the infrastructure. It lets me grant access to selected people and revoke it when needed by disabling their accounts or revoking their sessions.
+
+## 6. Cloud infrastructure
+
+The application infrastructure is hosted on Google Cloud Platform (GCP). Its main component is a Cloud Run service that runs the application container, serving both the React frontend and the authentication backend.
+
+The supporting services are:
+
+- **Artifact Registry**: Stores the Docker images built and pushed by the deployment workflow. Cloud Run runs the selected image.
+- **Firebase Authentication / Identity Platform**: Manages user accounts and authentication.
+- **Secret Manager**: Stores configuration values with access controlled through IAM. The deployment workflow retrieves the demo URLs and passes them to the frontend build as environment variables. These URLs become part of the browser bundle, so they are not confidential once deployed.
+- **VPC and serverless subnet**: Provide Cloud Run with Direct VPC egress for traffic to private network addresses.
+
+Terraform manages the application infrastructure, while GitHub Actions automates image builds, publishing, and deployment.
+
+```mermaid
+flowchart TD
+    User["User browser"]
+    Workflow["GitHub Actions deployment"]
+    Terraform["Terraform"]
+
+    subgraph GCP["Google Cloud Platform"]
+        Secrets["Secret Manager"]
+        Registry["Artifact Registry"]
+        Run["Cloud Run service"]
+        Container["Application container: React frontend and Express backend"]
+        Auth["Firebase Authentication / Identity Platform"]
+        Network["VPC and serverless subnet"]
+    end
+
+    Secrets -->|Build-time demo URL configuration| Workflow
+    Workflow -->|Build and push image| Registry
+    Workflow -->|Apply infrastructure configuration| Terraform
+    Terraform -->|Configure service and image| Run
+    Registry -->|Container image| Run
+    User -->|HTTPS requests| Run
+    Run -->|Runs| Container
+    User -->|Sign in| Auth
+    Container -->|Verify tokens and sessions| Auth
+    Run -->|Private-range egress| Network
+```
+
+## 7. Infrastructure as code and versioning
+
+Terraform manages the application's cloud infrastructure. When a pull request from `dev` is merged into `main`, the GitHub Actions deployment workflow runs in two stages:
+
+1. **Build and plan**: If application source files changed, the workflow builds and pushes a Docker image tagged with the commit SHA. It then runs `terraform plan` and uploads the plan as an artifact. If application files did not change, it reuses the latest image in Artifact Registry.
+2. **Approval and apply**: The workflow uses GitHub's protected `production` environment for the apply job. After the required team approval, it applies the saved Terraform plan.
+
+Tagging images with the commit SHA ties each deployed application image to the source revision used to build it.
+
+```mermaid
+flowchart TD
+    Merge["PR from dev merged into main"] --> Check{"Application source changed?"}
+    Check -->|Yes| Build["Build and push image tagged with commit SHA"]
+    Check -->|No| Reuse["Reuse latest image from Artifact Registry"]
+    Build --> Plan["Run Terraform plan"]
+    Reuse --> Plan
+    Plan --> Artifact["Upload plan artifact"]
+    Artifact --> Approval["Wait for team approval in production environment"]
+    Approval --> Apply["Apply saved Terraform plan"]
 ```

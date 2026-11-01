@@ -51,3 +51,5 @@ next-env.d.ts
 tfplan
 *.auto.tfvars
 infra/**/.build/
+
+/videos

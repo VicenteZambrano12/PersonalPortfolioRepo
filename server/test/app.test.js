@@ -4,6 +4,7 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, mock, test } from 'node:test'
+import { Readable } from 'node:stream'
 import { fileURLToPath } from 'node:url'
 import { createApp } from '../app.js'
 
@@ -12,6 +13,7 @@ let staticDir
 let baseUrl
 let origin
 let auth
+let videoBucket
 const cookie = '__Host-portfolio_session=valid-session'
 const firebaseConfig = { apiKey: 'public-api-key', authDomain: 'example.firebaseapp.com', projectId: 'example' }
 const claims = () => ({ uid: 'admin-created-user', auth_time: Date.now() / 1000, firebase: { sign_in_provider: 'password' } })
@@ -28,8 +30,19 @@ beforeEach(async () => {
     createSessionCookie: mock.fn(async () => 'valid-session'),
     verifySessionCookie: mock.fn(async () => claims()),
   }
+  const data = Buffer.from('0123456789')
+  videoBucket = {
+    file: mock.fn((name) => ({
+      getMetadata: async () => {
+        if (!name.endsWith('/demo.mp4')) throw Object.assign(new Error('missing'), { code: 404 })
+        return [{ size: String(data.length), contentType: 'video/mp4' }]
+      },
+      createReadStream: ({ start, end }) => Readable.from([data.subarray(start, end + 1)]),
+    })),
+  }
   server = createApp({
     auth,
+    videoBucket,
     firebaseConfig,
     staticDir,
     loginFile: fileURLToPath(new URL('../../auth-portal/index.html', import.meta.url)),
@@ -216,4 +229,33 @@ test('authenticated missing assets return 404, not the SPA document', async () =
   const response = await request('/assets/missing.js', { headers: { Cookie: cookie } })
   assert.equal(response.status, 404)
   assert.equal(await response.text(), 'Not found')
+})
+
+test('videos require a session', async () => {
+  const response = await request('/videos/2-orchestratordata/EN/demo.mp4')
+  assert.equal(response.status, 303)
+  assert.equal(videoBucket.file.mock.callCount(), 0)
+})
+
+test('videos stream from the videos prefix with range support', async () => {
+  const full = await request('/videos/2-orchestratordata/EN/demo.mp4', { headers: { Cookie: cookie } })
+  assert.equal(full.status, 200)
+  assert.equal(full.headers.get('content-type'), 'video/mp4')
+  assert.equal(await full.text(), '0123456789')
+  assert.equal(videoBucket.file.mock.calls[0].arguments[0], 'videos/2-orchestratordata/EN/demo.mp4')
+
+  const partial = await request('/videos/2-orchestratordata/EN/demo.mp4', { headers: { Cookie: cookie, Range: 'bytes=2-4' } })
+  assert.equal(partial.status, 206)
+  assert.equal(partial.headers.get('content-range'), 'bytes 2-4/10')
+  assert.equal(await partial.text(), '234')
+
+  const invalid = await request('/videos/2-orchestratordata/EN/demo.mp4', { headers: { Cookie: cookie, Range: 'bytes=50-' } })
+  assert.equal(invalid.status, 416)
+})
+
+test('videos reject unexpected paths and missing objects', async () => {
+  for (const route of ['/videos/2-orchestratordata/FR/demo.mp4', '/videos/..%2Fsecret/EN/demo.mp4', '/videos/2-orchestratordata/EN/demo.txt', '/videos/2-orchestratordata/EN/other.mp4']) {
+    const response = await request(route, { headers: { Cookie: cookie } })
+    assert.equal(response.status, 404, route)
+  }
 })

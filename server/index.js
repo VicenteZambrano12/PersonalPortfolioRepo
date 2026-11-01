@@ -1,5 +1,6 @@
 import { applicationDefault, initializeApp } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
+import { Storage } from '@google-cloud/storage'
 import { access } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { createApp } from './app.js'
@@ -29,6 +30,9 @@ const app = createApp({
   staticDir,
   loginFile,
   secureCookies: !development,
+  videoBucket: process.env.VIDEO_BUCKET?.trim()
+    ? new Storage({ projectId }).bucket(process.env.VIDEO_BUCKET.trim())
+    : undefined,
 })
 const port = Number(process.env.PORT ?? 8080)
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('PORT must be a valid TCP port')

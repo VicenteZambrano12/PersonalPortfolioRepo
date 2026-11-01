@@ -1,5 +1,6 @@
 export const orchestratordataConfig = {
   slug: '2-orchestratordata',
+  videos: { en: 'demo-form-ai-english.mp4' },
   icon: 'ph-database',
   liveUrl: import.meta.env.VITE_ORCHESTRATOR_APP,
   thumbUrl:
