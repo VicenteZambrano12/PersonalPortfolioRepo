@@ -9,6 +9,51 @@ const pages = import.meta.glob('../../../features/docs/*/*.html', {
   eager: true,
 })
 
+it.each(['en', 'es'])('fills Personal Portfolio technical slides from README sections 2–7 (%s)', (language) => {
+  const content = getPresentationContent('0-portfolio', 'technical', language)
+  const text = JSON.stringify(content)
+  expect(content.isTemplate).toBe(false)
+  expect(content.showOverview).toBe(false)
+  expect(content.source).toContain(language === 'en' ? 'Sections 2–7' : 'Secciones 2–7')
+  expect(content.slides.map(([title]) => title)).toEqual(language === 'en'
+    ? [
+        '2. Repository structure',
+        '3. Tech stack',
+        '4. Frontend',
+        '5. Authorization',
+        '6. Cloud infrastructure',
+        '7. Infrastructure as code and versioning',
+      ]
+    : [
+        '2. Estructura del repositorio',
+        '3. Stack tecnológico',
+        '4. Frontend',
+        '5. Autorización',
+        '6. Infraestructura cloud',
+        '7. Infraestructura como código y versionado',
+      ])
+  for (const [index, [, notes, diagram]] of content.slides.entries()) {
+    expect(notes).toHaveLength(3)
+    expect(diagram.section).toBe(index + 2)
+    expect(diagram.nodes.length).toBeGreaterThanOrEqual(5)
+    const ids = diagram.nodes.map(({ id }) => id)
+    expect(new Set(ids).size).toBe(ids.length)
+    for (const diagramNode of diagram.nodes) {
+      expect(diagramNode.label.length).toBeGreaterThan(0)
+      expect(diagramNode.x + diagramNode.width).toBeLessThanOrEqual(diagram.width)
+      expect(diagramNode.y + diagramNode.height).toBeLessThanOrEqual(diagram.height)
+    }
+    for (const edge of diagram.edges) {
+      expect(ids).toContain(edge.from)
+      expect(ids).toContain(edge.to)
+    }
+  }
+  expect(text).toContain('Firebase Authentication')
+  expect(text).toContain('HTTP-only')
+  expect(text).toContain('Direct VPC egress')
+  expect(getPresentationContent('0-portfolio', 'business', language).isTemplate).toBe(false)
+})
+
 vi.mock('reveal.js', () => ({
   default: vi.fn(function () {
     this.initialize = vi.fn().mockResolvedValue()
@@ -21,6 +66,33 @@ afterEach(() => {
   document.body.innerHTML = ''
   document.body.className = ''
   window.history.replaceState(null, '', '/')
+})
+
+it.each(['en', 'es'])('renders all six portfolio technical sections (%s)', async (language) => {
+  vi.resetModules()
+  vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
+  window.history.replaceState(null, '', `/?lang=${language}`)
+  document.body.innerHTML = '<main class="reveal"><div class="slides"></div></main>'
+  document.body.dataset.project = '0-portfolio'
+  document.body.dataset.audience = 'technical'
+  await import('../../../features/docs/presentation.js')
+  const content = getPresentationContent('0-portfolio', 'technical', language)
+  expect(document.documentElement.lang).toBe(language)
+  expect(document.querySelector('h1').textContent).toBe('Personal Portfolio')
+  expect(document.querySelectorAll('.slides > section')).toHaveLength(7)
+  expect(document.querySelectorAll('.technical-diagram svg')).toHaveLength(6)
+  expect(document.querySelectorAll('.prompt-card')).toHaveLength(18)
+  expect([...document.querySelectorAll('[data-readme-section]')].map(node => node.dataset.readmeSection))
+    .toEqual(['2', '3', '4', '5', '6', '7'])
+  expect(document.body).toHaveClass('schematic-deck')
+  expect([...document.querySelectorAll('.eyebrow')].every(node => node.textContent === content.audience)).toBe(true)
+  for (const [title, cards] of content.slides) {
+    expect(document.body.textContent).toContain(title)
+    for (const [heading, text] of cards) {
+      expect(document.body.textContent).toContain(heading)
+      expect(document.body.textContent).toContain(text)
+    }
+  }
 })
 
 describe('presentation templates', () => {
@@ -56,7 +128,9 @@ describe('presentation templates', () => {
           const slideCount = slug === '1-pauhelper'
             ? (audience === 'business' ? 6 : 9)
             : slug === '2-orchestratordata' ? (audience === 'business' ? 6 : 14)
-              : slug === '0-portfolio' && audience === 'business' ? 6 : 3
+              : slug === '3-voicesimulator'
+                ? (audience === 'business' ? 6 : 10)
+                : slug === '0-portfolio' ? (audience === 'business' ? 6 : 6) : 3
           expect(content.slides).toHaveLength(slideCount)
           expect(content.slides.every(([, prompts]) => prompts.length === 3)).toBe(true)
         }
@@ -73,7 +147,7 @@ describe('presentation templates', () => {
     expect(text).toContain(language === 'en' ? 'hiring teams' : 'equipos de selección')
     expect(text).toContain(language === 'en' ? 'public self-registration is disabled' : 'registro público está deshabilitado')
     expect(text).toContain(language === 'en' ? 'low-cost foundation' : 'base de bajo coste')
-    expect(getPresentationContent('0-portfolio', 'technical', language).isTemplate).toBe(true)
+    expect(getPresentationContent('0-portfolio', 'technical', language).isTemplate).toBe(false)
   })
 
   it.each(['en', 'es'])('fills PAUHelper business slides from the README (%s)', (language) => {
@@ -89,7 +163,7 @@ describe('presentation templates', () => {
     expect(content.slides[4][0]).toContain(language === 'en' ? 'not current features' : 'no funciones actuales')
     expect(content.slides[4][1][2][1]).toContain(language === 'en' ? 'not implemented' : 'no están implementadas')
     expect(content.slides[5][1][2][1]).toContain(language === 'en' ? 'access controls and document governance' : 'controles de acceso y gobierno documental')
-    expect(getPresentationContent('3-voicesimulator', 'business', language).isTemplate).toBe(true)
+    expect(getPresentationContent('3-voicesimulator', 'business', language).isTemplate).toBe(false)
     expect(getPresentationContent('1-pauhelper', 'technical', language).isTemplate).toBe(false)
   })
 
@@ -119,6 +193,21 @@ describe('presentation templates', () => {
     expect(getPresentationContent('2-orchestratordata', 'technical', language).isTemplate).toBe(false)
   })
 
+  it.each(['en', 'es'])('fills the Plinius business presentation from its README (%s)', (language) => {
+    const content = getPresentationContent('3-voicesimulator', 'business', language)
+    const text = JSON.stringify(content)
+    expect(content.isTemplate).toBe(false)
+    expect(content.source).toContain(language === 'en' ? 'Plinius README' : 'README de Plinius')
+    expect(content.project.title).toBe('Plinius')
+    expect(content.slides).toHaveLength(6)
+    expect(content.slides.every(([, cards]) => cards.length === 3)).toBe(true)
+    expect(text).toContain(language === 'en' ? 'historic sites' : 'lugares históricos')
+    expect(text).toContain(language === 'en' ? 'selected stop' : 'parada seleccionada')
+    expect(text).toContain(language === 'en' ? 'sources behind each answer' : 'fuentes de cada respuesta')
+    expect(text).toContain(language === 'en' ? 'audio-to-audio' : 'audio a audio')
+    expect(getPresentationContent('3-voicesimulator', 'technical', language).isTemplate).toBe(false)
+  })
+
   it.each(['en', 'es'])('renders the complete Orchestrator business presentation (%s)', async (language) => {
     vi.resetModules()
     vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
@@ -144,6 +233,56 @@ describe('presentation templates', () => {
     }
     expect([...document.querySelectorAll('.eyebrow')].every(node => node.textContent === content.audience)).toBe(true)
     expect(Reveal.mock.results[0].value.initialize).toHaveBeenCalledOnce()
+  })
+
+  it.each(['en', 'es'])('renders the complete Plinius business presentation (%s)', async (language) => {
+    vi.resetModules()
+    vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
+    window.history.replaceState(null, '', `/?lang=${language}`)
+    document.body.innerHTML = '<main class="reveal"><div class="slides"></div></main>'
+    document.body.dataset.project = '3-voicesimulator'
+    document.body.dataset.audience = 'business'
+    await import('../../../features/docs/presentation.js')
+    const content = getPresentationContent('3-voicesimulator', 'business', language)
+    expect(document.documentElement.lang).toBe(language)
+    expect(document.querySelector('h1').textContent).toBe('Plinius')
+    expect(document.querySelectorAll('.slides > section')).toHaveLength(8)
+    expect(document.querySelectorAll('.prompt-card')).toHaveLength(18)
+    for (const [title, cards] of content.slides) {
+      expect(document.body.textContent).toContain(title)
+      for (const [heading, text] of cards) {
+        expect(document.body.textContent).toContain(heading)
+        expect(document.body.textContent).toContain(text)
+      }
+    }
+    expect([...document.querySelectorAll('.eyebrow')].every(node => node.textContent === content.audience)).toBe(true)
+  })
+
+  it.each(['en', 'es'])('renders all ten Plinius technical sections (%s)', async (language) => {
+    vi.resetModules()
+    vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
+    window.history.replaceState(null, '', `/?lang=${language}`)
+    document.body.innerHTML = '<main class="reveal"><div class="slides"></div></main>'
+    document.body.dataset.project = '3-voicesimulator'
+    document.body.dataset.audience = 'technical'
+    await import('../../../features/docs/presentation.js')
+    const content = getPresentationContent('3-voicesimulator', 'technical', language)
+    expect(document.documentElement.lang).toBe(language)
+    expect(document.querySelector('h1').textContent).toBe('Plinius')
+    expect(document.querySelectorAll('.slides > section')).toHaveLength(11)
+    expect(document.querySelectorAll('.technical-diagram svg')).toHaveLength(10)
+    expect(document.querySelectorAll('.prompt-card')).toHaveLength(30)
+    expect([...document.querySelectorAll('[data-readme-section]')].map(node => node.dataset.readmeSection))
+      .toEqual(Array.from({ length: 10 }, (_, index) => String(index + 1)))
+    expect(document.body).toHaveClass('schematic-deck')
+    expect([...document.querySelectorAll('.eyebrow')].every(node => node.textContent === content.audience)).toBe(true)
+    for (const [title, cards] of content.slides) {
+      expect(document.body.textContent).toContain(title)
+      for (const [heading, text] of cards) {
+        expect(document.body.textContent).toContain(heading)
+        expect(document.body.textContent).toContain(text)
+      }
+    }
   })
 
   it.each(['en', 'es'])('provides one technical diagram per numbered README section (%s)', (language) => {
@@ -181,9 +320,63 @@ describe('presentation templates', () => {
       expect(figure.querySelectorAll('.diagram-edge')).toHaveLength(diagram.edges.length)
       expect(figure.querySelector('.diagram-viewport')).toHaveAttribute('tabindex', '0')
     }
-    for (const slug of ['0-portfolio', '3-voicesimulator']) {
-      expect(getPresentationContent(slug, 'technical', language).isTemplate).toBe(true)
+  })
+
+  it.each(['en', 'es'])('fills Plinius technical slides from README sections 1–10 (%s)', (language) => {
+    const content = getPresentationContent('3-voicesimulator', 'technical', language)
+    expect(content.showOverview).toBe(false)
+    expect(content.isTemplate).toBe(false)
+    expect(content.source).toContain(language === 'en' ? 'Sections 1–10' : 'Secciones 1–10')
+    expect(content.project.title).toBe('Plinius')
+    expect(content.slides).toHaveLength(10)
+    expect(content.slides.map(([title]) => title)).toEqual(language === 'en'
+      ? [
+          '1. Overview',
+          '2. Use Case and Business Value',
+          '3. Prerequisites and Installation Guide',
+          '4. Tech Stack',
+          '5. Voice Processing',
+          '6. RAG Agent',
+          '7. FastAPI Endpoints',
+          '8. Frontend',
+          '9. Google Cloud Platform Deployment',
+          '10. Infrastructure as Code with Terraform',
+        ]
+      : [
+          '1. Descripción general',
+          '2. Caso de uso y valor de negocio',
+          '3. Requisitos y guía de instalación',
+          '4. Stack tecnológico',
+          '5. Procesamiento de voz',
+          '6. Agente RAG',
+          '7. Endpoints FastAPI',
+          '8. Frontend',
+          '9. Despliegue en Google Cloud Platform',
+          '10. Infraestructura como código con Terraform',
+        ])
+    for (const [index, [, notes, diagram]] of content.slides.entries()) {
+      expect(notes).toHaveLength(3)
+      expect(diagram.section).toBe(index + 1)
+      expect(diagram.nodes.length).toBeGreaterThanOrEqual(5)
+      const ids = diagram.nodes.map(({ id }) => id)
+      expect(new Set(ids).size).toBe(ids.length)
+      for (const node of diagram.nodes) {
+        expect(node.label.length).toBeGreaterThan(0)
+        expect(node.x + node.width).toBeLessThanOrEqual(diagram.width)
+        expect(node.y + node.height).toBeLessThanOrEqual(diagram.height)
+      }
+      for (const edge of diagram.edges) {
+        expect(ids).toContain(edge.from)
+        expect(ids).toContain(edge.to)
+      }
     }
+
+    const text = JSON.stringify(content)
+    expect(text).toContain(language === 'en' ? 'ENV selects LOCAL or GCP' : 'ENV selecciona LOCAL o GCP')
+    expect(text).toContain(language === 'en' ? 'audio-to-audio' : 'audio a audio')
+    expect(text).toContain('Qdrant')
+    expect(text).toContain('APP_SECRETS_JSON')
+    expect(getPresentationContent('3-voicesimulator', 'business', language).isTemplate).toBe(false)
   })
 
   it('preserves the README technical constraints and service boundaries', () => {
@@ -206,8 +399,8 @@ describe('presentation templates', () => {
     const technical = getPresentationContent('0-portfolio', 'technical', 'en')
     expect(business.slides[0][0]).toBe('The challenge: showing skills in practice')
     expect(business.isTemplate).toBe(false)
-    expect(technical.slides[0][0]).toBe('Architecture & data flow')
-    expect(technical.isTemplate).toBe(true)
+    expect(technical.slides[0][0]).toBe('2. Repository structure')
+    expect(technical.isTemplate).toBe(false)
     expect(() => getPresentationContent('4-youtube', 'business', 'en')).toThrow('Unknown presentation project')
     expect(() => getPresentationContent('0-portfolio', 'unknown', 'en')).toThrow('Unknown presentation audience')
   })

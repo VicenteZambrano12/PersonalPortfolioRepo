@@ -1,5 +1,7 @@
 # Personal Portfolio app
 
+**Author:** Vicente Zambrano
+
 Application to serve as the gateway to my personal portfolio projects.
 
 ## Description

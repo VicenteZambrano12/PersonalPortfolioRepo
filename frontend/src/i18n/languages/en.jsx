@@ -76,12 +76,12 @@ export const en = {
         'Form is a gym application that demonstrates intent-based AI orchestration. A Gemini-powered orchestrator selects a specialized agent to explain exercises, create routines, or analyze logged workouts; a Python pipeline executes the selected task using predefined, parameterized SQL queries. The React interface presents exercise images, routine previews that require explicit save confirmation, and data-backed progress reports. Users can also follow saved routines and record completed sets outside chat. FastAPI supports SQLite locally and Neon PostgreSQL in the cloud, with frontend and backend deployed together on GCP Cloud Run using Docker, Terraform, and GitHub Actions. Conversation memory and routine drafts use process-local fakeredis and are not durable.',
     },
     voicesimulator: {
-      title: 'Voice Simulator',
-      subtitle: 'AI Audio Synthesis',
+      title: 'Plinius',
+      subtitle: 'AI Voice Tourist Guide',
       description:
-        'An advanced voice generation and simulation tool leveraging LLMs and neural TTS models to create realistic, conversational audio outputs for various use cases.',
+        'Explore Rome with a real-time AI voice guide. Plinius grounds answers about historic sites and local restaurants in curated sources you can verify.',
       fullDescription:
-        'An advanced audio platform utilizing cutting-edge neural Text-to-Speech (TTS) models and LLMs to generate highly realistic, nuanced voice simulations for automated customer service, content creation, and accessibility.',
+        'Plinius is an AI tourist guide for Rome. Select a stop on the route and ask questions about its history or nearby restaurants using voice or text in English or Spanish. Its retrieval-augmented generation (RAG) pipeline grounds answers in curated documents and shows the source pages, while configurable speech-to-text and text-to-speech layers provide a natural voice conversation.',
     },
   },
 }

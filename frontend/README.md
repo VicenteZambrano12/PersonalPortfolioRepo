@@ -56,7 +56,8 @@ Vite. Copy the repository-root [.env.sample](../.env.sample) to `.env` to get
 started; it also includes `VITE_QDRANT_VM_STARTER_URL` for the Qdrant VM starter.
 These values are public frontend configuration, so do not include secrets.
 Production receives them as Docker build arguments; changes require a rebuild.
-Voice Simulator does not currently have a demo URL configured.
+Plinius uses `VITE_HISTORIC_GUIDE_APP` for its live application URL. Set it in
+the repository-root `.env` or process environment when testing locally.
 
 ## YouTube card
 
