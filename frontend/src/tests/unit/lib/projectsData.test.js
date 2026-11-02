@@ -20,6 +20,16 @@ describe('projectsData', () => {
     expect(projectsData.pauhelper.modalTags).not.toContain('OpenAI API')
   })
 
+  it('labels Plinius with its documented voice guide and deployment stack', () => {
+    expect(projectsData.voicesimulator.tags).toEqual(['AI Agents', 'RAG', 'Gemini', 'React', 'GCP'])
+    expect(projectsData.voicesimulator.modalTags).toEqual(expect.arrayContaining([
+      'Python', 'FastAPI', 'RAG', 'Gemini', 'Speech-to-Text', 'Text-to-Speech',
+      'React', 'Vite', 'Qdrant', 'GCP Cloud Run', 'Docker', 'Terraform', 'GitHub Actions',
+    ]))
+    expect(en.projects.voicesimulator.title).toBe('Plinius')
+    expect(en.projects.voicesimulator.fullDescription).toContain('curated documents')
+  })
+
   it('gives every project an id, slug, icon and tags', () => {
     Object.entries(projectsData).forEach(([id, project]) => {
       expect(project.slug).toEqual(expect.any(String))
@@ -38,7 +48,7 @@ describe('projectsData', () => {
     })
   })
 
-  it('uses the Historic Guide app URL for the Voice Simulator live link', () => {
+  it('uses the Plinius app URL for its live link', () => {
     expect(projectsData.voicesimulator.liveUrl).toBe(import.meta.env.VITE_HISTORIC_GUIDE_APP)
   })
 })
