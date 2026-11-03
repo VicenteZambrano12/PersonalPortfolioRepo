@@ -2,6 +2,7 @@ import { en } from '../../i18n/languages/en.jsx'
 import { es } from '../../i18n/languages/es.jsx'
 import { projectsData } from '../../lib/projectsData.js'
 import { portfolioBusiness } from './0-portfolio/business.js'
+import { getPortfolioTechnical } from './0-portfolio/technical.js'
 import { pauhelperBusiness } from './1-pauhelper/business.js'
 import { getPauhelperTechnical } from './1-pauhelper/technical.js'
 import { orchestratorBusiness } from './2-orchestratordata/business.js'
@@ -122,7 +123,7 @@ export function getPresentationContent(slug, audience, language) {
     project = { ...entry[1], ...dictionary.projects[entry[0]] }
   }
   const projectContent = slug === '0-portfolio'
-    ? (audience === 'business' ? portfolioBusiness[dictionary.code] : null)
+    ? (audience === 'business' ? portfolioBusiness[dictionary.code] : getPortfolioTechnical(dictionary.code))
     : slug === '1-pauhelper'
       ? (audience === 'business' ? pauhelperBusiness[dictionary.code] : getPauhelperTechnical(dictionary.code))
     : slug === '2-orchestratordata'

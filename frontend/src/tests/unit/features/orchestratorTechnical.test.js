@@ -187,7 +187,7 @@ describe('Orchestrator technical presentation', () => {
     expect(document.title).toBe(`${content.project.title} | ${content.audience}`)
     expect(document.body).toHaveClass('schematic-deck')
     expect(document.querySelectorAll('.slides > section')).toHaveLength(15)
-    expect(document.querySelectorAll('.technical-diagram svg')).toHaveLength(14)
+    expect(document.querySelectorAll('.diagram-viewport > svg')).toHaveLength(14)
     expect(document.querySelectorAll('.prompt-card')).toHaveLength(42)
     expect([...document.querySelectorAll('[data-readme-section]')].map(node => node.dataset.readmeSection)).toEqual(sectionIds)
     expect(document.querySelector('.brand img').getAttribute('src')).toBeTruthy()

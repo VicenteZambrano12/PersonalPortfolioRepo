@@ -1,4 +1,13 @@
+import { LOGOS, logoMarkup } from './logos.js'
+
 const SVG_NS = 'http://www.w3.org/2000/svg'
+const LOGO_SIZE = 34
+const STACKED_LOGO_SIZE = 26
+const LOGO_GAP = 6
+const BASE_FONT_SIZE = 16
+const MIN_FONT_SIZE = 12
+// Approximate width of one 16px semibold character, used to fit labels beside logos.
+const CHAR_WIDTH = 8.6
 
 function svgElement(tag, attributes, text) {
   const node = document.createElementNS(SVG_NS, tag)
@@ -85,11 +94,37 @@ export function renderDiagram(diagram, hint) {
         rx: node.kind === 'store' ? 20 : 10,
       }))
     }
+    // One logo is drawn large; two (e.g. React + Vite) are stacked smaller.
+    const logos = [node.icon ?? []].flat().map(name => LOGOS[name]).filter(Boolean)
+    const size = logos.length > 1 ? STACKED_LOGO_SIZE : LOGO_SIZE
+    const inset = logos.length ? size + 16 : 0
+    const top = node.y + (node.height - (logos.length * size + (logos.length - 1) * LOGO_GAP)) / 2
+    logos.forEach((logo, index) => {
+      const mark = svgElement('svg', {
+        x: node.x + 12, y: top + index * (size + LOGO_GAP),
+        width: size, height: size, viewBox: logo.viewBox,
+        class: 'diagram-logo', 'aria-hidden': 'true',
+      })
+      mark.innerHTML = logoMarkup(logo)
+      group.append(mark)
+    })
+    // Fit the label inside the node: shrink the font first, and if a line is still
+    // too long at the minimum size, compress that line to the available width.
+    const padding = node.kind === 'decision' ? 56 : 20
+    const available = node.width - inset - padding
+    const estimate = line => line.length * CHAR_WIDTH
+    const longest = Math.max(...node.label.map(estimate))
+    const fontSize = longest > available
+      ? Math.max(MIN_FONT_SIZE, Math.floor((BASE_FONT_SIZE * available) / longest))
+      : BASE_FONT_SIZE
     node.label.forEach((line, index) => {
+      const compress = (estimate(line) * fontSize) / BASE_FONT_SIZE > available
       group.append(svgElement('text', {
-        x: node.x + node.width / 2,
+        x: node.x + inset + (node.width - inset) / 2,
         y: node.y + node.height / 2 + (index - (node.label.length - 1) / 2) * 24,
         'text-anchor': 'middle', 'dominant-baseline': 'central',
+        ...(fontSize < BASE_FONT_SIZE ? { style: `font-size: ${fontSize}px` } : {}),
+        ...(compress ? { textLength: available, lengthAdjust: 'spacingAndGlyphs' } : {}),
       }, line))
     })
     svg.append(group)

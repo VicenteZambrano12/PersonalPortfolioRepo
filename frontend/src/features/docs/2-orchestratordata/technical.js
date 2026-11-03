@@ -6,24 +6,46 @@ function edge(from, to, options = {}) {
   return { from, to, ...options }
 }
 
+// Icons for the three notes under each diagram (brand logos or generic icons).
+const noteIcons = {
+  3: ['uv', 'fastapi', 'sqlite'],
+  4: ['python', 'terraform', 'githubActions'],
+  5: ['python', 'claude', 'docker'],
+  6: ['route', 'redis', 'fastapi'],
+  '6.1': ['gemini', 'list', 'pydantic'],
+  '6.2': ['sliders', 'calendar', 'check'],
+  '6.3': ['search', 'file', 'gemini'],
+  '6.4': ['route', 'postgresql', 'growth'],
+  '6.5': ['redis', 'userCheck', 'lock'],
+  7: ['sqlite', 'python', 'cloudStorage'],
+  8: ['pydantic', 'calendar', 'fastapi'],
+  9: ['react', 'check', 'users'],
+  10: ['docker', 'iam', 'redis'],
+  11: ['githubActions', 'terraform', 'cloudRun'],
+}
+
 const layouts = {
   3: {
     height: 300,
+    icons: { tools: ['node', 'python'], install: 'uv', api: 'fastapi', assets: 'sqlite', gemini: 'gemini', vite: 'vite' },
     nodes: [node('tools', 10, 20), node('config', 300, 20), node('install', 600, 20), node('api', 890, 20), node('assets', 300, 210, 'store'), node('gemini', 600, 210), node('vite', 890, 210)],
     edges: [edge('tools', 'config'), edge('config', 'install'), edge('install', 'api'), edge('assets', 'api', { fromSide: 'top', toSide: 'bottom', via: [[405, 145], [995, 145]] }), edge('api', 'gemini'), edge('vite', 'api', { bidirectional: true })],
   },
   4: {
     height: 340,
+    icons: { root: 'github', backend: 'python', frontend: 'react', infra: 'terraform', database: 'sqlite', workflow: 'githubActions', scripts: ['postgresql', 'cloudStorage'], package: 'uv', docker: 'docker' },
     nodes: [node('root', 450, 10), node('backend', 10, 140), node('frontend', 300, 140), node('infra', 600, 140), node('database', 890, 140, 'store'), node('workflow', 10, 250), node('scripts', 300, 250), node('package', 600, 250), node('docker', 890, 250)],
     edges: ['backend', 'frontend', 'infra', 'database', 'workflow', 'scripts', 'package', 'docker'].map(id => edge('root', id, { fromSide: 'bottom', toSide: 'top' })),
   },
   5: {
     height: 330,
+    icons: { react: ['react', 'tailwind'], api: ['fastapi', 'uv'], python: ['python', 'pydantic'], gemini: 'gemini', docker: ['docker', 'terraform'], cloudrun: 'cloudRun', sql: ['sqlite', 'neon'], assets: ['cloudStorage', 'secretManager'] },
     nodes: [node('react', 10, 20), node('api', 300, 20), node('python', 600, 20), node('gemini', 890, 20), node('docker', 10, 230), node('cloudrun', 300, 230), node('sql', 600, 230, 'store'), node('assets', 890, 230, 'store')],
     edges: [edge('react', 'api'), edge('api', 'python'), edge('python', 'gemini'), edge('docker', 'cloudrun'), edge('cloudrun', 'sql'), edge('cloudrun', 'assets', { fromSide: 'bottom', toSide: 'bottom', via: [[405, 320], [995, 320]] })],
   },
   6: {
     height: 400,
+    icons: { request: 'fastapi', pipeline: 'python', router: 'gemini', dispatch: 'pydantic', store: 'redis' },
     nodes: [node('request', 10, 10), node('pipeline', 300, 10), node('router', 600, 10), node('dispatch', 890, 10, 'decision'), node('routine', 10, 170), node('exercise', 300, 170), node('history', 600, 170), node('fallback', 890, 170), node('store', 300, 310, 'store'), node('response', 600, 310)],
     edges: [
       edge('request', 'pipeline'), edge('pipeline', 'router'), edge('router', 'dispatch'),
@@ -34,6 +56,7 @@ const layouts = {
   },
   '6.1': {
     height: 360,
+    icons: { llm: 'gemini', validate: 'pydantic', pipeline: 'python' },
     nodes: [node('catalog', 10, 10), node('context', 300, 10), node('llm', 600, 10), node('validate', 890, 10, 'decision'), node('error', 890, 150), node('fallback', 600, 270), node('pipeline', 300, 270), node('agent', 10, 270)],
     edges: [
       edge('catalog', 'context'), edge('context', 'llm'), edge('llm', 'validate'),
@@ -46,6 +69,7 @@ const layouts = {
   },
   '6.2': {
     height: 400,
+    icons: { context: 'redis', decision: 'gemini', validate: 'pydantic', missing: 'gemini', catalog: ['sqlite', 'neon'], generate: 'gemini', plan: 'pydantic', draft: 'redis', preview: 'react', persist: ['sqlite', 'neon'] },
     nodes: [node('context', 10, 10), node('decision', 300, 10), node('validate', 600, 10, 'decision'), node('complete', 890, 10, 'decision'), node('missing', 890, 150), node('catalog', 600, 150, 'store'), node('generate', 300, 150), node('plan', 10, 150, 'decision'), node('draft', 10, 310, 'store'), node('preview', 300, 310), node('confirm', 600, 310, 'decision'), node('persist', 890, 310, 'store')],
     edges: [
       edge('context', 'decision'), edge('decision', 'validate'), edge('validate', 'complete', { label: 'valid' }),
@@ -60,6 +84,7 @@ const layouts = {
   },
   '6.3': {
     height: 360,
+    icons: { extract: ['gemini', 'pydantic'], match: 'python', records: ['sqlite', 'neon'], explain: 'gemini', response: 'react' },
     nodes: [node('query', 10, 10), node('extract', 300, 10), node('match', 600, 10), node('resolved', 890, 10, 'decision'), node('clarify', 890, 150), node('records', 600, 270, 'store'), node('explain', 300, 270), node('response', 10, 270)],
     edges: [
       edge('query', 'extract'), edge('extract', 'match'), edge('match', 'resolved'),
@@ -72,6 +97,7 @@ const layouts = {
   },
   '6.4': {
     height: 400,
+    icons: { route: 'gemini', validate: 'pydantic', rows: ['sqlite', 'neon'], explain: 'gemini', response: 'pydantic', view: 'react' },
     nodes: [node('query', 10, 10), node('route', 300, 10), node('validate', 600, 10, 'decision'), node('error', 890, 10), node('latest', 10, 170, 'store'), node('compare', 300, 170, 'store'), node('weekly', 600, 170, 'store'), node('rows', 890, 170, 'store'), node('explain', 890, 310), node('response', 600, 310), node('view', 300, 310)],
     edges: [
       edge('query', 'route'), edge('route', 'validate'),
@@ -84,6 +110,7 @@ const layouts = {
   },
   '6.5': {
     height: 310,
+    icons: { turns: 'redis', pipeline: 'python', draft: 'redis', sql: ['sqlite', 'neon'] },
     nodes: [node('session', 10, 10), node('turns', 300, 10, 'store'), node('pipeline', 600, 10), node('response', 890, 10), node('scope', 10, 210), node('draft', 300, 210, 'store'), node('routine', 600, 210), node('sql', 890, 210, 'store')],
     edges: [
       edge('session', 'turns'), edge('turns', 'pipeline'), edge('pipeline', 'response'),
@@ -93,6 +120,7 @@ const layouts = {
   },
   7: {
     height: 390,
+    icons: { users: ['sqlite', 'postgresql'], routines: ['sqlite', 'postgresql'], exercises: ['sqlite', 'postgresql'], sets: ['sqlite', 'postgresql'] },
     nodes: [node('users', 10, 10, 'store', 490, 110), node('routines', 610, 10, 'store', 500, 110), node('exercises', 10, 200, 'store', 490, 180), node('sets', 610, 200, 'store', 500, 180)],
     edges: [
       edge('users', 'routines', { label: 'owns' }), edge('routines', 'sets', { label: 'contains' }),
@@ -102,11 +130,13 @@ const layouts = {
   },
   8: {
     height: 390,
+    icons: { client: 'react', api: ['fastapi', 'pydantic'], chat: 'gemini' },
     nodes: [node('client', 10, 155), node('api', 300, 155), node('health', 650, 10, 'service', 450, 60), node('chat', 650, 85, 'service', 450, 76), node('users', 650, 176, 'service', 450, 60), node('routines', 650, 251, 'service', 450, 60), node('workouts', 650, 326, 'service', 450, 60)],
     edges: [edge('client', 'api'), ...['health', 'chat', 'users', 'routines', 'workouts'].map(id => edge('api', id))],
   },
   9: {
     height: 380,
+    icons: { startup: ['react', 'vite'], health: 'fastapi', chat: 'gemini', views: 'react' },
     nodes: [node('startup', 10, 10), node('health', 300, 10), node('session', 600, 10), node('workspace', 890, 10, 'decision'), node('chat', 10, 150), node('stream', 300, 150), node('views', 600, 150), node('save', 890, 150), node('routine', 10, 290), node('edit', 300, 290), node('workout', 600, 290), node('activity', 890, 290)],
     edges: [
       edge('startup', 'health'), edge('startup', 'session', { fromSide: 'bottom', toSide: 'bottom', via: [[115, 115], [705, 115]] }),
@@ -121,6 +151,7 @@ const layouts = {
   },
   10: {
     height: 400,
+    icons: { delivery: ['githubActions', 'terraform'], registry: 'artifactRegistry', state: 'cloudStorage', runtime: 'iam', cloudrun: 'cloudRun', memory: 'redis', sql: ['neon', 'postgresql'], gemini: 'gemini', images: 'cloudStorage', secrets: 'secretManager' },
     nodes: [node('delivery', 10, 10), node('registry', 300, 10, 'store'), node('state', 600, 10, 'store'), node('runtime', 890, 10), node('browser', 10, 170), node('cloudrun', 300, 170), node('memory', 600, 170, 'store'), node('sql', 890, 170, 'store'), node('gemini', 10, 310), node('images', 300, 310, 'store'), node('secrets', 600, 310, 'store')],
     edges: [
       edge('delivery', 'registry'), edge('delivery', 'state', { fromSide: 'top', toSide: 'top', via: [[115, 0], [705, 0]] }),
@@ -133,6 +164,7 @@ const layouts = {
   },
   11: {
     height: 390,
+    icons: { merge: 'github', auth: 'iam', build: 'docker', reuse: 'artifactRegistry', plan: 'terraform', artifact: 'githubActions', approval: 'githubActions', apply: 'terraform', state: 'cloudStorage', verify: 'cloudRun' },
     nodes: [node('merge', 10, 10), node('auth', 300, 10), node('changed', 600, 10, 'decision'), node('build', 890, 10), node('reuse', 890, 150), node('plan', 600, 150), node('artifact', 300, 150, 'store'), node('approval', 10, 150, 'decision'), node('stop', 10, 300), node('apply', 300, 300), node('state', 600, 300, 'store'), node('verify', 890, 300)],
     edges: [
       edge('merge', 'auth'), edge('auth', 'changed'), edge('changed', 'build', { label: 'yes' }),
@@ -338,12 +370,13 @@ export function getOrchestratorTechnical(language) {
     slides: content.sections.map((section, index) => {
       const id = sectionIds[index]
       const layout = layouts[id]
-      return [`${id}. ${section.title}`, section.notes, {
+      const notes = section.notes.map((note, noteIndex) => [...note, noteIcons[id][noteIndex]])
+      return [`${id}. ${section.title}`, notes, {
         width: 1120,
         height: layout.height,
         section: id,
         caption: `${id} · ${section.title}`,
-        nodes: layout.nodes.map(node => ({ ...node, label: section.nodes[node.id] })),
+        nodes: layout.nodes.map(node => ({ ...node, icon: layout.icons[node.id], label: section.nodes[node.id] })),
         edges: layout.edges.map(edge => ({ ...edge, label: content.edges[edge.label] })),
       }]
     }),

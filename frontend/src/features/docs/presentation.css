@@ -42,6 +42,59 @@ a:focus-visible { outline: 3px solid var(--accentViolet); outline-offset: 6px; }
 .prompt-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .prompt-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accentCyan); border-radius: 16px; padding: 28px; }
 .prompt-card p { color: var(--primaryText); font-size: 0.85em; margin: 0; }
+
+/* Visual layouts (icons + varied arrangements) */
+.slide-icon { width: 100%; height: 100%; display: block; }
+.card-icon { position: relative; flex: none; width: 64px; height: 64px; padding: 14px; border-radius: 18px; color: var(--accentCyan); background: color-mix(in srgb, var(--accentCyan) 14%, transparent); border: 1px solid color-mix(in srgb, var(--accentCyan) 35%, transparent); }
+.prompt-grid[class*='layout-'] .prompt-card { border-top-width: 1px; }
+.prompt-grid[class*='layout-'] .prompt-card:nth-child(3n+2) .card-icon { color: var(--accentViolet); background: color-mix(in srgb, var(--accentViolet) 14%, transparent); border-color: color-mix(in srgb, var(--accentViolet) 35%, transparent); }
+.reveal .prompt-grid[class*='layout-'] h3 { margin-bottom: 10px; }
+
+/* list: stacked rows with icon on the left */
+.layout-list { grid-template-columns: 1fr; gap: 16px; }
+.layout-list .prompt-card { display: flex; align-items: center; gap: 28px; padding: 20px 28px; border-left: 4px solid var(--accentCyan); }
+.layout-list .prompt-card:nth-child(2) { margin-left: 48px; border-left-color: var(--accentViolet); }
+.layout-list .prompt-card:nth-child(3) { margin-left: 96px; }
+
+/* steps: horizontal journey with numbered icons and arrows */
+.layout-steps { grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr) 48px minmax(0, 1fr); gap: 12px; align-items: start; }
+.layout-steps .prompt-card { background: transparent; border: none; padding: 8px; text-align: center; }
+.layout-steps .card-icon { width: 120px; height: 120px; padding: 30px; margin: 0 auto 24px; border-radius: 50%; }
+.step-number { position: absolute; top: -4px; right: -4px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--accentViolet); color: var(--background); font-size: 18px; font-weight: 800; }
+.step-connector { color: var(--presentation-secondary); width: 48px; height: 48px; align-self: start; margin-top: 36px; }
+
+/* spotlight: centred cards with large icons */
+.layout-spotlight .prompt-card { text-align: center; padding: 36px 28px; border-top: none; border-bottom: 4px solid var(--accentCyan); }
+.layout-spotlight .prompt-card:nth-child(2) { border-bottom-color: var(--accentViolet); transform: translateY(-20px); }
+.layout-spotlight .card-icon { width: 88px; height: 88px; padding: 20px; margin: 0 auto 24px; border-radius: 50%; }
+
+/* roadmap: dashed, centred cards for possible future work */
+.layout-roadmap .prompt-card { text-align: center; padding: 32px 26px; background: transparent; border: 2px dashed color-mix(in srgb, var(--accentViolet) 45%, transparent); }
+.layout-roadmap .card-icon { width: 80px; height: 80px; padding: 18px; margin: 0 auto 22px; border-radius: 50%; border-style: dashed; }
+
+/* focus: large hero icon beside a compact list */
+.visual-wrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; align-items: center; }
+.hero-icon { width: 220px; height: 220px; padding: 54px; border-radius: 50%; color: var(--accentViolet); background: radial-gradient(circle, color-mix(in srgb, var(--accentViolet) 22%, transparent), transparent 70%); border: 2px dashed color-mix(in srgb, var(--accentViolet) 45%, transparent); }
+.layout-focus { grid-template-columns: 1fr; gap: 14px; }
+.layout-focus .prompt-card { display: flex; align-items: center; gap: 22px; padding: 14px 22px; }
+.reveal .layout-focus h3 { font-size: 1em; margin-bottom: 6px; }
+.layout-focus .prompt-card p { font-size: 0.75em; line-height: 1.5; }
+.layout-focus .card-icon { width: 56px; height: 56px; padding: 12px; }
+
+/* stairs: ascending blocks to show growth */
+.layout-stairs { align-items: stretch; }
+.layout-stairs .prompt-card { border-top: none; border-bottom: 4px solid var(--accentCyan); }
+.layout-stairs .prompt-card:nth-child(1) { margin-top: 120px; }
+.layout-stairs .prompt-card:nth-child(2) { margin-top: 60px; border-bottom-color: var(--accentViolet); }
+.layout-stairs .prompt-card:nth-child(3) { background: color-mix(in srgb, var(--accentCyan) 10%, var(--surface)); }
+.layout-stairs .card-icon { margin-bottom: 20px; }
+
+/* pair: two sides facing each other, shared outcome below */
+.layout-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.layout-pair .prompt-card { display: flex; gap: 22px; align-items: flex-start; }
+.layout-pair .prompt-card:nth-child(1) { border-top: 1px solid var(--border); border-left: 4px solid var(--accentCyan); }
+.layout-pair .prompt-card:nth-child(2) { border-top: 1px solid var(--border); border-right: 4px solid var(--accentViolet); }
+.layout-pair .prompt-card:nth-child(3) { grid-column: 1 / -1; align-items: center; border: 1px dashed var(--accentCyan); background: transparent; }
 .reveal .controls { color: var(--accentCyan); }
 .reveal .progress { color: var(--accentViolet); }
 .reveal .slide-number { background: var(--surface); color: var(--primaryText); font-family: inherit; }
@@ -53,7 +106,7 @@ a:focus-visible { outline: 3px solid var(--accentViolet); outline-offset: 6px; }
 .technical-diagram { margin: 0 0 18px; }
 .diagram-viewport { width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--background); }
 .diagram-viewport:focus-visible { outline: 3px solid var(--accentViolet); outline-offset: 3px; }
-.technical-diagram svg { display: block; width: 100%; min-width: 900px; height: auto; }
+.diagram-viewport > svg { display: block; width: 100%; min-width: 900px; height: auto; }
 .diagram-node rect, .diagram-node polygon { fill: var(--surface); stroke: var(--accentCyan); stroke-width: 2; }
 .diagram-store rect { stroke: var(--accentViolet); }
 .diagram-decision polygon { stroke: var(--accentViolet); }
@@ -67,6 +120,130 @@ a:focus-visible { outline: 3px solid var(--accentViolet); outline-offset: 6px; }
 .schematic-facts .prompt-card { padding: 16px; border-top-width: 2px; }
 .reveal .schematic-facts h3 { font-size: 0.8em; margin-bottom: 10px; }
 .schematic-facts .prompt-card p { font-size: 0.64em; line-height: 1.5; }
+.schematic-facts .prompt-card { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; align-items: center; align-content: start; }
+.schematic-facts .card-body { display: contents; }
+.schematic-facts .card-icon { width: 38px; height: 38px; padding: 7px; border-radius: 10px; }
+.reveal .schematic-facts .card-icon + .card-body h3 { margin: 0; }
+.schematic-facts .card-icon ~ .card-body p { grid-column: 1 / -1; margin-top: 10px; }
+.dense-notes .schematic-facts { gap: 12px; }
+.dense-notes .schematic-facts .prompt-card { padding: 12px 14px; }
+.dense-notes .schematic-facts .card-icon { width: 32px; height: 32px; padding: 6px; }
+.reveal .dense-notes .schematic-facts h3 { font-size: 0.72em; }
+.dense-notes .schematic-facts .prompt-card p { font-size: 0.55em; line-height: 1.42; }
+.dense-notes .schematic-facts .card-icon ~ .card-body p { margin-top: 8px; }
+
+/* The caption repeats the slide title: keep it for assistive tech, free the space on desktop. */
+@media (min-width: 1025px) {
+  .technical-diagram figcaption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+.diagram-logo { overflow: visible; color: var(--primaryText); }
+.card-icon .brand-logo { color: var(--primaryText); }
+
+/* notes: pinned sticky notes, slightly tilted */
+.layout-notes { gap: 36px; padding: 16px 8px 0; }
+.layout-notes .prompt-card { position: relative; border: none; border-radius: 4px; padding: 40px 28px 32px; background: color-mix(in srgb, var(--accentCyan) 16%, var(--surface)); box-shadow: 0 14px 30px -18px rgb(0 0 0 / 45%); transform: rotate(-2deg); }
+.layout-notes .prompt-card:nth-child(2) { background: color-mix(in srgb, var(--accentViolet) 16%, var(--surface)); transform: rotate(1.5deg) translateY(18px); }
+.layout-notes .prompt-card:nth-child(3) { transform: rotate(-1deg); }
+.layout-notes .prompt-card::before { content: ''; position: absolute; top: -12px; left: 50%; width: 110px; height: 26px; transform: translateX(-50%) rotate(-3deg); background: color-mix(in srgb, var(--primaryText) 14%, transparent); border-radius: 2px; }
+.layout-notes .card-icon { width: 52px; height: 52px; padding: 11px; margin-bottom: 18px; background: var(--surface); }
+
+/* browser / terminal / phone frames */
+.mock-window { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--surface); box-shadow: 0 24px 50px -30px rgb(0 0 0 / 50%); }
+.window-bar { display: flex; align-items: center; gap: 8px; padding: 12px 18px; background: color-mix(in srgb, var(--primaryText) 6%, var(--surface)); border-bottom: 1px solid var(--border); }
+.window-dot { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
+.window-dot:nth-child(2) { background: #febc2e; }
+.window-dot:nth-child(3) { background: #28c840; }
+.window-url { flex: 1; max-width: 420px; height: 26px; margin-left: 18px; padding: 5px 10px; border-radius: 13px; background: var(--background); color: var(--accentCyan); }
+.url-icon { width: 16px; height: 16px; display: block; }
+.layout-browser { gap: 0; }
+.layout-browser .prompt-card { border: none; border-radius: 0; padding: 32px 28px; background: transparent; }
+.layout-browser .prompt-card + .prompt-card { border-left: 1px solid var(--border); }
+.layout-browser .card-icon { margin-bottom: 18px; }
+
+.mock-terminal { background: #0b1020; border-color: #26304f; }
+.mock-terminal .window-bar { background: #151c33; border-color: #26304f; }
+.layout-terminal { grid-template-columns: 1fr; gap: 0; padding: 22px 30px 26px; font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+.layout-terminal .prompt-card { display: flex; gap: 18px; align-items: flex-start; border: none; background: transparent; padding: 12px 0; }
+.layout-terminal .card-icon { width: 40px; height: 40px; padding: 8px; border-radius: 8px; color: #55eaf2; background: #55eaf21f; border-color: #55eaf24d; }
+.reveal .layout-terminal h3 { color: #55eaf2; font-size: 0.85em; font-family: inherit; margin-bottom: 6px; }
+.reveal .layout-terminal h3::before { content: '$ '; color: #b18cff; }
+.layout-terminal .prompt-card p { color: #d6def5; font-size: 0.68em; }
+
+.mock-phone { position: relative; width: 760px; margin: 0 auto; padding: 46px 22px 22px; border: 10px solid color-mix(in srgb, var(--primaryText) 82%, transparent); border-radius: 44px; background: var(--background); }
+.phone-notch { position: absolute; top: 10px; left: 50%; width: 120px; height: 20px; transform: translateX(-50%); border-radius: 12px; background: color-mix(in srgb, var(--primaryText) 82%, transparent); }
+.layout-phone { grid-template-columns: 1fr; gap: 10px; }
+.layout-phone .prompt-card { display: flex; gap: 16px; align-items: center; padding: 14px 18px; border-radius: 18px; border-top-width: 1px; }
+.layout-phone .card-icon { width: 48px; height: 48px; padding: 10px; border-radius: 14px; }
+.reveal .layout-phone h3 { font-size: 0.85em; margin-bottom: 4px; }
+.layout-phone .prompt-card p { font-size: 0.66em; line-height: 1.45; }
+
+/* bento: one feature tile and two supporting tiles */
+.layout-bento { grid-template-columns: 1.2fr 1fr; grid-template-rows: auto auto; gap: 18px; }
+.layout-bento .prompt-card { display: flex; gap: 20px; align-items: center; border-top-width: 1px; }
+.layout-bento .prompt-card:first-child { grid-row: span 2; flex-direction: column; align-items: flex-start; justify-content: flex-end; background: linear-gradient(150deg, color-mix(in srgb, var(--accentCyan) 22%, var(--surface)), color-mix(in srgb, var(--accentViolet) 18%, var(--surface))); }
+.layout-bento .prompt-card:first-child .card-icon { width: 96px; height: 96px; padding: 22px; margin-bottom: auto; }
+.reveal .layout-bento .prompt-card:first-child h3 { font-size: 1.5em; }
+
+/* hub: central icon with cards around it */
+.layout-hub { grid-template-columns: 1fr 200px 1fr; grid-template-areas: 'a hero b' 'c c c'; gap: 22px 28px; align-items: center; }
+.layout-hub > article:nth-of-type(1) { grid-area: a; text-align: right; }
+.layout-hub > article:nth-of-type(2) { grid-area: b; }
+.layout-hub > article:nth-of-type(3) { grid-area: c; justify-self: center; max-width: 760px; text-align: center; }
+.layout-hub .hero-icon { grid-area: hero; width: 200px; height: 200px; padding: 50px; }
+.layout-hub .prompt-card { border-top-width: 1px; }
+.layout-hub > article:nth-of-type(1) .card-icon { margin-left: auto; }
+.layout-hub > article:nth-of-type(3) .card-icon { margin: 0 auto; }
+.layout-hub .card-icon { margin-bottom: 14px; width: 56px; height: 56px; padding: 12px; }
+
+/* chat: a conversation thread */
+.layout-chat { grid-template-columns: 1fr; gap: 16px; }
+.layout-chat .prompt-card { display: flex; gap: 18px; align-items: flex-end; max-width: 860px; padding: 0; background: transparent; border: none; }
+.layout-chat .prompt-card:nth-child(even) { flex-direction: row-reverse; margin-left: auto; text-align: right; }
+.layout-chat .card-icon { width: 56px; height: 56px; padding: 12px; border-radius: 50%; }
+.layout-chat .card-body { padding: 18px 24px; border-radius: 22px 22px 22px 4px; background: var(--surface); border: 1px solid var(--border); }
+.layout-chat .prompt-card:nth-child(even) .card-body { border-radius: 22px 22px 4px 22px; background: color-mix(in srgb, var(--accentViolet) 14%, var(--surface)); }
+.layout-chat .prompt-card p { font-size: 0.72em; }
+
+/* checklist: ticked boxes */
+.layout-checklist { grid-template-columns: 1fr; gap: 0; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); overflow: hidden; }
+.layout-checklist .prompt-card { display: flex; gap: 24px; align-items: center; border: none; border-radius: 0; padding: 22px 28px; background: transparent; }
+.layout-checklist .prompt-card + .prompt-card { border-top: 1px dashed var(--border); }
+.layout-checklist .prompt-card::before { content: '✓'; flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--accentCyan); color: var(--background); font-weight: 800; font-size: 26px; }
+.layout-checklist .card-icon { order: 2; margin-left: auto; width: 56px; height: 56px; padding: 12px; border-radius: 50%; }
+
+/* quote: editorial pull quote with two footnotes */
+.layout-quote { grid-template-columns: 1fr 1fr; gap: 26px 48px; }
+.layout-quote .prompt-card { border: none; background: transparent; padding: 0; display: flex; gap: 18px; }
+.layout-quote .prompt-card:first-child { grid-column: 1 / -1; position: relative; padding: 8px 0 26px 90px; border-bottom: 2px solid var(--border); }
+.layout-quote .prompt-card:first-child::before { content: '“'; position: absolute; left: 0; top: -38px; font-size: 180px; line-height: 1; font-family: Georgia, serif; color: var(--accentViolet); }
+.layout-quote .prompt-card:first-child .card-icon { display: none; }
+.reveal .layout-quote .prompt-card:first-child h3 { color: var(--accentCyan); font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.1em; }
+.layout-quote .prompt-card:first-child p { font-size: 1.15em; font-style: italic; line-height: 1.45; }
+.layout-quote .prompt-card:not(:first-child) { padding-left: 18px; border-left: 3px solid var(--accentCyan); }
+.layout-quote .prompt-card p { font-size: 0.72em; }
+
+/* pipeline: chevron stages */
+.layout-pipeline { gap: 0; align-items: stretch; }
+.layout-pipeline .prompt-card { border: none; border-radius: 0; padding: 28px 48px 28px 56px; background: color-mix(in srgb, var(--accentCyan) 14%, var(--surface)); clip-path: polygon(0 0, calc(100% - 32px) 0, 100% 50%, calc(100% - 32px) 100%, 0 100%, 32px 50%); margin-right: -20px; }
+.layout-pipeline .prompt-card:first-child { padding-left: 32px; clip-path: polygon(0 0, calc(100% - 32px) 0, 100% 50%, calc(100% - 32px) 100%, 0 100%); border-radius: 16px 0 0 16px; }
+.layout-pipeline .prompt-card:nth-child(2) { background: color-mix(in srgb, var(--accentViolet) 14%, var(--surface)); }
+.layout-pipeline .prompt-card:last-child { margin-right: 0; }
+.layout-pipeline .card-icon { margin-bottom: 16px; background: var(--surface); }
+.layout-pipeline .prompt-card p { font-size: 0.66em; line-height: 1.5; }
+
+/* numbered: oversized editorial numerals */
+.layout-numbered { counter-reset: point; gap: 40px; }
+.layout-numbered .prompt-card { position: relative; counter-increment: point; border: none; border-top: 2px solid var(--primaryText); border-radius: 0; background: transparent; padding: 96px 0 0; }
+.layout-numbered .prompt-card::before { content: counter(point, decimal-leading-zero); position: absolute; top: 8px; left: 0; font-size: 84px; font-weight: 800; line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--accentViolet); }
+.layout-numbered .card-icon { position: absolute; top: 18px; right: 0; width: 56px; height: 56px; padding: 12px; border-radius: 50%; }
+
+/* folders: file-folder cards with tabs */
+.layout-folders { gap: 26px; padding-top: 34px; align-items: stretch; }
+.layout-folders .prompt-card { position: relative; border-radius: 0 16px 16px 16px; border-top-width: 1px; background: color-mix(in srgb, var(--accentCyan) 9%, var(--surface)); }
+.layout-folders .prompt-card:nth-child(2) { background: color-mix(in srgb, var(--accentViolet) 9%, var(--surface)); }
+.layout-folders .card-icon { position: absolute; top: -34px; left: -1px; width: 120px; height: 34px; padding: 6px 0; border-radius: 12px 12px 0 0; border-bottom: none; background: inherit; display: flex; justify-content: center; }
+.layout-folders .card-icon .slide-icon { width: 22px; }
+.layout-folders .prompt-card p { font-size: 0.75em; }
 
 @media (max-width: 1024px) {
   .schematic-deck .reveal .slides { width: 100% !important; height: 100% !important; zoom: 1 !important; transform: none !important; inset: 0 !important; }
@@ -93,6 +270,36 @@ a:focus-visible { outline: 3px solid var(--accentViolet); outline-offset: 6px; }
   .prompt-grid { grid-template-columns: 1fr; gap: 12px; }
   .prompt-card { padding: 16px; }
   .prompt-card h3 { margin-bottom: 12px; }
+  .layout-list .prompt-card:nth-child(n) { margin-left: 0; gap: 16px; padding: 16px; }
+  .layout-steps { grid-template-columns: 1fr; }
+  .layout-steps .card-icon { width: 88px; height: 88px; padding: 22px; margin-bottom: 12px; }
+  .step-connector { justify-self: center; margin: 0; width: 32px; height: 32px; transform: rotate(90deg); }
+  .layout-spotlight .prompt-card:nth-child(2) { transform: none; }
+  .layout-stairs .prompt-card:nth-child(n) { margin-top: 0; }
+  .layout-pair { grid-template-columns: 1fr; }
+  .layout-pair .prompt-card { gap: 16px; }
+  .visual-wrap { grid-template-columns: 1fr; gap: 20px; }
+  .hero-icon { width: 120px; height: 120px; padding: 28px; }
+  .card-icon { width: 52px; height: 52px; padding: 11px; }
+  .prompt-grid[class*='layout-'] { grid-template-columns: 1fr; grid-template-areas: none; }
+  .prompt-grid[class*='layout-'] > * { grid-area: auto; grid-row: auto; grid-column: auto; }
+  .layout-notes .prompt-card:nth-child(n) { transform: none; }
+  .layout-browser .prompt-card + .prompt-card { border-left: none; border-top: 1px solid var(--border); }
+  .mock-phone { width: 100%; padding: 40px 12px 14px; border-width: 6px; border-radius: 30px; }
+  .layout-hub > article:nth-of-type(n), .layout-hub .hero-icon { grid-area: auto; }
+  .layout-bento .prompt-card:first-child { grid-row: auto; }
+  .layout-hub > article:nth-of-type(n) { text-align: left; max-width: none; justify-self: stretch; }
+  .layout-hub > article:nth-of-type(n) .card-icon { margin: 0 0 12px; }
+  .layout-hub .hero-icon { width: 120px; height: 120px; padding: 28px; }
+  .layout-chat .prompt-card { max-width: none; }
+  .layout-chat .prompt-card p, .layout-phone .prompt-card p { font-size: 0.82em; }
+  .layout-quote .prompt-card:first-child { padding-left: 52px; }
+  .layout-quote .prompt-card:first-child::before { font-size: 110px; top: -20px; }
+  .layout-quote .prompt-card:first-child p { font-size: 0.95em; }
+  .layout-pipeline .prompt-card:nth-child(n) { clip-path: none; margin: 0 0 8px; padding: 20px; border-radius: 14px; }
+  .layout-numbered .prompt-card { padding-top: 80px; }
+  .layout-numbered .prompt-card::before { font-size: 64px; }
+  .layout-folders { gap: 44px; }
   .diagram-scroll-hint { display: block; color: var(--accentViolet); }
   .technical-diagram figcaption { font-size: 0.7em; }
   .reveal .schematic-facts h3 { font-size: 1em; }
