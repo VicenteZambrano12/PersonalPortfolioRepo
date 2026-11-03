@@ -295,7 +295,7 @@ describe('presentation templates', () => {
     expect(document.documentElement.lang).toBe(language)
     expect(document.querySelector('h1').textContent).toBe('Plinius')
     expect(document.querySelectorAll('.slides > section')).toHaveLength(11)
-    expect(document.querySelectorAll('.technical-diagram svg')).toHaveLength(10)
+    expect(document.querySelectorAll('.diagram-viewport > svg')).toHaveLength(10)
     expect(document.querySelectorAll('.prompt-card')).toHaveLength(30)
     expect([...document.querySelectorAll('[data-readme-section]')].map(node => node.dataset.readmeSection))
       .toEqual(Array.from({ length: 10 }, (_, index) => String(index + 1)))
@@ -383,6 +383,7 @@ describe('presentation templates', () => {
 
   it.each([
     ['1-pauhelper', 'en'], ['1-pauhelper', 'es'], ['2-orchestratordata', 'en'], ['2-orchestratordata', 'es'],
+    ['3-voicesimulator', 'en'], ['3-voicesimulator', 'es'],
   ])('draws a logo for the technologies in each %s diagram and note (%s)', (slug, language) => {
     const { slides } = getPresentationContent(slug, 'technical', language)
     for (const [, notes, diagram] of slides) {
@@ -396,7 +397,7 @@ describe('presentation templates', () => {
 
   it('uses every brand logo across the technical decks with unique gradient ids', () => {
     const used = new Set()
-    for (const slug of ['0-portfolio', '1-pauhelper', '2-orchestratordata']) {
+    for (const slug of ['0-portfolio', '1-pauhelper', '2-orchestratordata', '3-voicesimulator']) {
       for (const [, notes, diagram] of getPresentationContent(slug, 'technical', 'en').slides) {
         for (const node of diagram.nodes) for (const name of [node.icon ?? []].flat()) used.add(name)
         for (const note of notes) if (note[2] in LOGOS) used.add(note[2])

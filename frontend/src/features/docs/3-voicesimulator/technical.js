@@ -71,19 +71,22 @@ const copy = {
         ['Local setup', 'Generate the SQLite snapshot, start FastAPI on port 8000, then start the Vite frontend, which proxies /api to the backend.'],
       ]),
       makeSection('Tech Stack', {
-        backend: ['Backend', 'Python + FastAPI', 'custom classes'],
-        llm: ['LLM', 'Google AI Studio', 'Gemini API'],
-        frontend: ['Frontend', 'React + Vite'],
-        cloud: ['Cloud', 'Google Cloud Platform'],
-        iac: ['Infrastructure as Code', 'Terraform'],
-        retrieval: ['Retrieval', 'SQLite local / Qdrant cloud'],
+        frontend: ['React + Vite', 'Map, route, guide'],
+        backend: ['Python + FastAPI', 'uv + Pydantic'],
+        llm: ['Gemini API', 'Routing + answers'],
+        speech: ['Gemini STT + TTS', 'Kore voice, WAV'],
+        embed: ['Gemini embeddings', 'gemini-embedding-001'],
+        retrieval: ['SQLite local', 'Qdrant on GCP'],
+        cloud: ['Google Cloud', 'Cloud Run + VM'],
+        iac: ['Terraform + Docker', 'GitHub Actions'],
       }, [
-        ['backend', 'llm'], ['backend', 'retrieval'], ['frontend', 'backend'],
-        ['cloud', 'iac'], ['cloud', 'retrieval'],
+        ['frontend', 'backend'], ['backend', 'llm'], ['llm', 'speech'],
+        ['embed', 'retrieval'], ['retrieval', 'cloud'], ['cloud', 'iac'],
+        ['backend', 'retrieval'],
       ], [
-        ['Backend', 'Python and FastAPI provide the backend; custom classes handle utilities, memory, and workflow without an agent framework.'],
-        ['Frontend', 'The user interface is built with React and Vite.'],
-        ['Cloud', 'The README identifies Google Cloud Platform as the cloud platform and Terraform as the infrastructure-as-code tool.'],
+        ['Backend', 'Python and FastAPI with uv-locked dependencies. Custom classes, not an agent framework; Pydantic validates requests, prompts and routes.'],
+        ['One provider, separate models', 'Gemini handles routing and answers (LLM_MODEL), transcription (gemini-3.5-flash-lite), speech (gemini-2.5-flash-preview-tts, voice Kore) and gemini-embedding-001 vectors.'],
+        ['Data and delivery', 'React + Vite frontend. SQLite snapshot locally, Qdrant on a Compute Engine VM in GCP. Docker builds one image; Terraform and GitHub Actions deploy it.'],
       ]),
       makeSection('Voice Processing', {
         input: ['Question', 'audio or text'],
@@ -98,7 +101,7 @@ const copy = {
       ], [
         ['Pipeline', 'The custom pipeline places the LLM agent between optional Speech-to-Text and Text-to-Speech layers.'],
         ['Modes', 'full is audio-to-audio; stt is audio-to-text; tts is text-to-audio; text is text-to-text.'],
-        ['Mode behavior', 'The request mode determines whether STT and TTS run around the LLM agent in the same endpoint.'],
+        ['Streaming and limits', 'With stream=true, NDJSON reports only executed steps (transcribing, routing, retrieving, generating, synthesizing), then a result or error. Audio uploads: audio/*, at most 14,000,000 bytes.'],
       ]),
       makeSection('RAG Agent', {
         question: ['Question + stop'],
@@ -115,7 +118,7 @@ const copy = {
         ['rank', 'generate'], ['generate', 'answer'],
       ], [
         ['Stored metadata', 'Each document chunk is stored with its stop name and type, such as historic or restaurants, alongside document information.'],
-        ['Retrieval', 'The current stop and the intent-derived type filter the collection; the question is embedded to find relevant chunks.'],
+        ['Retrieval', 'Filter by the current stop and the intent-derived type, embed the question with RETRIEVAL_QUERY, and keep the top two cosine matches. Chunks: at most 400 tokens, 60 overlap, never crossing pages.'],
         ['Response', 'The LLM agent generates an answer from the retrieved chunks and returns the associated sources.'],
       ]),
       makeSection('FastAPI Endpoints', {
@@ -252,19 +255,22 @@ const copy = {
         ['Entorno local', 'Generar el snapshot SQLite, iniciar FastAPI en el puerto 8000 y después Vite, que redirige /api al backend.'],
       ]),
       makeSection('Stack tecnológico', {
-        backend: ['Backend', 'Python + FastAPI', 'clases personalizadas'],
-        llm: ['LLM', 'Google AI Studio', 'API Gemini'],
-        frontend: ['Frontend', 'React + Vite'],
-        cloud: ['Cloud', 'Google Cloud Platform'],
-        iac: ['Infraestructura como código', 'Terraform'],
-        retrieval: ['Recuperación', 'SQLite local / Qdrant cloud'],
+        frontend: ['React + Vite', 'Mapa, ruta, guía'],
+        backend: ['Python + FastAPI', 'uv + Pydantic'],
+        llm: ['API Gemini', 'Enrutado + respuestas'],
+        speech: ['Gemini STT + TTS', 'Voz Kore, WAV'],
+        embed: ['Embeddings Gemini', 'gemini-embedding-001'],
+        retrieval: ['SQLite en local', 'Qdrant en GCP'],
+        cloud: ['Google Cloud', 'Cloud Run + VM'],
+        iac: ['Terraform + Docker', 'GitHub Actions'],
       }, [
-        ['backend', 'llm'], ['backend', 'retrieval'], ['frontend', 'backend'],
-        ['cloud', 'iac'], ['cloud', 'retrieval'],
+        ['frontend', 'backend'], ['backend', 'llm'], ['llm', 'speech'],
+        ['embed', 'retrieval'], ['retrieval', 'cloud'], ['cloud', 'iac'],
+        ['backend', 'retrieval'],
       ], [
-        ['Backend', 'Python y FastAPI proporcionan el backend; clases personalizadas gestionan utilidades, memoria y flujo sin un framework de agentes.'],
-        ['Frontend', 'La interfaz está construida con React y Vite.'],
-        ['Cloud', 'El README identifica Google Cloud Platform como plataforma cloud y Terraform como herramienta de infraestructura como código.'],
+        ['Backend', 'Python y FastAPI con dependencias fijadas por uv. Clases propias, sin framework de agentes; Pydantic valida peticiones, prompts y rutas.'],
+        ['Un proveedor, modelos distintos', 'Gemini enruta y responde (LLM_MODEL), transcribe (gemini-3.5-flash-lite), genera voz (gemini-2.5-flash-preview-tts, voz Kore) y vectores gemini-embedding-001.'],
+        ['Datos y entrega', 'Frontend React + Vite. Snapshot SQLite en local y Qdrant en una VM de Compute Engine en GCP. Docker crea una imagen; Terraform y GitHub Actions la despliegan.'],
       ]),
       makeSection('Procesamiento de voz', {
         input: ['Pregunta', 'audio o texto'],
@@ -279,7 +285,7 @@ const copy = {
       ], [
         ['Pipeline', 'El pipeline personalizado sitúa el agente LLM entre las capas opcionales de voz a texto y texto a voz.'],
         ['Modos', 'full es audio a audio; stt es audio a texto; tts es texto a audio; text es texto a texto.'],
-        ['Comportamiento del modo', 'El modo de la petición determina si STT y TTS se ejecutan alrededor del agente LLM en el mismo endpoint.'],
+        ['Streaming y límites', 'Con stream=true, NDJSON informa solo de los pasos ejecutados (transcribing, routing, retrieving, generating, synthesizing) y luego un resultado o error. Audio: audio/*, máx. 14.000.000 bytes.'],
       ]),
       makeSection('Agente RAG', {
         question: ['Pregunta + parada'],
@@ -296,7 +302,7 @@ const copy = {
         ['rank', 'generate'], ['generate', 'answer'],
       ], [
         ['Metadatos guardados', 'Cada fragmento se almacena con el nombre de la parada y el tipo, como historia o restaurantes, junto con la información del documento.'],
-        ['Recuperación', 'La parada actual y el tipo derivado de la intención filtran la colección; la pregunta se convierte en embedding para buscar fragmentos relevantes.'],
+        ['Recuperación', 'Filtra por la parada actual y el tipo derivado de la intención, crea el embedding con RETRIEVAL_QUERY y conserva las dos coincidencias coseno más cercanas. Fragmentos: máx. 400 tokens, 60 de solapamiento, sin cruzar páginas.'],
         ['Respuesta', 'El agente LLM genera una respuesta a partir de los fragmentos recuperados y devuelve las fuentes asociadas.'],
       ]),
       makeSection('Endpoints FastAPI', {
@@ -371,6 +377,33 @@ const copy = {
   },
 }
 
+// Brand logos per diagram box (see ../logos.js) and icons for the three notes, in section order.
+const sectionIcons = [
+  { frontend: ['react', 'vite'], api: 'fastapi', pipeline: 'python', gemini: 'gemini', retrieval: 'qdrant', sources: 'cloudStorage' },
+  { intent: 'gemini', filter: 'qdrant', vectors: ['sqlite', 'qdrant'], answer: 'gemini', sources: 'cloudStorage' },
+  { docs: 'cloudStorage', database: 'sqlite', backend: ['python', 'uv'], frontend: ['node', 'vite'], credentials: 'gemini', cloud: ['cloudStorage', 'qdrant'] },
+  { frontend: ['react', 'vite'], backend: ['python', 'fastapi'], llm: 'gemini', speech: 'gemini', embed: 'gemini', retrieval: ['sqlite', 'qdrant'], cloud: ['cloudRun', 'computeEngine'], iac: ['terraform', 'githubActions'] },
+  { stt: 'gemini', agent: 'python', tts: 'gemini' },
+  { intent: 'gemini', embed: 'gemini', filter: 'pydantic', collection: 'qdrant', generate: 'gemini' },
+  { client: 'react', api: ['fastapi', 'pydantic'], chat: 'gemini', documents: 'cloudStorage', ready: 'qdrant', start: 'cloudFunctions' },
+  { controls: 'react', stop: 'react', answer: 'react', pdf: 'cloudStorage' },
+  { cloudrun: 'cloudRun', gemini: 'gemini', storage: 'cloudStorage', qdrant: ['computeEngine', 'qdrant'], secret: 'secretManager', registry: 'artifactRegistry', terraform: 'terraform' },
+  { merge: 'github', auth: 'iam', build: 'docker', plan: 'terraform', artifact: 'githubActions', approval: 'githubActions', apply: 'terraform', deploy: 'cloudRun' },
+]
+
+const noteIcons = [
+  ['react', 'python', 'search'],
+  ['sliders', 'pin', 'file'],
+  ['uv', 'sliders', 'fastapi'],
+  ['python', 'gemini', 'docker'],
+  ['mic', 'volume', 'list'],
+  ['qdrant', 'search', 'gemini'],
+  ['fastapi', 'file', 'check'],
+  ['mic', 'pin', 'file'],
+  ['cloudRun', 'secretManager', 'docker'],
+  ['githubActions', 'terraform', 'shield'],
+]
+
 const positions = [
   [10, 20], [290, 20], [570, 20], [850, 20],
   [10, 190], [290, 190], [570, 190], [850, 190],
@@ -388,9 +421,11 @@ export function getPliniusTechnical(language) {
           'retrieval', 'sources', 'database', 'cloud', 'vectors', 'collection',
           'documents', 'storage', 'qdrant', 'secret', 'registry', 'artifact',
         ].includes(id) ? 'store' : 'service'),
+        icon: sectionIcons[index][id],
         label,
       }))
-      return [`${index + 1}. ${section.title}`, section.notes, {
+      const notes = section.notes.map((note, noteIndex) => [...note, noteIcons[index][noteIndex]])
+      return [`${index + 1}. ${section.title}`, notes, {
         width: 1120,
         height: 300,
         section: index + 1,

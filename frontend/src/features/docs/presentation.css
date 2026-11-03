@@ -245,6 +245,54 @@ a:focus-visible { outline: 3px solid var(--accentViolet); outline-offset: 6px; }
 .layout-folders .card-icon .slide-icon { width: 22px; }
 .layout-folders .prompt-card p { font-size: 0.75em; }
 
+/* pillars: Roman columns with capital and base */
+.layout-pillars { gap: 44px; padding: 26px 16px 22px; }
+.layout-pillars .prompt-card { position: relative; text-align: center; border: 1px solid var(--border); border-top: none; border-bottom: none; border-radius: 0; padding: 30px 22px; background: repeating-linear-gradient(90deg, var(--surface) 0 20px, color-mix(in srgb, var(--primaryText) 6%, var(--surface)) 20px 23px); }
+.layout-pillars .prompt-card::before, .layout-pillars .prompt-card::after { content: ''; position: absolute; left: -16px; right: -16px; height: 24px; border: 1px solid var(--border); background: color-mix(in srgb, var(--accentCyan) 16%, var(--surface)); }
+.layout-pillars .prompt-card::before { top: -24px; border-radius: 8px 8px 2px 2px; }
+.layout-pillars .prompt-card::after { bottom: -22px; border-radius: 2px; background: color-mix(in srgb, var(--accentViolet) 14%, var(--surface)); }
+.layout-pillars .card-icon { margin: 0 auto 18px; width: 72px; height: 72px; padding: 16px; border-radius: 50%; }
+
+/* postcards: stamped cards, slightly tilted */
+.layout-postcards { gap: 26px; }
+.layout-postcards .prompt-card { position: relative; border: 1px solid var(--border); border-radius: 6px; padding: 26px 24px; background: color-mix(in srgb, var(--accentViolet) 5%, var(--surface)); box-shadow: 0 16px 30px -22px rgb(0 0 0 / 50%); transform: rotate(-1deg); }
+.layout-postcards .prompt-card:nth-child(2) { transform: rotate(1.2deg) translateY(14px); }
+.layout-postcards .card-icon { float: right; width: 74px; height: 86px; margin: 0 0 12px 14px; padding: 20px 16px; border: 2px dashed color-mix(in srgb, var(--accentCyan) 60%, transparent); border-radius: 4px; }
+.layout-postcards .card-body h3 { padding-bottom: 12px; border-bottom: 2px dotted var(--border); }
+
+/* route: a dashed tour route with numbered pins */
+.layout-route { position: relative; counter-reset: stop; gap: 28px; padding-top: 6px; }
+.layout-route::before { content: ''; position: absolute; top: 52px; left: 16%; right: 16%; border-top: 4px dashed color-mix(in srgb, var(--accentViolet) 55%, transparent); }
+.layout-route .prompt-card { position: relative; counter-increment: stop; text-align: center; border: none; background: transparent; padding: 0; }
+.layout-route .card-icon { position: relative; z-index: 1; width: 96px; height: 96px; padding: 24px; margin: 0 auto 22px; border-radius: 50%; background: var(--surface); border: 3px solid var(--accentCyan); }
+.layout-route .card-icon::after { content: counter(stop); position: absolute; top: -6px; right: -6px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--accentViolet); color: var(--background); font-size: 17px; font-weight: 800; }
+.layout-route .card-body { padding: 22px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); }
+
+/* funnel: narrowing stages from question to answer */
+.layout-funnel { grid-template-columns: 1fr; gap: 14px; justify-items: center; }
+.layout-funnel .prompt-card { position: relative; width: 100%; display: flex; gap: 22px; align-items: center; padding: 16px 28px; border: none; border-radius: 14px; background: color-mix(in srgb, var(--accentCyan) 16%, var(--surface)); }
+.layout-funnel .prompt-card:nth-child(2) { width: 86%; background: color-mix(in srgb, var(--accentViolet) 16%, var(--surface)); }
+.layout-funnel .prompt-card:nth-child(3) { width: 72%; background: color-mix(in srgb, var(--accentCyan) 26%, var(--surface)); }
+.layout-funnel .prompt-card:not(:last-child)::after { content: ''; position: absolute; bottom: -12px; left: 50%; width: 18px; height: 18px; transform: translateX(-50%) rotate(45deg); background: inherit; }
+.layout-funnel .card-icon { width: 56px; height: 56px; padding: 12px; background: var(--surface); }
+.reveal .layout-funnel h3 { margin-bottom: 4px; }
+.layout-funnel .prompt-card p { font-size: 0.78em; }
+
+/* player: an audio player panel with waveform tracks */
+.layout-player { position: relative; gap: 0; padding: 26px 26px 54px; border-radius: 22px; background: color-mix(in srgb, var(--primaryText) 4%, var(--surface)); border: 1px solid var(--border); }
+.layout-player::after { content: ''; position: absolute; left: 26px; right: 26px; bottom: 26px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--accentCyan) 0 62%, var(--border) 62%); }
+.layout-player .prompt-card { border: none; border-radius: 0; background: transparent; padding: 0 20px; text-align: center; }
+.layout-player .prompt-card + .prompt-card { border-left: 1px solid var(--border); }
+.layout-player .prompt-card::before { content: ''; display: block; height: 54px; margin: 0 auto 18px; width: 82%; background: repeating-linear-gradient(90deg, var(--accentViolet) 0 4px, transparent 4px 9px); clip-path: polygon(0 50%, 6% 30%, 12% 60%, 18% 15%, 24% 70%, 30% 35%, 36% 5%, 42% 55%, 48% 25%, 54% 75%, 60% 20%, 66% 50%, 72% 10%, 78% 65%, 84% 30%, 90% 55%, 100% 50%, 90% 45%, 84% 70%, 78% 35%, 72% 90%, 66% 50%, 60% 80%, 54% 25%, 48% 75%, 42% 45%, 36% 95%, 30% 65%, 24% 30%, 18% 85%, 12% 40%, 6% 70%); }
+.layout-player .prompt-card:nth-child(2)::before { background: repeating-linear-gradient(90deg, var(--accentCyan) 0 4px, transparent 4px 9px); }
+.layout-player .card-icon { width: 64px; height: 64px; padding: 15px; margin: 0 auto 16px; border-radius: 50%; }
+
+/* rings: centred badges inside gradient rings */
+.layout-rings { gap: 30px; }
+.layout-rings .prompt-card { text-align: center; border: none; background: transparent; padding: 0 8px; }
+.layout-rings .card-icon { width: 150px; height: 150px; padding: 46px; margin: 0 auto 24px; border: none; border-radius: 50%; background: radial-gradient(closest-side, var(--surface) 80%, transparent 81%), conic-gradient(from 210deg, var(--accentCyan), var(--accentViolet), var(--accentCyan)); }
+.prompt-grid.layout-rings .prompt-card:nth-child(3n+2) .card-icon { background: radial-gradient(closest-side, var(--surface) 80%, transparent 81%), conic-gradient(from 30deg, var(--accentViolet), var(--accentCyan), var(--accentViolet)); }
+
 @media (max-width: 1024px) {
   .schematic-deck .reveal .slides { width: 100% !important; height: 100% !important; zoom: 1 !important; transform: none !important; inset: 0 !important; }
   .schematic-deck .reveal .slides > section { height: 100%; padding: 24px 20px 64px; top: 0 !important; overflow-y: auto; font-size: 20px; }
@@ -300,6 +348,12 @@ a:focus-visible { outline: 3px solid var(--accentViolet); outline-offset: 6px; }
   .layout-numbered .prompt-card { padding-top: 80px; }
   .layout-numbered .prompt-card::before { font-size: 64px; }
   .layout-folders { gap: 44px; }
+  .layout-pillars { gap: 52px; }
+  .layout-postcards .prompt-card:nth-child(n) { transform: none; }
+  .layout-route::before { display: none; }
+  .layout-funnel .prompt-card:nth-child(n) { width: 100%; }
+  .layout-player .prompt-card + .prompt-card { border-left: none; border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px; }
+  .layout-rings .card-icon { width: 110px; height: 110px; padding: 32px; }
   .diagram-scroll-hint { display: block; color: var(--accentViolet); }
   .technical-diagram figcaption { font-size: 0.7em; }
   .reveal .schematic-facts h3 { font-size: 1em; }
