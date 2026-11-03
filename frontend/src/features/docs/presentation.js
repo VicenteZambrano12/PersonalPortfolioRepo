@@ -5,6 +5,7 @@ import { brandPalettes } from '../../utils/colors.jsx'
 import { createLogger } from '../../utils/logger.js'
 import { getPresentationContent } from './content.js'
 import { renderDiagram } from './diagram.js'
+import { renderIcon } from './icons.js'
 
 const log = createLogger('presentation')
 const root = document.querySelector('.reveal')
@@ -49,6 +50,29 @@ function element(tag, text, className) {
   if (text) node.textContent = text
   if (className) node.className = className
   return node
+}
+
+const DENSE_NOTE_LENGTH = 180
+
+// Decorative device frames that wrap some slide layouts.
+const FRAMES = { browser: 'mock-window', terminal: 'mock-window mock-terminal', phone: 'mock-phone' }
+
+function frame(layout, content) {
+  const wrapper = element('div', null, FRAMES[layout])
+  if (layout === 'phone') {
+    wrapper.append(element('div', null, 'phone-notch'))
+  } else {
+    const bar = element('div', null, 'window-bar')
+    for (let i = 0; i < 3; i += 1) bar.append(element('span', null, 'window-dot'))
+    if (layout === 'browser') {
+      const url = element('span', null, 'window-url')
+      url.append(renderIcon('lock', 'url-icon'))
+      bar.append(url)
+    }
+    wrapper.append(bar)
+  }
+  wrapper.append(content)
+  return wrapper
 }
 
 const header = element('header', null, 'deck-header')
@@ -97,18 +121,47 @@ if (content.showOverview) {
   slides.append(overview)
 }
 
-for (const [title, prompts, diagram] of content.slides) {
+for (const [title, prompts, diagram, visual] of content.slides) {
   const slide = element('section', null, diagram ? 'schematic-slide' : undefined)
   if (diagram) slide.dataset.readmeSection = diagram.section
+  // Long technical notes get a tighter type scale so they fit below the diagram.
+  if (diagram && Math.max(...prompts.map(([, text]) => text.length)) > DENSE_NOTE_LENGTH) slide.classList.add('dense-notes')
   slide.append(element('p', eyebrow, 'eyebrow'), element('h2', title))
   if (diagram) slide.append(renderDiagram(diagram, labels.diagramHint))
-  const grid = element('div', null, diagram ? 'prompt-grid schematic-facts' : 'prompt-grid')
-  for (const [heading, prompt] of prompts) {
+  const layout = visual?.layout
+  const gridClass = diagram ? 'prompt-grid schematic-facts' : layout ? `prompt-grid layout-${layout}` : 'prompt-grid'
+  const grid = element('div', null, gridClass)
+  prompts.forEach(([heading, prompt, icon], index) => {
     const card = element('article', null, 'prompt-card')
-    card.append(element('h3', heading), element('p', prompt))
+    if (icon) {
+      const badge = element('div', null, 'card-icon')
+      badge.append(renderIcon(icon))
+      if (layout === 'steps') badge.append(element('span', String(index + 1), 'step-number'))
+      card.append(badge)
+    }
+    const body = element('div', null, 'card-body')
+    body.append(element('h3', heading), element('p', prompt))
+    card.append(body)
     grid.append(card)
+    if (layout === 'steps' && index < prompts.length - 1) {
+      const connector = element('div', null, 'step-connector')
+      connector.append(renderIcon('arrow'))
+      grid.append(connector)
+    }
+  })
+  let content = grid
+  if (visual?.icon) {
+    const hero = element('div', null, 'hero-icon')
+    hero.append(renderIcon(visual.icon))
+    if (layout === 'hub') {
+      grid.insertBefore(hero, grid.children[1])
+    } else {
+      content = element('div', null, `visual-wrap visual-${layout}`)
+      content.append(hero, grid)
+    }
   }
-  slide.append(grid)
+  if (FRAMES[layout]) content = frame(layout, content)
+  slide.append(content)
   slides.append(slide)
 }
 

@@ -6,9 +6,23 @@ function edge(from, to, options = {}) {
   return { from, to, ...options }
 }
 
+// Icons for the three notes under each diagram (brand logos or generic icons).
+const noteIcons = [
+  ['layers', 'check', 'android'],
+  ['uv', 'qdrant', 'vertexAi'],
+  ['react', 'python', 'terraform'],
+  ['langgraph', 'qdrant', 'gemini'],
+  ['pydantic', 'fastapi', 'shield'],
+  ['vertexAi', 'cloudStorage', 'redis'],
+  ['react', 'file', 'lock'],
+  ['iap', 'cloudFunctions', 'terraform'],
+  ['terraform', 'githubActions', 'userCheck'],
+]
+
 const layouts = [
   {
     height: 270,
+    icons: { docs: 'cloudStorage', answer: 'gemini', sources: 'cloudStorage' },
     nodes: [node('subject', 10, 20), node('community', 10, 170), node('docs', 300, 20, 'store'), node('instructions', 300, 170), node('answer', 600, 95), node('sources', 890, 95, 'store')],
     edges: [
       edge('subject', 'docs'), edge('community', 'instructions'),
@@ -18,16 +32,19 @@ const layouts = [
   },
   {
     height: 300,
+    icons: { tools: ['uv', 'node'], ingest: 'python', backend: 'fastapi', cloud: ['gemini', 'vertexAi'], qdrant: ['qdrant', 'docker'], web: ['react', 'vite'] },
     nodes: [node('tools', 10, 30), node('config', 300, 30), node('ingest', 600, 30), node('backend', 890, 30), node('cloud', 300, 200, 'store'), node('qdrant', 600, 200, 'store'), node('web', 890, 200)],
     edges: [edge('tools', 'config'), edge('config', 'ingest'), edge('ingest', 'backend'), edge('cloud', 'config', { fromSide: 'top', toSide: 'bottom' }), edge('qdrant', 'ingest', { fromSide: 'top', toSide: 'bottom' }), edge('backend', 'web')],
   },
   {
     height: 300,
+    icons: { root: 'github', frontend: ['react', 'vite'], backend: ['python', 'fastapi'], vectors: 'qdrant', infra: 'terraform', quality: ['githubActions', 'git'] },
     nodes: [node('root', 450, 10), node('frontend', 10, 175, 'service', 200, 96), node('backend', 230, 175, 'service', 200, 96), node('vectors', 450, 175, 'store', 200, 96), node('infra', 670, 175, 'service', 200, 96), node('quality', 890, 175, 'service', 200, 96)],
     edges: ['frontend', 'backend', 'vectors', 'infra', 'quality'].map(id => edge('root', id, { fromSide: 'bottom', toSide: 'top' })),
   },
   {
     height: 390,
+    icons: { prompts: 'cloudStorage', start: 'langgraph', retrieve: ['vertexAi', 'qdrant'], generate: 'gemini', end: 'langgraph', qdrant: 'qdrant' },
     nodes: [node('context', 10, 10), node('prompts', 310, 10), node('system', 610, 10), node('start', 10, 175), node('retrieve', 300, 175), node('generate', 600, 175), node('end', 890, 175), node('qdrant', 300, 300, 'store')],
     edges: [
       edge('context', 'prompts'), edge('prompts', 'system'),
@@ -38,11 +55,13 @@ const layouts = [
   },
   {
     height: 390,
+    icons: { client: 'react', api: ['fastapi', 'pydantic'], health: 'qdrant', create: 'langgraph', chat: 'gemini', guide: 'cloudStorage' },
     nodes: [node('client', 10, 155), node('api', 290, 155), ...['health', 'config', 'create', 'chat', 'guide'].map((id, index) => node(id, 650, 10 + index * 76, 'service', 450, 60))],
     edges: [edge('client', 'api'), ...['health', 'config', 'create', 'chat', 'guide'].map(id => edge('api', id))],
   },
   {
     height: 370,
+    icons: { gcs: 'cloudStorage', embed: 'vertexAi', qdrant: 'qdrant', memory: 'redis', query: 'vertexAi', search: 'qdrant', answer: 'gemini' },
     nodes: [node('pdf', 10, 10), node('chunks', 290, 10), node('embed', 570, 10), node('qdrant', 850, 10, 'store'), node('gcs', 10, 145, 'store'), node('metadata', 290, 145), node('memory', 850, 145, 'store'), node('question', 10, 280), node('query', 290, 280), node('search', 570, 280), node('answer', 850, 280)],
     edges: [
       edge('pdf', 'chunks'), edge('chunks', 'embed'), edge('embed', 'qdrant'), edge('pdf', 'gcs'), edge('chunks', 'metadata'),
@@ -54,6 +73,7 @@ const layouts = [
   },
   {
     height: 330,
+    icons: { ui: ['react', 'vite'], api: 'fastapi', rag: ['langgraph', 'qdrant'], pdf: 'cloudStorage', signed: 'iam', memory: 'redis' },
     nodes: [node('user', 10, 20), node('ui', 290, 20), node('api', 570, 20), node('rag', 850, 20), node('pdf', 10, 225, 'store'), node('source', 290, 225), node('signed', 570, 225), node('memory', 850, 225, 'store')],
     edges: [
       edge('user', 'ui'), edge('ui', 'api', { bidirectional: true }), edge('api', 'rag', { bidirectional: true }),
@@ -62,6 +82,7 @@ const layouts = [
   },
   {
     height: 380,
+    icons: { registry: 'artifactRegistry', identity: 'iam', secrets: 'secretManager', cloudrun: 'cloudRun', egress: 'vpc', vm: ['computeEngine', 'qdrant'], ai: ['vertexAi', 'gemini'], docs: 'cloudStorage', nat: 'cloudNat', disk: 'persistentDisk' },
     nodes: [node('registry', 290, 10, 'store'), node('identity', 570, 10), node('secrets', 850, 10, 'store'), node('browser', 10, 145), node('cloudrun', 290, 145), node('egress', 570, 145), node('vm', 850, 145, 'store'), node('ai', 10, 290), node('docs', 290, 290, 'store'), node('nat', 570, 290), node('disk', 850, 290, 'store')],
     edges: [
       edge('registry', 'cloudrun'), edge('identity', 'cloudrun', { fromSide: 'bottom', toSide: 'top', via: [[675, 110], [395, 110]] }),
@@ -73,6 +94,7 @@ const layouts = [
   },
   {
     height: 370,
+    icons: { merge: 'github', auth: 'iam', build: 'docker', reuse: 'artifactRegistry', plan: 'terraform', artifacts: 'githubActions', approval: 'githubActions', apply: 'terraform' },
     nodes: [node('merge', 10, 35), node('auth', 290, 35), node('changed', 570, 35, 'decision'), node('build', 850, 5), node('reuse', 850, 140), node('plan', 850, 280), node('artifacts', 570, 280), node('approval', 290, 280, 'decision'), node('apply', 10, 280)],
     edges: [
       edge('merge', 'auth'), edge('auth', 'changed'), edge('changed', 'build', { label: 'yes' }),
@@ -207,12 +229,13 @@ export function getPauhelperTechnical(language) {
     showOverview: false,
     slides: content.sections.map((section, index) => {
       const layout = layouts[index]
-      return [`${index + 1}. ${section.title}`, section.notes, {
+      const notes = section.notes.map((note, noteIndex) => [...note, noteIcons[index][noteIndex]])
+      return [`${index + 1}. ${section.title}`, notes, {
         width: 1120,
         height: layout.height,
         section: index + 1,
         caption: `${index + 1} · ${section.title}`,
-        nodes: layout.nodes.map(node => ({ ...node, label: section.nodes[node.id] })),
+        nodes: layout.nodes.map(node => ({ ...node, icon: layout.icons[node.id], label: section.nodes[node.id] })),
         edges: layout.edges.map(edge => ({ ...edge, label: content.edges[edge.label] })),
       }]
     }),

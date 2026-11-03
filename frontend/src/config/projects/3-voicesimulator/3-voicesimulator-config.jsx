@@ -1,5 +1,6 @@
 export const voicesimulatorConfig = {
   slug: '3-voicesimulator',
+  videos: { en: 'demo-plinius-en.mp4', es: 'demo-plinius-es.mp4' },
   icon: 'ph-waveform',
   liveUrl: import.meta.env.VITE_HISTORIC_GUIDE_APP,
   thumbUrl:
@@ -8,14 +9,19 @@ export const voicesimulatorConfig = {
   modalTags: [
     'Python',
     'FastAPI',
+    'Pydantic',
+    'uv',
     'RAG',
     'Gemini',
     'Speech-to-Text',
     'Text-to-Speech',
     'React',
     'Vite',
+    'SQLite',
     'Qdrant',
     'GCP Cloud Run',
+    'Cloud Storage',
+    'Compute Engine',
     'Docker',
     'Terraform',
     'GitHub Actions',
