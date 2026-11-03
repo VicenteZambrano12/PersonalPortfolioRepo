@@ -76,12 +76,12 @@ export const es = {
         'Form es una aplicación de gimnasio que demuestra la orquestación de IA basada en la intención. Un orquestador con Gemini selecciona un agente especializado para explicar ejercicios, crear rutinas o analizar entrenamientos registrados; un pipeline Python ejecuta la tarea seleccionada mediante consultas SQL predefinidas y parametrizadas. La interfaz React presenta imágenes de ejercicios, borradores de rutinas que requieren confirmación explícita para guardarse e informes de progreso basados en datos. También permite seguir rutinas guardadas y registrar series completadas fuera del chat. FastAPI utiliza SQLite en local y Neon PostgreSQL en cloud, con frontend y backend desplegados juntos en GCP Cloud Run mediante Docker, Terraform y GitHub Actions. La memoria conversacional y los borradores usan fakeredis dentro del proceso y no son duraderos.',
     },
     voicesimulator: {
-      title: 'Voice Simulator',
-      subtitle: 'Síntesis de Audio con IA',
+      title: 'Plinius',
+      subtitle: 'Guía turística por voz con IA',
       description:
-        'Una herramienta avanzada de generación y simulación de voz que utiliza LLMs y modelos neuronales de TTS para crear salidas de audio realistas y conversacionales para diversos casos de uso.',
+        'Explora Roma con una guía turística de voz con IA en tiempo real. Plinius responde sobre lugares históricos y restaurantes locales basándose en fuentes seleccionadas que puedes consultar.',
       fullDescription:
-        'Una plataforma de audio avanzada que utiliza modelos neuronales de Texto a Voz (TTS) de última generación y LLMs para generar simulaciones de voz altamente realistas y matizadas, orientadas a servicio al cliente automatizado, creación de contenido y accesibilidad.',
+        'Plinius es una guía turística con IA para Roma. Elige una parada de la ruta y pregunta sobre su historia o los restaurantes cercanos por voz o texto, en inglés o español. Su pipeline de generación aumentada por recuperación (RAG) fundamenta las respuestas en documentos seleccionados y muestra las páginas fuente; además, las capas configurables de voz a texto y texto a voz permiten una conversación por voz natural.',
     },
   },
 }

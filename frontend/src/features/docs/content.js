@@ -7,6 +7,8 @@ import { pauhelperBusiness } from './1-pauhelper/business.js'
 import { getPauhelperTechnical } from './1-pauhelper/technical.js'
 import { orchestratorBusiness } from './2-orchestratordata/business.js'
 import { getOrchestratorTechnical } from './2-orchestratordata/technical.js'
+import { pliniusBusiness } from './3-voicesimulator/business.js'
+import { getPliniusTechnical } from './3-voicesimulator/technical.js'
 
 const copy = {
   en: {
@@ -128,6 +130,10 @@ export function getPresentationContent(slug, audience, language) {
       ? (audience === 'business' ? pauhelperBusiness[dictionary.code] : getPauhelperTechnical(dictionary.code))
     : slug === '2-orchestratordata'
       ? (audience === 'business' ? orchestratorBusiness[dictionary.code] : getOrchestratorTechnical(dictionary.code))
+      : slug === '3-voicesimulator' && audience === 'business'
+        ? pliniusBusiness[dictionary.code]
+        : slug === '3-voicesimulator' && audience === 'technical'
+          ? getPliniusTechnical(dictionary.code)
       : null
   return {
     language: dictionary.code,
